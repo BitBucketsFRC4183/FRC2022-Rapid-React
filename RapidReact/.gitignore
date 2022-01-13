@@ -160,3 +160,10 @@ bin/
 
 # Simulation GUI and other tools window save file
 *-window.json
+/.idea/compiler.xml
+/.idea/discord.xml
+/.idea/gradle.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/.gitignore
