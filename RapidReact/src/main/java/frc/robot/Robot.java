@@ -37,6 +37,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     //Add Subsystems Here
+
+    this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
   /**
@@ -47,7 +49,10 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic()
+  {
+    this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
