@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.config.Config;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   private  Buttons buttons;
+  private Config config;
   private  DrivetrainSubsystem m_drivetrainSubsystem;
 
   private final List<BitBucketsSubsystem> robotSubsystems = new ArrayList<>();
@@ -38,6 +40,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    this.config = new Config();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
