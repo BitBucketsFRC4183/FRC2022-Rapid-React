@@ -6,6 +6,7 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.kauailabs.navx.frc.AHRS;
+import com.swervedrivespecialties.swervelib.DriveController;
 import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
@@ -22,9 +23,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.*;
+//import static frc.robot.Constants.*;
+import frc.robot.config.*;
+import frc.robot.config.Config.DriveConfig;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
+        Config config;
+        DriveConfig driveConfig;
   /**
    * The maximum voltage that will be delivered to the drive motors.
    * <p>
@@ -51,18 +56,18 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
    * This is a measure of how fast the robot can rotate in place.
    */
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
+  driveConfig = new DriveConfig();
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
-
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
-          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Front right
-          new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Back left
-          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(-driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Back right
-          new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0)
+          new Translation2d(-driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0)
   );
 
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
@@ -81,6 +86,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
   public DrivetrainSubsystem() {
+        config = new Config();
+        driveConfig = new DriveConfig();
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     // There are 4 methods you can call to create your swerve modules.
@@ -111,13 +118,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             // This can either be STANDARD or FAST depending on your gear configuration
             Mk4SwerveModuleHelper.GearRatio.L2,
             // This is the ID of the drive motor
-            FRONT_LEFT_MODULE_DRIVE_MOTOR,
+            config.frontLeftModuleDriveMotor,
             // This is the ID of the steer motor
-            FRONT_LEFT_MODULE_STEER_MOTOR,
+           config.frontLeftModuleSteerMotor,
             // This is the ID of the steer encoder
-            FRONT_LEFT_MODULE_STEER_ENCODER,
+            config.frontLeftModuleSteerEncoder,
             // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
-            FRONT_LEFT_MODULE_STEER_OFFSET
+            driveConfig.frontLeftModuleSteerOffset
     );
 
     // We will do the same for the other modules
@@ -126,10 +133,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
                     .withSize(2, 4)
                     .withPosition(2, 0),
             Mk4SwerveModuleHelper.GearRatio.L2,
-            FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_MOTOR,
-            FRONT_RIGHT_MODULE_STEER_ENCODER,
-            FRONT_RIGHT_MODULE_STEER_OFFSET
+            config.frontRightModuleDriveMotor,
+            config.frontRightModuleSteerEncoder,
+            config.frontRightModuleSteerEncoder,
+            driveConfig.frontRightModuleSteerOffset
     );
 
     m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -137,10 +144,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
                     .withSize(2, 4)
                     .withPosition(4, 0),
             Mk4SwerveModuleHelper.GearRatio.L2,
-            BACK_LEFT_MODULE_DRIVE_MOTOR,
-            BACK_LEFT_MODULE_STEER_MOTOR,
-            BACK_LEFT_MODULE_STEER_ENCODER,
-            BACK_LEFT_MODULE_STEER_OFFSET
+            config.backLeftModuleDriveMotor,
+            config.backLeftModuleSteerMotor,
+            config.backLeftModuleSteerEncoder,
+            driveConfig.backLeftModuleSteerOffset
     );
 
     m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -148,10 +155,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
                     .withSize(2, 4)
                     .withPosition(6, 0),
             Mk4SwerveModuleHelper.GearRatio.L2,
-            BACK_RIGHT_MODULE_DRIVE_MOTOR,
-            BACK_RIGHT_MODULE_STEER_MOTOR,
-            BACK_RIGHT_MODULE_STEER_ENCODER,
-            BACK_RIGHT_MODULE_STEER_OFFSET
+            config.backRightModuleDriveMotor,
+            config.backRightModuleSteerMotor,
+            config.backRightModuleSteerEncoder,
+            driveConfig.backRightModuleSteerOffset
     );
   }
 
