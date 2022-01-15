@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
 
-public class DrivetrainSubsystem extends SubsystemBase {
+public class DrivetrainSubsystem extends BitBucketsSubsystem {
   /**
    * The maximum voltage that will be delivered to the drive motors.
    * <p>
@@ -196,4 +196,28 @@ public class DrivetrainSubsystem extends SubsystemBase {
     m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
     m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
   }
+
+@Override
+public void init() {
+        // TODO Auto-generated method stub
+        
+}
+
+@Override
+public void disable() {
+        // TODO Auto-generated method stub
+        
+}
+
+@Override
+public void addMotorsToList() {
+        // TODO Auto-generated method stub
+        
+}
+
+@Override
+public void updateDashboard() {
+        // TODO Auto-generated method stub
+        
+}
 }

@@ -47,15 +47,15 @@ public class Robot extends TimedRobot {
     buttons = new Buttons();
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
       m_drivetrainSubsystem,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND/2));
     // Configure the button bindings
     configureButtonBindings();
   
 
     //Add Subsystems Here
-
+    this.robotSubsystems.add(m_drivetrainSubsystem);
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
@@ -163,7 +163,7 @@ public class Robot extends TimedRobot {
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.05);
+    value = deadband(value, 0.1);
 
     // Square the axis
     value = Math.copySign(value * value, value);
