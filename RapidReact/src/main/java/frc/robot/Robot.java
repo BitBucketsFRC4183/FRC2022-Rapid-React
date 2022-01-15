@@ -7,9 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.log.LogTestSubsystem;
-import frc.robot.simulator.SimulatorTestSubsystem;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystem.BitBucketsSubsystem;
+import frc.robot.subsystem.DrivetrainSubsystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,34 +22,40 @@ import java.util.List;
  * project.
  */
 public class Robot extends TimedRobot {
-
-
-
-
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private  Buttons buttons;
+  private  DrivetrainSubsystem m_drivetrainSubsystem;
 
   private final List<BitBucketsSubsystem> robotSubsystems = new ArrayList<>();
 
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    m_drivetrainSubsystem = new DrivetrainSubsystem();
+    buttons = new Buttons();
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+      m_drivetrainSubsystem,
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
+      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND/2));
+    // Configure the button bindings
+    configureButtonBindings();
+  
+
     //Add Subsystems Here
-
-    if (Robot.isSimulation()) {
-      this.robotSubsystems.add(new LogTestSubsystem());
-      this.robotSubsystems.add(new SimulatorTestSubsystem());
-    }
-
+    this.robotSubsystems.add(m_drivetrainSubsystem);
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
@@ -62,7 +69,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic()
   {
+    CommandScheduler.getInstance().run();
+
     this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
+    
   }
 
   /**
@@ -98,11 +108,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -122,4 +135,44 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+/**
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {
+      
+    buttons.zeroGyroscopoe.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+    // Back button zeros the gyroscope
+    
+  }
+
+  private static double deadband(double value, double deadband) {
+    if (Math.abs(value) > deadband) {
+      if (value > 0.0) {
+        return (value - deadband) / (1.0 - deadband);
+      } else {
+        return (value + deadband) / (1.0 - deadband);
+      }
+    } else {
+      return 0.0;
+    }
+  }
+
+  private static double modifyAxis(double value) {
+    // Deadband
+    value = deadband(value, 0.1);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
+  }
+
+
+
 }
+
+
