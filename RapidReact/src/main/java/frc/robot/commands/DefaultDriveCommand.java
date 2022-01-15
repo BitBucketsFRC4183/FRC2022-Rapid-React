@@ -32,8 +32,7 @@ public class DefaultDriveCommand extends CommandBase {
         ChassisSpeeds robotOrient = new ChassisSpeeds(m_translationXSupplier.getAsDouble()
         , m_translationYSupplier.getAsDouble(), m_rotationSupplier.getAsDouble());
         m_drivetrainSubsystem.drive(robotOrient);
-        SmartDashboard.putNumber("/drive/translation", m_translationXSupplier.getAsDouble());
-        SmartDashboard.putNumber("/drive/rotation", m_rotationSupplier.getAsDouble());
+
 
        /* m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
