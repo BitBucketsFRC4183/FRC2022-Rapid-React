@@ -29,11 +29,6 @@ public class LogTestSubsystem extends BitBucketsSubsystem {
     }
 
     @Override
-    public void addMotorsToList() {
-
-    }
-
-    @Override
     public void updateDashboard() {
 
     }

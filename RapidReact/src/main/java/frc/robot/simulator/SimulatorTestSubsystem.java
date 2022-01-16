@@ -34,11 +34,6 @@ public class SimulatorTestSubsystem extends BitBucketsSubsystem {
     }
 
     @Override
-    public void addMotorsToList() {
-
-    }
-
-    @Override
     public void updateDashboard() {
 
     }
