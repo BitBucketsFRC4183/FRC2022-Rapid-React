@@ -59,9 +59,9 @@ public class Config {
 
     // Drive Config
     public class DriveConfig {
-        public double DRIVETRAIN_TRACKWIDTH_METERS = 0.3937; //set trackwidth
+        public double drivetrainTrackwidthMeters = 0.3937; //set trackwidth
 
-        public  double DRIVETRAIN_WHEELBASE_METERS = 0.3937; //set wheelbase
+        public  double drivetrainWheelbaseMeters = 0.3937; //set wheelbase
 
         public  double frontLeftModuleSteerOffset = -Math.toRadians(345); //set front left steer offset
 

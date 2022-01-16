@@ -1,5 +1,6 @@
 package frc.robot.utils;
 
+import edu.wpi.first.math.*;
 public class MathUtils {
 
   // TODO: Finish documenting the unit converter.
@@ -41,5 +42,15 @@ public class MathUtils {
    */
   public static double average(double value, double otherValue) {
     return (value + otherValue) / 2;
+  }
+
+  public static double modifyAxis(double value) {
+    // Deadband
+    value = MathUtil.applyDeadband(value, 0.1);
+
+    // Square the axis
+    value = Math.copySign(value * value, value);
+
+    return value;
   }
 }
