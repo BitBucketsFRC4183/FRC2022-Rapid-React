@@ -12,6 +12,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
+import frc.robot.utils.MathUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +52,9 @@ public class Robot extends TimedRobot {
     buttons = new Buttons();
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
       m_drivetrainSubsystem,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND/2,
-      () -> -modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND/2));
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * m_drivetrainSubsystem.maxAngularVelocityRadiansPerSecond/2));
     // Configure the button bindings
     configureButtonBindings();
   
@@ -153,27 +154,6 @@ public class Robot extends TimedRobot {
     
   }
 
-  private static double deadband(double value, double deadband) {
-    if (Math.abs(value) > deadband) {
-      if (value > 0.0) {
-        return (value - deadband) / (1.0 - deadband);
-      } else {
-        return (value + deadband) / (1.0 - deadband);
-      }
-    } else {
-      return 0.0;
-    }
-  }
-
-  private static double modifyAxis(double value) {
-    // Deadband
-    value = deadband(value, 0.1);
-
-    // Square the axis
-    value = Math.copySign(value * value, value);
-
-    return value;
-  }
 
 
 
