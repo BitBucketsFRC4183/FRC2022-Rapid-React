@@ -20,6 +20,13 @@
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Auto choices": "String Chooser"
+    },
+    "windows": {
+      "/LiveWindow/DrivetrainSubsystem": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
