@@ -40,13 +40,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public double maxVelocityMetersPerSecond;
+  public double maxVelocity_metersPerSecond;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
    * This is a measure of how fast the robot can rotate in place.
    */
-  public double maxAngularVelocityRadiansPerSecond;
+  public double maxAngularVelocity_radiansPerSecond;
 
   //Instance Variables
   private SwerveDriveKinematics kinematics;
@@ -69,37 +69,37 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   @Override
   public void init()
   {
-    this.maxVelocityMetersPerSecond =
+    this.maxVelocity_metersPerSecond =
             6380.0 /
                     60.0 *
                     SdsModuleConfigurations.MK4_L2.getDriveReduction() *
                     SdsModuleConfigurations.MK4_L2.getWheelDiameter() *
                     Math.PI;
 
-    this.maxAngularVelocityRadiansPerSecond =
-            maxVelocityMetersPerSecond /
+    this.maxAngularVelocity_radiansPerSecond =
+            maxVelocity_metersPerSecond /
                     Math.hypot(
-                            config.drive.drivetrainTrackWidth_Meters / 2.0,
-                            config.drive.drivetrainWheelBase_Meters / 2.0
+                            config.drive.drivetrainTrackWidth_meters / 2.0,
+                            config.drive.drivetrainWheelBase_meters / 2.0
                     );
 
     this.kinematics = new SwerveDriveKinematics(
       //Front Left
       new Translation2d(
-              config.drive.drivetrainTrackWidth_Meters / 2.0,
-              config.drive.drivetrainWheelBase_Meters / 2.0),
+              config.drive.drivetrainTrackWidth_meters / 2.0,
+              config.drive.drivetrainWheelBase_meters / 2.0),
       //Front Right
       new Translation2d(
-              config.drive.drivetrainTrackWidth_Meters / 2.0,
-              -config.drive.drivetrainWheelBase_Meters / 2.0),
+              config.drive.drivetrainTrackWidth_meters / 2.0,
+              -config.drive.drivetrainWheelBase_meters / 2.0),
       //Back Left
       new Translation2d(
-              -config.drive.drivetrainTrackWidth_Meters / 2.0,
-              config.drive.drivetrainWheelBase_Meters / 2.0),
+              -config.drive.drivetrainTrackWidth_meters / 2.0,
+              config.drive.drivetrainWheelBase_meters / 2.0),
       //Back Right
       new Translation2d(
-              -config.drive.drivetrainTrackWidth_Meters / 2.0,
-              -config.drive.drivetrainWheelBase_Meters / 2.0)
+              -config.drive.drivetrainTrackWidth_meters / 2.0,
+              -config.drive.drivetrainWheelBase_meters / 2.0)
     );
 
     this.navX = new AHRS(SPI.Port.kMXP, (byte)200);
@@ -227,22 +227,22 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void periodic() {
     SwerveModuleState[] states = this.kinematics.toSwerveModuleStates(chassisSpeeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocityMetersPerSecond);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
 
     moduleFrontLeft.set(
-      states[0].speedMetersPerSecond / maxVelocityMetersPerSecond * maxVoltage,
+      states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
       states[0].angle.getRadians()
     );
     moduleFrontRight.set(
-      states[1].speedMetersPerSecond / maxVelocityMetersPerSecond * maxVoltage,
+      states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
       states[1].angle.getRadians()
     );
     moduleBackLeft.set(
-      states[2].speedMetersPerSecond / maxVelocityMetersPerSecond * maxVoltage,
+      states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
       states[2].angle.getRadians()
     );
     moduleBackRight.set(
-      states[3].speedMetersPerSecond / maxVelocityMetersPerSecond * maxVoltage,
+      states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
       states[3].angle.getRadians()
     );
   }

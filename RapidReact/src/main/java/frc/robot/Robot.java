@@ -44,9 +44,9 @@ public class Robot extends TimedRobot {
 
     drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
             drivetrainSubsystem,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * drivetrainSubsystem.maxAngularVelocityRadiansPerSecond/2));
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * drivetrainSubsystem.maxVelocity_metersPerSecond /2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * drivetrainSubsystem.maxVelocity_metersPerSecond /2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * drivetrainSubsystem.maxAngularVelocity_radiansPerSecond /2));
 
     // Configure the button bindings
     this.configureButtonBindings();
