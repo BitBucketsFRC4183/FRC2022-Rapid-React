@@ -250,11 +250,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   @Override
-  public void addMotorsToList() {
-
-  }
-
-  @Override
   public void updateDashboard() {
     //This is done automatically by the SwerveModules
   }
