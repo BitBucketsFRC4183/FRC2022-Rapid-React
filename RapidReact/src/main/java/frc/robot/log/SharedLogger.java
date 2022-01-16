@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 /**
  * inside, is an executor.
@@ -62,5 +63,35 @@ public class SharedLogger implements Logger {
                     )
             );
         }
+    }
+
+    @Override
+    public void subscribeNum(String path, Consumer<Number> consumer) {
+        SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {
+
+            if (!entry.value.isDouble()) throw new IllegalStateException("Expected a double on listener but got an alien");
+            consumer.accept(entry.value.getDouble());
+
+        }, 0);
+    }
+
+    @Override
+    public void subscribeString(String path, Consumer<String> consumer) {
+        SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {
+
+            if (!entry.value.isString()) throw new IllegalStateException("Expected a double on listener but got an alien");
+            consumer.accept(entry.value.getString());
+
+        }, 0);
+    }
+
+    @Override
+    public void subscribeBool(String path, Consumer<Boolean> consumer) {
+        SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {
+
+            if (!entry.value.isBoolean()) throw new IllegalStateException("Expected a double on listener but got an alien");
+            consumer.accept(entry.value.getBoolean());
+
+        }, 0);
     }
 }
