@@ -249,8 +249,4 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     stop();
   }
 
-  @Override
-  public void updateDashboard() {
-    //This is done automatically by the SwerveModules
-  }
 }
