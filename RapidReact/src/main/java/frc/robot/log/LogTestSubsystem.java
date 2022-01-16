@@ -1,5 +1,6 @@
 package frc.robot.log;
 
+import frc.robot.config.Config;
 import frc.robot.subsystem.BitBucketsSubsystem;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -7,6 +8,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LogTestSubsystem extends BitBucketsSubsystem {
 
     final AtomicInteger counter = new AtomicInteger();
+
+    public LogTestSubsystem(Config config) {
+        super(config);
+    }
 
     @Override
     public void init() {
