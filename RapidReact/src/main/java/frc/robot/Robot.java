@@ -28,12 +28,13 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  private  Buttons buttons;
+
+  private Buttons buttons;
   private Config config;
-  private  DrivetrainSubsystem m_drivetrainSubsystem;
 
   private final List<BitBucketsSubsystem> robotSubsystems = new ArrayList<>();
 
+  private DrivetrainSubsystem drivetrainSubsystem;
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -43,24 +44,26 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     this.config = new Config();
+    this.buttons = new Buttons();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    m_drivetrainSubsystem = new DrivetrainSubsystem(this.config);
-    buttons = new Buttons();
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-      m_drivetrainSubsystem,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * m_drivetrainSubsystem.maxAngularVelocityRadiansPerSecond/2));
+    //Add Subsystems Here
+    this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            drivetrainSubsystem,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * drivetrainSubsystem.maxVelocityMetersPerSecond/2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * drivetrainSubsystem.maxVelocityMetersPerSecond/2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * drivetrainSubsystem.maxAngularVelocityRadiansPerSecond/2));
+
     // Configure the button bindings
-    configureButtonBindings();
+    this.configureButtonBindings();
   
 
-    //Add Subsystems Here
-    this.robotSubsystems.add(m_drivetrainSubsystem);
+    //Subsystem Initialize Loop
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
@@ -148,15 +151,10 @@ public class Robot extends TimedRobot {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-      
-    buttons.zeroGyroscopoe.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     // Back button zeros the gyroscope
+    buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
     
   }
-
-
-
-
 }
 
 
