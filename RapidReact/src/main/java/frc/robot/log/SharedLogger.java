@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 
+import java.util.function.Consumer;
 /**
  * inside, is an executor.
  */
@@ -64,7 +64,6 @@ public class SharedLogger implements Logger {
             );
         }
     }
-
     @Override
     public void subscribeNum(String path, Consumer<Number> consumer) {
         SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {

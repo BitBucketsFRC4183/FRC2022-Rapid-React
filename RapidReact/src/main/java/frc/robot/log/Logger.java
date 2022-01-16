@@ -1,5 +1,6 @@
 package frc.robot.log;
 
+
 import java.util.function.Consumer;
 
 public interface Logger {
