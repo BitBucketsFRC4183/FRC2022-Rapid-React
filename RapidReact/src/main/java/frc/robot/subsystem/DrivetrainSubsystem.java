@@ -21,13 +21,6 @@ import frc.robot.config.Config;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
-  /**
-   * The maximum voltage that will be delivered to the drive motors.
-   * <p>
-   * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
-   */
-  public final double maxVoltage = 12.0;
-
   // Measure the drivetrain's maximum velocity or calculate the theoretical.
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -230,19 +223,19 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
 
     moduleFrontLeft.set(
-      states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
+      states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[0].angle.getRadians()
     );
     moduleFrontRight.set(
-      states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
+      states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[1].angle.getRadians()
     );
     moduleBackLeft.set(
-      states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
+      states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[2].angle.getRadians()
     );
     moduleBackRight.set(
-      states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * maxVoltage,
+      states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[3].angle.getRadians()
     );
   }

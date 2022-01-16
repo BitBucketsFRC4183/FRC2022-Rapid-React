@@ -16,6 +16,9 @@ public class Config {
     public boolean enableIntakeSubsystem = true;
 
     //////////////////////////////////////////////////////////////////////////////
+    //General Stuff
+    public int maxVoltage = 12;
+
     // Motor IDs
  
     // Autonomous Subsystem
