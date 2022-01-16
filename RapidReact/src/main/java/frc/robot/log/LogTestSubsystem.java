@@ -28,8 +28,4 @@ public class LogTestSubsystem extends BitBucketsSubsystem {
     public void disable() {
     }
 
-    @Override
-    public void updateDashboard() {
-
-    }
 }

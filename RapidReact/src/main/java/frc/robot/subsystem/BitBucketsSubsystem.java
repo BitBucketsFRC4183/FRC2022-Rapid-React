@@ -38,15 +38,4 @@ public abstract class BitBucketsSubsystem extends SubsystemBase
     //When the subsystem is turned off
     public abstract void disable();
 
-    //Update all the dashboard constants at once – use this#setDashboardValue() to set each one
-    public abstract void updateDashboard();
-
-    //Set a specific dashboard value
-    protected <T> void setDashboardValue(String name, T value)
-    {
-        if(value instanceof Boolean) SmartDashboard.putBoolean(name, (boolean)value);
-        else if(value instanceof Integer || value instanceof Double || value instanceof Float) SmartDashboard.putNumber(name, (double)value);
-        else if(value instanceof String) SmartDashboard.putString(name, (String)value);
-        else if(value instanceof Sendable) SmartDashboard.putData(name, (Sendable)value);
-    }
 }
