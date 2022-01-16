@@ -1,6 +1,5 @@
 package frc.robot.simulator;
 
-import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.subsystem.BitBucketsSubsystem;
 
@@ -34,8 +33,4 @@ public class SimulatorTestSubsystem extends BitBucketsSubsystem {
 
     }
 
-    @Override
-    public void updateDashboard() {
-
-    }
 }
