@@ -5,8 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
@@ -24,16 +22,12 @@ import java.util.List;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  private  Buttons buttons;
+  private Buttons buttons;
   private Config config;
-  private  DrivetrainSubsystem m_drivetrainSubsystem;
 
   private final List<BitBucketsSubsystem> robotSubsystems = new ArrayList<>();
 
+  private DrivetrainSubsystem drivetrainSubsystem;
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -43,24 +37,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     this.config = new Config();
-
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
-    m_drivetrainSubsystem = new DrivetrainSubsystem(this.config);
-    buttons = new Buttons();
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-      m_drivetrainSubsystem,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * m_drivetrainSubsystem.maxVelocityMetersPerSecond/2,
-      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * m_drivetrainSubsystem.maxAngularVelocityRadiansPerSecond/2));
-    // Configure the button bindings
-    configureButtonBindings();
-  
+    this.buttons = new Buttons();
 
     //Add Subsystems Here
-    this.robotSubsystems.add(m_drivetrainSubsystem);
+    this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+
+    drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            drivetrainSubsystem,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)) * drivetrainSubsystem.maxVelocity_metersPerSecond /2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)) * drivetrainSubsystem.maxVelocity_metersPerSecond /2,
+      () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation)) * drivetrainSubsystem.maxAngularVelocity_radiansPerSecond /2));
+
+    // Configure the button bindings
+    this.configureButtonBindings();
+
+    //Subsystem Initialize Loop
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
@@ -92,23 +83,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+
   }
 
   /** This function is called once when teleop is enabled. */
@@ -143,20 +124,15 @@ public class Robot extends TimedRobot {
 
 /**
    * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * instantiating a {GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-      
-    buttons.zeroGyroscopoe.whenPressed(m_drivetrainSubsystem::zeroGyroscope);
     // Back button zeros the gyroscope
+    buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
     
   }
-
-
-
-
 }
 
 
