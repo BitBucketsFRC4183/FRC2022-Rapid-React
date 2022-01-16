@@ -42,7 +42,7 @@ public class Config {
 
     //////////////////////////////////////////////////////////////////////////////
     // Subsystem Configs
-
+    public DriveConfig drive = new DriveConfig();
     // Autonomous Config
     public class AutonomousConfig {
         public AutonomousConfig() {

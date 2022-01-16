@@ -4,32 +4,24 @@
 
 package frc.robot.subsystem;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.DriveController;
-import com.swervedrivespecialties.swervelib.Mk3SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-import com.swervedrivespecialties.swervelib.SwerveModule;
+        import com.kauailabs.navx.frc.AHRS;
+        import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
+        import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
+        import com.swervedrivespecialties.swervelib.SwerveModule;
+        import edu.wpi.first.math.geometry.Rotation2d;
+        import edu.wpi.first.math.geometry.Translation2d;
+        import edu.wpi.first.math.kinematics.ChassisSpeeds;
+        import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+        import edu.wpi.first.math.kinematics.SwerveModuleState;
+        import edu.wpi.first.wpilibj.SPI;
+        import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+        import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+        import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+        import frc.robot.config.Config;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-//import static frc.robot.Constants.*;
-import frc.robot.config.*;
-import frc.robot.config.Config.DriveConfig;
+        import static frc.robot.Constants.*;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
-        Config config;
-        DriveConfig driveConfig;
   /**
    * The maximum voltage that will be delivered to the drive motors.
    * <p>
@@ -56,18 +48,17 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
    * This is a measure of how fast the robot can rotate in place.
    */
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
-  driveConfig = new DriveConfig();
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
   private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
-          new Translation2d(driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(config.drive.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, config.drive.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Front right
-          new Translation2d(driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(config.drive.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -config.drive.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Back left
-          new Translation2d(-driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0),
+          new Translation2d(-config.drive.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, config.drive.DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Back right
-          new Translation2d(-driveConfig.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -driveConfig.DRIVETRAIN_WHEELBASE_METERS / 2.0)
+          new Translation2d(-config.drive.DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -config.drive.DRIVETRAIN_WHEELBASE_METERS / 2.0)
   );
 
   // By default we use a Pigeon for our gyroscope. But if you use another gyroscope, like a NavX, you can change this.
@@ -85,9 +76,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-  public DrivetrainSubsystem() {
-        config = new Config();
-        driveConfig = new DriveConfig();
+  public DrivetrainSubsystem(Config config) {
+    super(config);
+
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     // There are 4 methods you can call to create your swerve modules.
@@ -124,7 +115,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             // This is the ID of the steer encoder
             config.frontLeftModuleSteerEncoder,
             // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
-            driveConfig.frontLeftModuleSteerOffset
+            config.drive.frontLeftModuleSteerOffset
     );
 
     // We will do the same for the other modules
@@ -136,7 +127,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             config.frontRightModuleDriveMotor,
             config.frontRightModuleSteerEncoder,
             config.frontRightModuleSteerEncoder,
-            driveConfig.frontRightModuleSteerOffset
+            config.drive.frontRightModuleSteerOffset
     );
 
     m_backLeftModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -147,7 +138,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             config.backLeftModuleDriveMotor,
             config.backLeftModuleSteerMotor,
             config.backLeftModuleSteerEncoder,
-            driveConfig.backLeftModuleSteerOffset
+            config.drive.backLeftModuleSteerOffset
     );
 
     m_backRightModule = Mk4SwerveModuleHelper.createFalcon500(
@@ -158,7 +149,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             config.backRightModuleDriveMotor,
             config.backRightModuleSteerMotor,
             config.backRightModuleSteerEncoder,
-            driveConfig.backRightModuleSteerOffset
+            config.drive.backRightModuleSteerOffset
     );
   }
 
