@@ -1,5 +1,8 @@
 package frc.robot.log;
 
+
+import java.util.function.Consumer;
+
 public interface Logger {
 
     /**
@@ -10,5 +13,9 @@ public interface Logger {
     void logString(LogLevel level, String path, String data);
     void logBool(LogLevel level, String path, boolean data);
     void logNum(LogLevel level, String path, Number data);
+
+    void subscribeNum(String path, Consumer<Number> consumer);
+    void subscribeString(String path, Consumer<String> consumer);
+    void subscribeBool(String path, Consumer<Boolean> consumer);
 
 }

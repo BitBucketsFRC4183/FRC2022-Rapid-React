@@ -26,7 +26,6 @@ public class LogTestSubsystem extends BitBucketsSubsystem {
 
     @Override
     public void disable() {
-
     }
 
     @Override
