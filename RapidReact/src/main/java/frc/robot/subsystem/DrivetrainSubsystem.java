@@ -5,7 +5,6 @@
 package frc.robot.subsystem;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.config.Config;
+import frc.robot.utils.modifiedswervelib.BitBucketsMk4SwerveModuleHelper;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
@@ -127,13 +127,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // you MUST change it. If you do not, your code will crash on startup.
     // Setup motor configuration
     moduleFrontLeft =
-            Mk4SwerveModuleHelper.createFalcon500(
+            BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
                     // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
                     tab.getLayout("Front Left Module", BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(0, 0),
                     // This can either be STANDARD or FAST depending on your gear configuration
-                    Mk4SwerveModuleHelper.GearRatio.L2,
+                    BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
                     // This is the ID of the drive motor
                     config.frontLeftModuleDriveMotor,
                     // This is the ID of the steer motor
@@ -146,11 +146,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     // We will do the same for the other modules
     moduleFrontRight =
-            Mk4SwerveModuleHelper.createFalcon500(
+            BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
                     tab.getLayout("Front Right Module", BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(2, 0),
-                    Mk4SwerveModuleHelper.GearRatio.L2,
+                    BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
                     config.frontRightModuleDriveMotor,
                     config.frontRightModuleSteerMotor,
                     config.frontRightModuleSteerEncoder,
@@ -158,11 +158,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             );
 
     moduleBackLeft =
-            Mk4SwerveModuleHelper.createFalcon500(
+            BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
                     tab.getLayout("Back Left Module", BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(4, 0),
-                    Mk4SwerveModuleHelper.GearRatio.L2,
+                    BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
                     config.backLeftModuleDriveMotor,
                     config.backLeftModuleSteerMotor,
                     config.backLeftModuleSteerEncoder,
@@ -170,11 +170,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             );
 
     moduleBackRight =
-            Mk4SwerveModuleHelper.createFalcon500(
+            BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
                     tab.getLayout("Back Right Module", BuiltInLayouts.kList)
                             .withSize(2, 4)
                             .withPosition(6, 0),
-                    Mk4SwerveModuleHelper.GearRatio.L2,
+                    BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
                     config.backRightModuleDriveMotor,
                     config.backRightModuleSteerMotor,
                     config.backRightModuleSteerEncoder,
