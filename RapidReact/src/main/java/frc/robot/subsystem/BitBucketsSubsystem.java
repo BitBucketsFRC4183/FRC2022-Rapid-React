@@ -4,6 +4,9 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.log.LogLevel;
+import frc.robot.log.Logger;
+import frc.robot.log.SharedLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.List;
 public abstract class BitBucketsSubsystem extends SubsystemBase
 {
     private final List<BaseTalon> motors;
+    private final Logger logger;
 
     protected BitBucketsSubsystem()
     {
@@ -18,6 +22,13 @@ public abstract class BitBucketsSubsystem extends SubsystemBase
 
         this.motors = new ArrayList<>();
         this.addMotorsToList();
+
+
+        this.logger = new SharedLogger(getName());
+    }
+
+    public Logger logger() {
+        return this.logger;
     }
 
     //When the subsystem is initialized

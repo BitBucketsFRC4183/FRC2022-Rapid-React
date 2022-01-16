@@ -7,6 +7,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.log.LogTestSubsystem;
+import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 
 import java.util.ArrayList;
@@ -19,6 +21,10 @@ import java.util.List;
  * project.
  */
 public class Robot extends TimedRobot {
+
+
+
+
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
@@ -37,6 +43,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     //Add Subsystems Here
+
+    if (Robot.isSimulation()) {
+      this.robotSubsystems.add(new LogTestSubsystem());
+      this.robotSubsystems.add(new SimulatorTestSubsystem());
+    }
 
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
