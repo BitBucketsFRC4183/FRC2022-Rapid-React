@@ -13,6 +13,7 @@ public class LogTestSubsystem extends BitBucketsSubsystem {
         super(config);
     }
 
+    //simulate cool values for the simulator
     @Override
     public void init() {
         logger().logBool(LogLevel.GENERAL, "isReady", true);

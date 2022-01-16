@@ -23,6 +23,7 @@ public class SimulatorTestSubsystem extends BitBucketsSubsystem {
     public void periodic() {
         int num = counter.incrementAndGet();
 
+        //check that if in CI the simulator runs for 15 seconds, pass the simulator test
         if (num > 700) {
             System.exit(0);
         }

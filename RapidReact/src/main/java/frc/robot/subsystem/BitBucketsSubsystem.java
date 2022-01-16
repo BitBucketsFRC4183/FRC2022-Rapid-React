@@ -13,16 +13,12 @@ import frc.robot.config.Config;
 
 public abstract class BitBucketsSubsystem extends SubsystemBase
 {
-    private final List<BaseTalon> motors;
     private final Logger logger;
     protected final Config config;
 
     protected BitBucketsSubsystem(Config config)
     {
         this.setName(this.getClass().getSimpleName());
-
-        this.motors = new ArrayList<>();
-        this.addMotorsToList();
 
         this.config = config;
 
