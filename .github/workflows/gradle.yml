@@ -41,3 +41,4 @@ jobs:
       with:
         arguments: simulateJava
         build-root-directory: ./RapidReact
+

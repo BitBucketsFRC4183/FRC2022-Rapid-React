@@ -59,6 +59,10 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(new SimulatorTestSubsystem(this.config));
     }
 
+    // Configure the button bindings
+    this.configureButtonBindings();
+
+    //Subsystem Initialize Loop
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
