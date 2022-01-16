@@ -16,6 +16,9 @@ public class Config {
     public boolean enableIntakeSubsystem = true;
 
     //////////////////////////////////////////////////////////////////////////////
+    //General Stuff
+    public int maxVoltage = 12;
+
     // Motor IDs
  
     // Autonomous Subsystem
@@ -29,7 +32,7 @@ public class Config {
 
     public int frontRightModuleDriveMotor = 7;
     public int frontRightModuleSteerMotor = 8; 
-    public int frontRightModuleSteerEncoder = 12 ; 
+    public int frontRightModuleSteerEncoder = 12;
 
     public int backLeftModuleDriveMotor = 3; 
     public int backLeftModuleSteerMotor = 4;
@@ -59,18 +62,18 @@ public class Config {
 
     // Drive Config
     public class DriveConfig {
-        public double drivetrainTrackwidthMeters = 0.3937; //set trackwidth
+        public double drivetrainTrackWidth_meters = 0.3937; //set trackwidth
 
-        public  double drivetrainWheelbaseMeters = 0.3937; //set wheelbase
+        public double drivetrainWheelBase_meters = 0.3937; //set wheelbase
 
-        public  double frontLeftModuleSteerOffset = -Math.toRadians(345); //set front left steer offset
+        public double frontLeftModuleSteerOffset = -Math.toRadians(345); //set front left steer offset
 
-        public  double frontRightModuleSteerOffset = -Math.toRadians(149); //set front right steer offset
+        public double frontRightModuleSteerOffset = -Math.toRadians(149); //set front right steer offset
 
 
-        public  double backLeftModuleSteerOffset = -Math.toRadians(321); //set back left steer offset
+        public double backLeftModuleSteerOffset = -Math.toRadians(321); //set back left steer offset
 
-        public  double backRightModuleSteerOffset = -Math.toRadians(60.9); //set back right steer offset
+        public double backRightModuleSteerOffset = -Math.toRadians(60.9); //set back right steer offset
     
 
 
