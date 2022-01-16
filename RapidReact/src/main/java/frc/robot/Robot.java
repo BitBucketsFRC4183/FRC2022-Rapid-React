@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
     this.configureButtonBindings();
 
     //Subsystem Initialize Loop
-    if (Robot.isSimulation()) {
+    if (System.getenv().containsKey("CI")) {
       this.robotSubsystems.add(new LogTestSubsystem(this.config));
       this.robotSubsystems.add(new SimulatorTestSubsystem(this.config));
     }
