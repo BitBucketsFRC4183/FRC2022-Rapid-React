@@ -1,6 +1,7 @@
 package frc.robot.log;
 
 
+
 import edu.wpi.first.util.sendable.Sendable;
 
 import java.util.function.Consumer;
@@ -16,6 +17,10 @@ public interface Logger {
     void logBool(LogLevel level, String path, boolean data);
     void logNum(LogLevel level, String path, Number data);
     void logSend(LogLevel level, String path, Sendable sendable);
+
+    void subscribeNum(String path, Consumer<Number> consumer);
+    void subscribeString(String path, Consumer<String> consumer);
+    void subscribeBool(String path, Consumer<Boolean> consumer);
 
     void subscribeNum(String path, Consumer<Number> consumer);
     void subscribeString(String path, Consumer<String> consumer);

@@ -66,6 +66,7 @@ public class SharedLogger implements Logger {
         }
     }
 
+
     @Override
     public void logSend(LogLevel level, String path, Sendable sendable) {
         if (LEVEL.shouldLog(level)) {
