@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.log.LogTestSubsystem;
+import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.robot.utils.MathUtils;
@@ -52,6 +56,11 @@ public class Robot extends TimedRobot {
     this.configureButtonBindings();
 
     //Subsystem Initialize Loop
+    if (Robot.isSimulation()) {
+      this.robotSubsystems.add(new LogTestSubsystem());
+      this.robotSubsystems.add(new SimulatorTestSubsystem());
+    }
+
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
