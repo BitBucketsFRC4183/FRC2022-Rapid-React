@@ -37,7 +37,7 @@
           "key90": 326
         }
       ],
-      "povCount": 1
+      "povCount": 2
     },
     {
       "axisConfig": [
@@ -87,11 +87,6 @@
       "axisCount": 0,
       "buttonCount": 0,
       "povCount": 0
-    }
-  ],
-  "robotJoysticks": [
-    {
-      "guid": "Keyboard0"
     }
   ]
 }
