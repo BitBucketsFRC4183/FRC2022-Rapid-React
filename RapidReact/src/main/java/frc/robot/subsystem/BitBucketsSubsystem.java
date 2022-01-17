@@ -33,4 +33,6 @@ public abstract class BitBucketsSubsystem extends SubsystemBase {
   //Periodically called
   public abstract void periodic();
 
+  public abstract void disable();
+
 }
