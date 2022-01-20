@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.log.LogTestSubsystem;
+import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
@@ -58,6 +59,8 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(new LogTestSubsystem(this.config));
       this.robotSubsystems.add(new SimulatorTestSubsystem(this.config));
     }
+
+    this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
     //Subsystem Initialize Loop
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);

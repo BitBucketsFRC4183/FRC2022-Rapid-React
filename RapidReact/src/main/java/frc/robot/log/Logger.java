@@ -22,8 +22,4 @@ public interface Logger {
     void subscribeString(String path, Consumer<String> consumer);
     void subscribeBool(String path, Consumer<Boolean> consumer);
 
-    void subscribeNum(String path, Consumer<Number> consumer);
-    void subscribeString(String path, Consumer<String> consumer);
-    void subscribeBool(String path, Consumer<Boolean> consumer);
-
 }
