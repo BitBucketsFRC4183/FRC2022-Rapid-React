@@ -74,8 +74,18 @@
         },
         "height": 8.229599952697754,
         "image": "images/2022-field.png",
+        "traj": {
+          "arrowSize": 53,
+          "arrowWeight": 0.20000000298023224,
+          "style": "Line"
+        },
         "units": "feet",
         "width": 16.459199905395508,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Trajectory Chooser": {
         "window": {
           "visible": true
         }
