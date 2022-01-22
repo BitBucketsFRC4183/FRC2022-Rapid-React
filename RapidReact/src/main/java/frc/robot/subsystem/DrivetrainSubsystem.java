@@ -118,18 +118,18 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       new SwerveDriveOdometry(
         kinematics,
         getGyroscopeRotation(), // this was "getgyroheading"
-        new Pose2d(0, 0, new Rotation2d(0))
+        config.auto.nearRightStart
       );
 
     this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    trajectory =
-      TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-        List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
-        new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
-        new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
-      );
+    trajectory = config.auto.nearRightStartTrajectory;
+      // TrajectoryGenerator.generateTrajectory(
+      //   new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+      //   List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
+      //   new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
+      //   new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
+      // );
 
     this.field = new Field2d();
     SmartDashboard.putData(field);
