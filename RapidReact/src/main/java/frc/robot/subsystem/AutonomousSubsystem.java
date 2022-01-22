@@ -8,30 +8,22 @@ import frc.robot.config.Config;
 
 public class AutonomousSubsystem extends BitBucketsSubsystem {
 
+  public Field2d field;
 
-    public Field2d field;
+  public AutonomousSubsystem(Config config) {
+    super(config);
+  }
 
-    public AutonomousSubsystem(Config config) {
-        super(config);
+  public void setTrajectory(Trajectory trajectory) {
+    field.getObject("traj").setTrajectory(trajectory);
+  }
 
-    }
+  @Override
+  public void init() {}
 
-    public void setTrajectory(Trajectory trajectory) {
-        field.getObject("traj").setTrajectory(trajectory);
-    }
+  @Override
+  public void periodic() {}
 
-    @Override
-    public void init() {
-    }
-
-    @Override
-    public void periodic() {
-
-    }
-
-    @Override
-    public void disable() {
-
-    }
-
+  @Override
+  public void disable() {}
 }

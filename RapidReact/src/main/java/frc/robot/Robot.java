@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
 
   public static enum BitBucketsTrajectory {
     FarLeft,
-    NearRight
+    NearRight,
   }
 
   private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
@@ -73,11 +73,13 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem.field = field;
 
     drivetrainSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
-            drivetrainSubsystem,
-            () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)),
-            () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)),
-            () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation))));
+      new DefaultDriveCommand(
+        drivetrainSubsystem,
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation))
+      )
+    );
 
     // Configure the button bindings
     this.configureButtonBindings();
@@ -151,13 +153,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {
-  }
+  public void teleopInit() {}
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -167,18 +167,15 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {
-  }
+  public void disabledPeriodic() {}
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {
-  }
+  public void testInit() {}
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {
-  }
+  public void testPeriodic() {}
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
