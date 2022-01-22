@@ -76,8 +76,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private Pose2d pose;
   private SwerveDriveOdometry odometry;
 
-  private Field2d field;
-  private Trajectory trajectory;
+  public Field2d field;
 
   @Override
   public void init() {
@@ -114,16 +113,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     this.navX = new AHRS(SPI.Port.kMXP, (byte) 200);
 
-    odometry =
-      new SwerveDriveOdometry(
-        kinematics,
-        getGyroscopeRotation(), // this was "getgyroheading"
-        config.auto.nearRightStart
-      );
+    setOdometry(config.drive.defaultStartingPosition);
 
     this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    trajectory = config.auto.nearRightStartTrajectory;
       // TrajectoryGenerator.generateTrajectory(
       //   new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
       //   List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
@@ -131,9 +124,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       //   new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
       // );
 
-    this.field = new Field2d();
     SmartDashboard.putData(field);
-    this.field.getObject("traj").setTrajectory(trajectory);
 
     this.initializeModules();
   }
@@ -270,6 +261,15 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
 
     field.setRobotPose(odometry.getPoseMeters());
+  }
+
+  public void setOdometry(Pose2d startingPosition){
+    odometry =
+      new SwerveDriveOdometry(
+        kinematics,
+        getGyroscopeRotation(), // this was "getgyroheading"
+        startingPosition
+      );
   }
 
   public void stop() {

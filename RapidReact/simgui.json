@@ -84,6 +84,11 @@
         "window": {
           "visible": true
         }
+      },
+      "/SmartDashboard/Trajectory Chooser": {
+        "window": {
+          "visible": true
+        }
       }
     }
   },
