@@ -90,26 +90,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     this.maxAngularVelocity_radiansPerSecond =
       maxVelocity_metersPerSecond /
-      Math.hypot(
-        config.drive.drivetrainTrackWidth_meters / 2.0,
-        config.drive.drivetrainWheelBase_meters / 2.0
-      );
+      Math.hypot(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
 
     this.moduleFrontLeftLocation =
-      new Translation2d(
-        config.drive.drivetrainTrackWidth_meters / 2.0,
-        config.drive.drivetrainWheelBase_meters / 2.0
-      );
+      new Translation2d(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
     this.moduleFrontRightLocation =
-      new Translation2d(
-        config.drive.drivetrainTrackWidth_meters / 2.0,
-        -config.drive.drivetrainWheelBase_meters / 2.0
-      );
+      new Translation2d(config.drive.drivetrainTrackWidth_meters / 2.0, -config.drive.drivetrainWheelBase_meters / 2.0);
     this.moduleBackLeftLocation =
-      new Translation2d(
-        -config.drive.drivetrainTrackWidth_meters / 2.0,
-        config.drive.drivetrainWheelBase_meters / 2.0
-      );
+      new Translation2d(-config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
     this.moduleBackRightLocation =
       new Translation2d(
         -config.drive.drivetrainTrackWidth_meters / 2.0,
@@ -138,7 +126,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     trajectory =
       TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-        List.of(new Translation2d(5,3), new Translation2d(10, 3)),
+        List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
         new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
         new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
       );
@@ -176,10 +164,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     moduleFrontLeft =
       BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
         // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
-        tab
-          .getLayout("Front Left Module", BuiltInLayouts.kList)
-          .withSize(2, 4)
-          .withPosition(0, 0),
+        tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
         // This can either be STANDARD or FAST depending on your gear configuration
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
@@ -195,10 +180,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // We will do the same for the other modules
     moduleFrontRight =
       BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
-        tab
-          .getLayout("Front Right Module", BuiltInLayouts.kList)
-          .withSize(2, 4)
-          .withPosition(2, 0),
+        tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         config.frontRightModuleDriveMotor,
         config.frontRightModuleSteerMotor,
@@ -208,10 +190,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     moduleBackLeft =
       BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
-        tab
-          .getLayout("Back Left Module", BuiltInLayouts.kList)
-          .withSize(2, 4)
-          .withPosition(4, 0),
+        tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         config.backLeftModuleDriveMotor,
         config.backLeftModuleSteerMotor,
@@ -221,10 +200,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     moduleBackRight =
       BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
-        tab
-          .getLayout("Back Right Module", BuiltInLayouts.kList)
-          .withSize(2, 4)
-          .withPosition(6, 0),
+        tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
         BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
         config.backRightModuleDriveMotor,
         config.backRightModuleSteerMotor,
@@ -269,42 +245,29 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    SwerveModuleState[] states =
-      this.kinematics.toSwerveModuleStates(chassisSpeeds);
+    SwerveModuleState[] states = this.kinematics.toSwerveModuleStates(chassisSpeeds);
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-      states,
-      maxVelocity_metersPerSecond
-    );
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
 
     moduleFrontLeft.set(
-      states[0].speedMetersPerSecond /
-      maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[0].angle.getRadians()
     );
     moduleFrontRight.set(
-      states[1].speedMetersPerSecond /
-      maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[1].angle.getRadians()
     );
     moduleBackLeft.set(
-      states[2].speedMetersPerSecond /
-      maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[2].angle.getRadians()
     );
     moduleBackRight.set(
-      states[3].speedMetersPerSecond /
-      maxVelocity_metersPerSecond *
-      this.config.maxVoltage,
+      states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
       states[3].angle.getRadians()
     );
 
     var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
-    pose =
-      odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
+    pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
 
     field.setRobotPose(odometry.getPoseMeters());
   }
@@ -317,5 +280,4 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void disable() {
     stop();
   }
-
 }

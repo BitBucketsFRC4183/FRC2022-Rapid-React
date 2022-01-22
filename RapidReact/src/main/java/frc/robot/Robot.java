@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.Logger;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DefaultDriveCommand;
@@ -17,8 +18,6 @@ import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.robot.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ctre.phoenix.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -45,25 +44,14 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
 
     //Add Subsystems Here
-    this.robotSubsystems.add(
-        drivetrainSubsystem = new DrivetrainSubsystem(this.config)
-      );
+    this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
 
     drivetrainSubsystem.setDefaultCommand(
       new DefaultDriveCommand(
         drivetrainSubsystem,
-        () ->
-          -MathUtils.modifyAxis(
-            buttons.driverControl.getRawAxis(buttons.SwerveForward)
-          ),
-        () ->
-          -MathUtils.modifyAxis(
-            buttons.driverControl.getRawAxis(buttons.SwerveStrafe)
-          ),
-        () ->
-          -MathUtils.modifyAxis(
-            buttons.driverControl.getRawAxis(buttons.SwerveRotation)
-          )
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation))
       )
     );
 
