@@ -96,8 +96,6 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
-    public Pose2d defaultStartingPosition;
-
     public double drivetrainTrackWidth_meters = 0.3937; // set trackwidth
 
     public double drivetrainWheelBase_meters = 0.3937; // set wheelbase
@@ -111,7 +109,6 @@ public class Config {
     public double backRightModuleSteerOffset = -Math.toRadians(60.9); // set back right steer offset
 
     public DriveConfig() {
-      defaultStartingPosition = new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0));
     }
   }
 
