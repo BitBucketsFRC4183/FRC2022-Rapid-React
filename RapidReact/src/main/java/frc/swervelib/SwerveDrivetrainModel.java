@@ -14,11 +14,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.config.Config;
-import frc.robot.log.Logger;
+import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.wpiClasses.QuadSwerveSim;
 import frc.wpiClasses.SwerveModuleSim;
 import java.util.ArrayList;
@@ -26,29 +25,17 @@ import java.util.ArrayList;
 public class SwerveDrivetrainModel {
 
   QuadSwerveSim swerveDt;
-  ArrayList<SwerveModule> realModules = new ArrayList<SwerveModule>(QuadSwerveSim.NUM_MODULES);
-  ArrayList<SwerveModuleSim> modules = new ArrayList<SwerveModuleSim>(QuadSwerveSim.NUM_MODULES);
+  ArrayList<SwerveModule> realModules;
+  ArrayList<SwerveModuleSim> simModules = new ArrayList<>(QuadSwerveSim.NUM_MODULES);
 
-  ArrayList<SteerController> steerMotorControllers = new ArrayList<SteerController>(QuadSwerveSim.NUM_MODULES);
-  ArrayList<DriveController> driveMotorControllers = new ArrayList<DriveController>(QuadSwerveSim.NUM_MODULES);
-  ArrayList<AbsoluteEncoder> steerEncoders = new ArrayList<AbsoluteEncoder>(QuadSwerveSim.NUM_MODULES);
-
+  Field2d field;
   Gyroscope gyro;
 
-  Pose2d endPose;
-  PoseTelemetry dtPoseView;
-
-  SwerveDrivePoseEstimator m_poseEstimator;
+  SwerveDrivePoseEstimator poseEstimator;
 
   SwerveDriveKinematics kinematics;
 
-  // todo: dont use as static thing
-  Config config = new Config();
-
-  Pose2d curEstPose = new Pose2d(config.auto.farLeftStart.getTranslation(), config.auto.farLeftStart.getRotation());
-  Pose2d fieldPose = new Pose2d(); // Field-referenced orign
-  boolean pointedDownfield = false;
-  double curSpeed = 0;
+  Pose2d curEstPose;
   SwerveModuleState[] states;
   ProfiledPIDController thetaController = new ProfiledPIDController(
     SwerveConstants.THETACONTROLLERkP,
@@ -57,33 +44,33 @@ public class SwerveDrivetrainModel {
     SwerveConstants.THETACONTROLLERCONSTRAINTS
   );
 
-  HolonomicDriveController m_holo;
-
-  private static final SendableChooser<String> orientationChooser = new SendableChooser<>();
-
-  public SwerveDrivetrainModel(ArrayList<SwerveModule> realModules, Gyroscope gyro, SwerveDriveKinematics _kinematics) {
+  public SwerveDrivetrainModel(ArrayList<SwerveModule> realModules, Gyroscope gyro, SwerveDriveKinematics _kinematics, Field2d field, Pose2d startPosition) {
     this.kinematics = _kinematics;
     this.gyro = gyro;
     this.realModules = realModules;
+    this.field = field;
 
     if (RobotBase.isSimulation()) {
-      modules.add(Mk4SwerveModuleHelper.createSim(realModules.get(0)));
-      modules.add(Mk4SwerveModuleHelper.createSim(realModules.get(1)));
-      modules.add(Mk4SwerveModuleHelper.createSim(realModules.get(2)));
-      modules.add(Mk4SwerveModuleHelper.createSim(realModules.get(3)));
+      simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(0)));
+      simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(1)));
+      simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(2)));
+      simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(3)));
     }
 
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    endPose = config.auto.nearRightStart;
-
+    // TODO: move these to config
+    double mass_kg = Units.lbsToKilograms(140);
+    double trackWidth_m = .75;
+    double trackLength_m = .75;
+    double moi = 1.0/12.0 * mass_kg * Math.pow((trackWidth_m*1.1),2) * 2;
     swerveDt =
       new QuadSwerveSim(
-        SwerveConstants.TRACKWIDTH_METERS,
-        SwerveConstants.TRACKLENGTH_METERS,
-        SwerveConstants.MASS_kg,
-        SwerveConstants.MOI_KGM2,
-        modules
+        trackWidth_m, // SwerveConstants.TRACKWIDTH_METERS,
+        trackLength_m, // SwerveConstants.TRACKLENGTH_METERS,
+        mass_kg, // SwerveConstants.MASS_kg,
+        moi, //Model moment of intertia as a square slab slightly bigger than wheelbase with axis through center, // SwerveConstants.MOI_KGM2,
+        simModules
       );
 
     // Trustworthiness of the internal model of how motors should be moving
@@ -99,10 +86,12 @@ public class SwerveDrivetrainModel {
     // rotation)
     var visionMeasurementStdDevs = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.1));
 
-    m_poseEstimator =
+
+    curEstPose = new Pose2d(startPosition.getTranslation(), startPosition.getRotation());
+    poseEstimator =
       new SwerveDrivePoseEstimator(
         getGyroscopeRotation(),
-        config.auto.nearRightStart,
+        startPosition,
         kinematics,
         stateStdDevs,
         localMeasurementStdDevs,
@@ -110,17 +99,8 @@ public class SwerveDrivetrainModel {
         SimConstants.CTRLS_SAMPLE_RATE_SEC
       );
 
-    setKnownPose(config.auto.nearRightStart);
+    setKnownPose(startPosition);
 
-    dtPoseView = new PoseTelemetry(swerveDt, m_poseEstimator);
-
-    // Control Orientation Chooser
-    orientationChooser.setDefaultOption("Field Oriented", "Field Oriented");
-    orientationChooser.addOption("Robot Oriented", "Robot Oriented");
-    SmartDashboard.putData("Orientation Chooser", orientationChooser);
-
-    m_holo =
-      new HolonomicDriveController(SwerveConstants.XPIDCONTROLLER, SwerveConstants.YPIDCONTROLLER, thetaController);
   }
 
   /**
@@ -131,6 +111,7 @@ public class SwerveDrivetrainModel {
    */
   public void modelReset(Pose2d pose) {
     swerveDt.modelReset(pose);
+    gyro.setAngle(pose.getRotation());
   }
 
   /**
@@ -142,13 +123,13 @@ public class SwerveDrivetrainModel {
     // Calculate and update input voltages to each motor.
     if (isDisabled) {
       for (int idx = 0; idx < QuadSwerveSim.NUM_MODULES; idx++) {
-        modules.get(idx).setInputVoltages(0.0, 0.0);
+        simModules.get(idx).setInputVoltages(0.0, 0.0);
       }
     } else {
       for (int idx = 0; idx < QuadSwerveSim.NUM_MODULES; idx++) {
         double steerVolts = realModules.get(idx).getSteerController().getOutputVoltage();
         double wheelVolts = realModules.get(idx).getDriveController().getOutputVoltage();
-        modules.get(idx).setInputVoltages(wheelVolts, steerVolts);
+        simModules.get(idx).setInputVoltages(wheelVolts, steerVolts);
       }
     }
 
@@ -157,13 +138,13 @@ public class SwerveDrivetrainModel {
 
     // Update each encoder
     for (int idx = 0; idx < QuadSwerveSim.NUM_MODULES; idx++) {
-      double azmthShaftPos = modules.get(idx).getAzimuthEncoderPositionRev();
-      double steerMotorPos = modules.get(idx).getAzimuthMotorPositionRev();
-      double wheelPos = modules.get(idx).getWheelEncoderPositionRev();
+      double azmthShaftPos = simModules.get(idx).getAzimuthEncoderPositionRev();
+      double steerMotorPos = simModules.get(idx).getAzimuthMotorPositionRev();
+      double wheelPos = simModules.get(idx).getWheelEncoderPositionRev();
 
-      double azmthShaftVel = modules.get(idx).getAzimuthEncoderVelocityRPM();
-      double steerVelocity = modules.get(idx).getAzimuthMotorVelocityRPM();
-      double wheelVelocity = modules.get(idx).getWheelEncoderVelocityRPM();
+      double azmthShaftVel = simModules.get(idx).getAzimuthEncoderVelocityRPM();
+      double steerVelocity = simModules.get(idx).getAzimuthMotorVelocityRPM();
+      double wheelVelocity = simModules.get(idx).getWheelEncoderVelocityRPM();
 
       realModules.get(idx).getAbsoluteEncoder().setAbsoluteEncoder(azmthShaftPos, azmthShaftVel);
       realModules.get(idx).getSteerController().setSteerEncoder(steerMotorPos, steerVelocity);
@@ -171,31 +152,12 @@ public class SwerveDrivetrainModel {
     }
 
     // Update associated devices based on drivetrain motion
-    gyro.setAngle(swerveDt.getCurPose().getRotation().getDegrees());
+    gyro.setAngle(swerveDt.getCurPose().getRotation());
 
-    // Based on gyro and measured module speeds and positions, estimate where our
-    // robot should have moved to.
-    Pose2d prevEstPose = curEstPose;
-    if (states != null) {
-      curEstPose = m_poseEstimator.update(getGyroscopeRotation(), states[0], states[1], states[2], states[3]);
+    // add swerve modules to field
+    field.getObject("Simulated Robot").setPose(swerveDt.getCurPose());
+    field.getObject("Swerve Modules").setPoses(swerveDt.getModulePoses());
 
-      // Calculate a "speedometer" velocity in ft/sec
-      Transform2d chngPose = new Transform2d(prevEstPose, curEstPose);
-      curSpeed = Units.metersToFeet(chngPose.getTranslation().getNorm()) / SimConstants.CTRLS_SAMPLE_RATE_SEC;
-
-      updateDownfieldFlag();
-    }
-
-    // dtPoseView.field.getObject("SwerveModules").setPoses(swerveDt.getModulePoses());
-  }
-
-  /**
-   * Sets the swerve ModuleStates.
-   *
-   * @param desiredStates The desired SwerveModule states.
-   */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    this.states = desiredStates;
   }
 
   /**
@@ -207,67 +169,19 @@ public class SwerveDrivetrainModel {
     this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
 
-  public void setModuleStates(SwerveInput input) {
-    switch (orientationChooser.getSelected()) {
-      case "Field Oriented":
-        states =
-          kinematics.toSwerveModuleStates(
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-              input.m_translationX * SwerveConstants.MAX_FWD_REV_SPEED_MPS,
-              input.m_translationY * SwerveConstants.MAX_STRAFE_SPEED_MPS,
-              input.m_rotation * SwerveConstants.MAX_ROTATE_SPEED_RAD_PER_SEC,
-              getGyroscopeRotation()
-            )
-          );
-        break;
-      case "Robot Oriented":
-        states =
-          kinematics.toSwerveModuleStates(
-            new ChassisSpeeds(
-              input.m_translationX * SwerveConstants.MAX_FWD_REV_SPEED_MPS,
-              input.m_translationY * SwerveConstants.MAX_STRAFE_SPEED_MPS,
-              input.m_rotation * SwerveConstants.MAX_ROTATE_SPEED_RAD_PER_SEC
-            )
-          );
-        break;
-    }
-  }
-
   public SwerveModuleState[] getSwerveModuleStates() {
     return states;
-  }
-
-  public Pose2d getCurActPose() {
-    return dtPoseView.getFieldPose();
-  }
-
-  public Pose2d getEstPose() {
-    return curEstPose;
   }
 
   public void setKnownPose(Pose2d in) {
     resetWheelEncoders();
     // No need to reset gyro, pose estimator does that.
-    m_poseEstimator.resetPosition(in, getGyroscopeRotation());
-    updateDownfieldFlag();
+    poseEstimator.resetPosition(in, getGyroscopeRotation());
     curEstPose = in;
-  }
-
-  public void updateDownfieldFlag() {
-    double curRotDeg = curEstPose.getRotation().getDegrees();
-    pointedDownfield = (curRotDeg > -90 && curRotDeg < 90);
-  }
-
-  public void zeroGyroscope() {
-    gyro.zeroGyroscope();
   }
 
   public Rotation2d getGyroscopeRotation() {
     return gyro.getGyroHeading();
-  }
-
-  public void updateTelemetry() {
-    dtPoseView.update(Timer.getFPGATimestamp() * 1000);
   }
 
   public void resetWheelEncoders() {
@@ -276,11 +190,12 @@ public class SwerveDrivetrainModel {
     }
   }
 
-  public Command createCommandForTrajectory(PathPlannerTrajectory trajectory, SwerveSubsystem m_drive) {
+  public Command createCommandForTrajectory(PathPlannerTrajectory trajectory, DrivetrainSubsystem m_drive, SwerveDriveKinematics kinematics) {
     SwerveControllerCommandPP swerveControllerCommand = new SwerveControllerCommandPP(
       trajectory,
-      () -> getCurActPose(), // Functional interface to feed supplier
-      SwerveConstants.KINEMATICS,
+      // TODO: is this curEstPose correct? Not sure if this is set outside of the sim
+      () -> curEstPose, // Functional interface to feed supplier
+      kinematics,
       // Position controllers
       SwerveConstants.XPIDCONTROLLER,
       SwerveConstants.YPIDCONTROLLER,
@@ -295,12 +210,8 @@ public class SwerveDrivetrainModel {
     return realModules;
   }
 
-  public ArrayList<SwerveModuleSim> getModules() {
-    return modules;
-  }
-
-  public void goToPose(Pose2d desiredPose, double angle) {
-    setModuleStates(m_holo.calculate(getCurActPose(), desiredPose, 1, Rotation2d.fromDegrees(angle)));
+  public ArrayList<SwerveModuleSim> getSimModules() {
+    return simModules;
   }
 
 }

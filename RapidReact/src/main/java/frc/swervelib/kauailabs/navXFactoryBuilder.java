@@ -39,8 +39,8 @@ public class navXFactoryBuilder {
         }
 
         @Override
-        public void setAngle(double angle) {
-            angleSim.set(angle);
+        public void setAngle(Rotation2d rotation2d) {
+            angleSim.set(Math.IEEEremainder(-rotation2d.getDegrees(), 360));
         }
     }
 }

@@ -81,7 +81,21 @@
       },
       "/SmartDashboard/Field": {
         "Robot": {
-          "style": "Line"
+          "image": "images/robot.png",
+          "style": "Box/Image"
+        },
+        "Simulated Robot": {
+          "image": "images/robot.png"
+        },
+        "Swerve Modules": {
+          "image": "images/swerve_module.png",
+          "length": 0.30480000376701355,
+          "width": 0.30480000376701355
+        },
+        "SwerveModules": {
+          "image": "images/swerve_module.png",
+          "length": 0.30480000376701355,
+          "width": 0.30480000376701355
         },
         "height": 8.229599952697754,
         "image": "images/2022-field.png",
@@ -107,6 +121,9 @@
   "NetworkTables": {
     "Shuffleboard": {
       "Drivetrain": {
+        "Back Left Module": {
+          "open": true
+        },
         "open": true
       },
       "open": true

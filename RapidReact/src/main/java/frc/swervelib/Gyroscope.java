@@ -19,5 +19,5 @@ public interface Gyroscope {
    * Sets the simulated gyroscope to a specified angle
    * @param angle Angle to be set in degrees.
    */
-  void setAngle(double angle);
+  void setAngle(Rotation2d angle);
 }

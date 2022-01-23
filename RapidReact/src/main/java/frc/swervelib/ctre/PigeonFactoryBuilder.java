@@ -32,8 +32,8 @@ public class PigeonFactoryBuilder {
         }
 
         @Override
-        public void setAngle(double angle) {
-            pigeonSim.setRawHeading(angle);
+        public void setAngle(Rotation2d angle) {
+            pigeonSim.setRawHeading(angle.getDegrees());
         }
     }
 }

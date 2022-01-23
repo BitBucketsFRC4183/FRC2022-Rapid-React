@@ -4,7 +4,6 @@
 
 package frc.robot.subsystem;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,23 +11,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.config.Config;
-import frc.robot.log.LogLevel;
 import frc.swervelib.Gyroscope;
 import frc.swervelib.GyroscopeHelper;
 import frc.swervelib.Mk4SwerveModuleHelper;
-import frc.swervelib.PoseTelemetry;
 import frc.swervelib.SdsModuleConfigurations;
 import frc.swervelib.SwerveDrivetrainModel;
 import frc.swervelib.SwerveModule;
@@ -91,7 +84,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   public Field2d field;
 
-  SwerveDrivetrainModel dt;
+  SwerveDrivetrainModel drivetrainModel;
 
   @Override
   public void init() {
@@ -126,24 +119,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         moduleBackRightLocation
       );
 
-    // this.navX = new AHRS(SPI.Port.kMXP, (byte) 200)
-    // navXFactoryBuilder n = new navXFactoryBuilder();
     this.gyro = GyroscopeHelper.createnavXMXP();
-
-    setOdometry(config.drive.defaultStartingPosition);
 
     this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    // TrajectoryGenerator.generateTrajectory(
-    // new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-    // List.of(new Translation2d(5, 3), new Translation2d(10, 3)),
-    // new Pose2d(10, 5, Rotation2d.fromDegrees(0)),
-    // new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
-    // );
-
-    SmartDashboard.putData(field);
-
     this.initializeModules();
+
+    setOdometry(config.auto.farLeftStart);
   }
 
   private void initializeModules() {
@@ -222,7 +204,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
           add(moduleBackRight);
         }
       };
-    dt = new SwerveDrivetrainModel(modules, gyro, this.kinematics);
+    drivetrainModel = new SwerveDrivetrainModel(modules, gyro, this.kinematics, field, config.auto.farLeftStart);
   }
   
   public void zeroGyroscope()
@@ -244,10 +226,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    dt.setModuleStates(chassisSpeeds);
-    SwerveModuleState[] states = dt.getSwerveModuleStates();
-    // SwerveModuleState[] states = this.kinematics.toSwerveModuleStates(chassisSpeeds);
-    
+    drivetrainModel.setModuleStates(chassisSpeeds);
+    SwerveModuleState[] states = drivetrainModel.getSwerveModuleStates();
+
     if (states != null) {
       SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
       
@@ -257,13 +238,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       modules.get(3).set(states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[3].angle.getRadians());
     }
 
-    var gyroAngle = gyro.getGyroHeading().times(-1);
-    // var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
+    if (Robot.isSimulation()) {
+      drivetrainModel.update(DriverStation.isDisabled(), this.config.maxVoltage);
+    }
+
+    var gyroAngle = gyro.getGyroHeading();
     pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
     
-    field.setRobotPose(odometry.getPoseMeters());
-    
-    dt.updateTelemetry();
+    field.setRobotPose(pose);
   }
 
   public void setOdometry(Pose2d startingPosition) {
@@ -273,18 +255,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         gyro.getGyroHeading(),
         startingPosition
         );
+
+    if (Robot.isSimulation()) {
+      drivetrainModel.modelReset(startingPosition);
+    }
   }
   
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-  }
-  
-  
-  @Override
-  public void simulationPeriodic()
-  {
-    // logger().logNum(LogLevel.GENERAL, "aasdsad/asdasd", chassisSpeeds.omegaRadiansPerSecond);
-    dt.update(DriverStation.isDisabled(), 13.2); //this.config.maxVoltage);
   }
   
   @Override

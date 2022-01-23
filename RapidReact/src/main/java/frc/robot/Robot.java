@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.Logger;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -20,6 +19,7 @@ import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +68,9 @@ public class Robot extends TimedRobot {
     // Add Subsystems Here
     this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+
+    // create a new field to update
+    SmartDashboard.putData("Field", field);
 
     autonomousSubsystem.field = field;
     drivetrainSubsystem.field = field;

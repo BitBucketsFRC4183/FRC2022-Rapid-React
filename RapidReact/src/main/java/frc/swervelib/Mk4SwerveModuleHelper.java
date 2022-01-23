@@ -1,5 +1,6 @@
 package frc.swervelib;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import frc.swervelib.ctre.*;
 import frc.swervelib.rev.NeoDriveControllerFactoryBuilder;
@@ -183,6 +184,8 @@ public final class Mk4SwerveModuleHelper {
   }
 
   public static SwerveModuleSim createSim(SwerveModule module) {
+    // TODO: use config
+    double mass_kg = Units.lbsToKilograms(140);
     ModuleConfiguration modConfig = module.getModuleConfiguration();
     return new SwerveModuleSim(
       module.getSteerController().getSteerMotor(),
@@ -194,7 +197,7 @@ public final class Mk4SwerveModuleHelper {
       1 / modConfig.getDriveReduction(),
       1.1,
       0.8,
-      SwerveConstants.MASS_kg * 9.81 / QuadSwerveSim.NUM_MODULES,
+      mass_kg * 9.81 / QuadSwerveSim.NUM_MODULES,
       0.01
     );
   }
