@@ -52,6 +52,7 @@ public class Config {
   public int backRightModuleSteerEncoder = 9;
 
   // Intake Subsystem
+  public static int INTAKE_MOTOR_ID = 13;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
