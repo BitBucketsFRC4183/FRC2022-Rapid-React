@@ -75,9 +75,9 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem.setDefaultCommand(
       new DefaultDriveCommand(
         drivetrainSubsystem,
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation))
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
       )
     );
 
