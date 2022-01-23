@@ -30,6 +30,11 @@
         "header": {
           "open": true
         }
+      },
+      "Talon SRX[13]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "RoboRIO": {
@@ -41,11 +46,15 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/AutonomousSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Orientation Chooser": "String Chooser",
+      "/SmartDashboard/Trajectory Chooser": "String Chooser"
     },
     "windows": {
       "/FMSInfo": {

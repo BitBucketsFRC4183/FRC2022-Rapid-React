@@ -19,6 +19,7 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
+import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
 
   private AutonomousSubsystem autonomousSubsystem;
   private DrivetrainSubsystem drivetrainSubsystem;
+  private IntakeSubsystem intakeSubsystem;
   private Field2d field;
 
   public static enum BitBucketsTrajectory {
@@ -68,6 +70,7 @@ public class Robot extends TimedRobot {
     // Add Subsystems Here
     this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+    this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
 
     autonomousSubsystem.field = field;
     drivetrainSubsystem.field = field;
@@ -188,5 +191,11 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+
+    //Intake buttons
+    buttons.intakeIn.whenPressed(intakeSubsystem::spinForward);
+    buttons.intakeOut.whenPressed(intakeSubsystem::spinBackward);
+    buttons.intakeIn.whenReleased(intakeSubsystem::stopSpin);
+    buttons.intakeOut.whenReleased(intakeSubsystem::stopSpin);
   }
 }

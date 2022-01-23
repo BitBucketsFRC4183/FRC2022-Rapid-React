@@ -11,4 +11,6 @@ public class Buttons {
   int SwerveStrafe = PS4Constants.LEFT_STICK_X.getId();
   int SwerveRotation = PS4Constants.RIGHT_STICK_X.getId();
   JoystickButton zeroGyroscope = new JoystickButton(driverControl, PS4Constants.SHARE.getId());
+  JoystickButton intakeIn = new JoystickButton(driverControl, PS4Constants.CIRCLE.getId());
+  JoystickButton intakeOut = new JoystickButton(driverControl, PS4Constants.SQUARE.getId());
 }
