@@ -16,6 +16,7 @@ public abstract class BitBucketsSubsystem extends SubsystemBase {
   protected final Config config;
 
   protected BitBucketsSubsystem(Config config) {
+    super();
     this.setName(this.getClass().getSimpleName());
 
     this.config = config;
