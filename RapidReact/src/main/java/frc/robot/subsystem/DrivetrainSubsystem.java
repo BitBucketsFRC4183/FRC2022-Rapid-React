@@ -248,6 +248,31 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     field.setRobotPose(pose);
   }
 
+  public void setStates(SwerveModuleState[] states)
+  {
+    moduleFrontLeft.set(
+            states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
+            states[0].angle.getRadians()
+    );
+    moduleFrontRight.set(
+            states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
+            states[1].angle.getRadians()
+    );
+    moduleBackLeft.set(
+            states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
+            states[2].angle.getRadians()
+    );
+    moduleBackRight.set(
+            states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
+            states[3].angle.getRadians()
+    );
+
+    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
+    pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
+
+    field.setRobotPose(odometry.getPoseMeters());
+  }
+
   public void setOdometry(Pose2d startingPosition) {
     odometry =
     new SwerveDriveOdometry(
