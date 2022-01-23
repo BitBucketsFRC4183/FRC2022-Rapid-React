@@ -1,51 +1,66 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystem.DrivetrainSubsystem;
-
 import java.util.function.DoubleSupplier;
 
 public class DefaultDriveCommand extends CommandBase {
-    private final DrivetrainSubsystem m_drivetrainSubsystem;
 
-    private final DoubleSupplier m_translationXSupplier;
-    private final DoubleSupplier m_translationYSupplier;
-    private final DoubleSupplier m_rotationSupplier;
+  private static final SendableChooser<String> orientationChooser = new SendableChooser<>();
 
-    public DefaultDriveCommand(DrivetrainSubsystem drivetrainSubsystem,
-                               DoubleSupplier translationXSupplier,
-                               DoubleSupplier translationYSupplier,
-                               DoubleSupplier rotationSupplier) {
-        this.m_drivetrainSubsystem = drivetrainSubsystem;
-        this.m_translationXSupplier = translationXSupplier;
-        this.m_translationYSupplier = translationYSupplier;
-        this.m_rotationSupplier = rotationSupplier;
+  private final DrivetrainSubsystem driveSubsystem;
 
-        addRequirements(drivetrainSubsystem);
+  private final DoubleSupplier translationXSupplier;
+  private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationSupplier;
+
+  public DefaultDriveCommand(
+    DrivetrainSubsystem drivetrainSubsystem,
+    DoubleSupplier translationXSupplier,
+    DoubleSupplier translationYSupplier,
+    DoubleSupplier rotationSupplier
+  ) {
+    this.driveSubsystem = drivetrainSubsystem;
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.rotationSupplier = rotationSupplier;
+    // Control Orientation Chooser
+    orientationChooser.setDefaultOption("Field Oriented", "Field Oriented");
+    orientationChooser.addOption("Robot Oriented", "Robot Oriented");
+    SmartDashboard.putData("Orientation Chooser", orientationChooser);
+    addRequirements(drivetrainSubsystem);
+  }
+
+  @Override
+  public void execute() {
+    // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
+    switch (orientationChooser.getSelected()) {
+      case "Field Oriented":
+        driveSubsystem.drive(
+          ChassisSpeeds.fromFieldRelativeSpeeds(
+            translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
+            translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
+            rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond / 2,
+            driveSubsystem.getGyroscopeRotation()
+          )
+        );
+        break;
+      case "Robot Oriented":
+        ChassisSpeeds robotOrient = new ChassisSpeeds(
+          translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
+          translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
+          rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond / 2
+        );
+        driveSubsystem.drive(robotOrient);
+        break;
     }
+  }
 
-    @Override
-    public void execute() {
-        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
-        ChassisSpeeds robotOrient = new ChassisSpeeds(m_translationXSupplier.getAsDouble()
-        , m_translationYSupplier.getAsDouble(), m_rotationSupplier.getAsDouble());
-        m_drivetrainSubsystem.drive(robotOrient);
-
-
-       /* m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        m_translationXSupplier.getAsDouble(),
-                        m_translationYSupplier.getAsDouble(),
-                        m_rotationSupplier.getAsDouble(),
-                        m_drivetrainSubsystem.getGyroscopeRotation())
-                
-        );*/
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-    }
+  @Override
+  public void end(boolean interrupted) {
+    driveSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+  }
 }
