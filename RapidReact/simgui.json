@@ -30,6 +30,11 @@
         "header": {
           "open": true
         }
+      },
+      "Talon SRX[13]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "RoboRIO": {
@@ -43,6 +48,7 @@
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/AutonomousSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
