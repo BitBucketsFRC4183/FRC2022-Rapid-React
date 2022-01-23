@@ -41,14 +41,22 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/AutonomousSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Orientation Chooser": "String Chooser",
+      "/SmartDashboard/Trajectory Chooser": "String Chooser"
     },
     "windows": {
       "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/LiveWindow/AutonomousSubsystem": {
         "window": {
           "visible": true
         }
@@ -77,6 +85,7 @@
         "traj": {
           "arrowSize": 53,
           "arrowWeight": 0.20000000298023224,
+          "arrows": false,
           "style": "Line"
         },
         "units": "feet",
