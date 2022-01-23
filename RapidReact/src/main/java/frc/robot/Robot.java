@@ -110,8 +110,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
-    this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
   }
 
   /**

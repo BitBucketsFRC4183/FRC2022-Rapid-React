@@ -5,8 +5,6 @@
 package frc.robot.subsystem;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,6 +16,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -25,8 +24,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
-import frc.robot.utils.modifiedswervelib.BitBucketsMk4SwerveModuleHelper;
-import java.util.List;
+import frc.robot.log.LogLevel;
+import frc.swervelib.Gyroscope;
+import frc.swervelib.GyroscopeHelper;
+import frc.swervelib.Mk4SwerveModuleHelper;
+import frc.swervelib.PoseTelemetry;
+import frc.swervelib.SdsModuleConfigurations;
+import frc.swervelib.SwerveDrivetrainModel;
+import frc.swervelib.SwerveModule;
+import java.util.ArrayList;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
@@ -62,15 +68,16 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   // The important thing about how you configure your gyroscope is that rotating
   // the robot counter-clockwise should
   // cause the angle reading to increase until it wraps back over to zero.
-  // Remove if you are using a Pigeon
-  // Uncomment if you are using a NavX
-  private AHRS navX;
+  //  Remove if you are using a Pigeon
+  //  Uncomment if you are using a NavX
+  private Gyroscope gyro;
 
   // Swerve Modules
   private SwerveModule moduleFrontLeft;
   private SwerveModule moduleFrontRight;
   private SwerveModule moduleBackLeft;
   private SwerveModule moduleBackRight;
+  private ArrayList<SwerveModule> modules;
 
   private Translation2d moduleFrontLeftLocation;
   private Translation2d moduleFrontRightLocation;
@@ -83,6 +90,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private SwerveDriveOdometry odometry;
 
   public Field2d field;
+
+  SwerveDrivetrainModel dt;
 
   @Override
   public void init() {
@@ -117,7 +126,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         moduleBackRightLocation
       );
 
-    this.navX = new AHRS(SPI.Port.kMXP, (byte) 200);
+    // this.navX = new AHRS(SPI.Port.kMXP, (byte) 200)
+    // navXFactoryBuilder n = new navXFactoryBuilder();
+    this.gyro = GyroscopeHelper.createnavXMXP();
 
     setOdometry(config.drive.defaultStartingPosition);
 
@@ -144,104 +155,87 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // Mk3SwerveModuleHelper.createFalcon500(...)
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
-    // Mk3SwerveModuleHelper.createNeo(...)
-    // Your module has two NEOs on it. One for steering and one for driving.
-    //
-    // Mk3SwerveModuleHelper.createFalcon500Neo(...)
-    // Your module has a Falcon 500 and a NEO on it. The Falcon 500 is for driving
-    // and the NEO is for steering.
-    //
-    // Mk3SwerveModuleHelper.createNeoFalcon500(...)
-    // Your module has a NEO and a Falcon 500 on it. The NEO is for driving and the
-    // Falcon 500 is for steering.
-    //
-    // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper
-    // class.
+    // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
 
     // By default we will use Falcon 500s in standard configuration. But if you use
     // a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
     // Setup motor configuration
     moduleFrontLeft =
-      BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
-        // This parameter is optional, but will allow you to see the current state of
-        // the module on the dashboard.
+      Mk4SwerveModuleHelper.createFalcon500(
+        // This parameter is optional, but will allow you to see the current state of the module on the dashboard.
         tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
         // This can either be STANDARD or FAST depending on your gear configuration
-        BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
+        Mk4SwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
         config.frontLeftModuleDriveMotor,
         // This is the ID of the steer motor
         config.frontLeftModuleSteerMotor,
         // This is the ID of the steer encoder
         config.frontLeftModuleSteerEncoder,
-        // This is how much the steer encoder is offset from true zero (In our case,
-        // zero is facing straight forward)
-        config.drive.frontLeftModuleSteerOffset
+        // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
+        config.drive.frontLeftModuleSteerOffset,
+        "FL"
       );
 
     // We will do the same for the other modules
     moduleFrontRight =
-      BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
+      Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-        BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
+        Mk4SwerveModuleHelper.GearRatio.L2,
         config.frontRightModuleDriveMotor,
         config.frontRightModuleSteerMotor,
         config.frontRightModuleSteerEncoder,
-        config.drive.frontRightModuleSteerOffset
+        config.drive.frontRightModuleSteerOffset,
+        "FR"
       );
 
     moduleBackLeft =
-      BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
+      Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
-        BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
+        Mk4SwerveModuleHelper.GearRatio.L2,
         config.backLeftModuleDriveMotor,
         config.backLeftModuleSteerMotor,
         config.backLeftModuleSteerEncoder,
-        config.drive.backLeftModuleSteerOffset
+        config.drive.backLeftModuleSteerOffset,
+        "BL"
       );
 
     moduleBackRight =
-      BitBucketsMk4SwerveModuleHelper.createWPI_TalonFX(
+      Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
-        BitBucketsMk4SwerveModuleHelper.GearRatio.L2,
+        Mk4SwerveModuleHelper.GearRatio.L2,
         config.backRightModuleDriveMotor,
         config.backRightModuleSteerMotor,
         config.backRightModuleSteerEncoder,
-        config.drive.backRightModuleSteerOffset
+        config.drive.backRightModuleSteerOffset,
+        "BR"
       );
+
+    // We will also create a list of all the modules so we can easily access them later
+    modules =
+      new ArrayList<SwerveModule>() {
+        {
+          add(moduleFrontLeft);
+          add(moduleFrontRight);
+          add(moduleBackLeft);
+          add(moduleBackRight);
+        }
+      };
+    dt = new SwerveDrivetrainModel(modules, gyro, this.kinematics);
+  }
+  
+  public void zeroGyroscope()
+  {
+    gyro.zeroGyroscope();
+  }
+  
+  public Rotation2d getGyroscopeRotation() {
+    return gyro.getGyroHeading();
   }
 
   public DrivetrainSubsystem(Config config) {
     super(config);
-  }
-
-  /**
-   * Sets the gyroscope angle to zero. This can be used to set the direction the
-   * robot is currently facing to the
-   * 'forwards' direction.
-   */
-  public void zeroGyroscope() {
-    // Remove if you are using a Pigeon
-    // m_pigeon.setFusedHeading(0.0);
-
-    // Uncomment if you are using a NavX
-    this.navX.zeroYaw();
-  }
-
-  public Rotation2d getGyroscopeRotation() {
-    // Remove if you are using a Pigeon
-    // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
-
-    // Uncomment if you are using a NavX
-    if (this.navX.isMagnetometerCalibrated()) {
-      // We will only get valid fused headings if the magnetometer is calibrated
-      return Rotation2d.fromDegrees(this.navX.getFusedHeading());
-    }
-
-    // // We have to invert the angle of the NavX so that rotating the robot
-    // counter-clockwise makes the angle increase.
-    return Rotation2d.fromDegrees(360.0 - this.navX.getYaw());
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
@@ -250,48 +244,52 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    SwerveModuleState[] states = this.kinematics.toSwerveModuleStates(chassisSpeeds);
+    dt.setModuleStates(chassisSpeeds);
+    SwerveModuleState[] states = dt.getSwerveModuleStates();
+    // SwerveModuleState[] states = this.kinematics.toSwerveModuleStates(chassisSpeeds);
+    
+    if (states != null) {
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
+      
+      modules.get(0).set(states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[0].angle.getRadians());
+      modules.get(1).set(states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[1].angle.getRadians());
+      modules.get(2).set(states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[2].angle.getRadians());
+      modules.get(3).set(states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[3].angle.getRadians());
+    }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
-
-    moduleFrontLeft.set(
-      states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
-      states[0].angle.getRadians()
-    );
-    moduleFrontRight.set(
-      states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
-      states[1].angle.getRadians()
-    );
-    moduleBackLeft.set(
-      states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
-      states[2].angle.getRadians()
-    );
-    moduleBackRight.set(
-      states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage,
-      states[3].angle.getRadians()
-    );
-
-    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
+    var gyroAngle = gyro.getGyroHeading().times(-1);
+    // var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
     pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
-
+    
     field.setRobotPose(odometry.getPoseMeters());
+    
+    dt.updateTelemetry();
   }
 
   public void setOdometry(Pose2d startingPosition) {
     odometry =
-      new SwerveDriveOdometry(
+    new SwerveDriveOdometry(
         kinematics,
-        getGyroscopeRotation(), // this was "getgyroheading"
+        gyro.getGyroHeading(),
         startingPosition
-      );
+        );
   }
-
+  
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
-
+  
+  
+  @Override
+  public void simulationPeriodic()
+  {
+    // logger().logNum(LogLevel.GENERAL, "aasdsad/asdasd", chassisSpeeds.omegaRadiansPerSecond);
+    dt.update(DriverStation.isDisabled(), 13.2); //this.config.maxVoltage);
+  }
+  
   @Override
   public void disable() {
     stop();
   }
+  
 }
