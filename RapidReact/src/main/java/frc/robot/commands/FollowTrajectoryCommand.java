@@ -34,7 +34,7 @@ public class FollowTrajectoryCommand extends InstantCommand
         new PPSwerveControllerCommand(
                 this.trajectory,
                 () -> this.trajectory.getInitialPose(),
-                drive.getKinematics(),
+                drive.kinematics,
                 new PIDController(0.002, 0.0005, -0.0001),
                 new PIDController(0.002, 0.0005, -0.0001),
                 new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(drive.maxVelocity_metersPerSecond, drive.maxAngularVelocity_radiansPerSecond)),

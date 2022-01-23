@@ -54,7 +54,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public double maxAngularVelocity_radiansPerSecond;
 
   // Instance Variables
-  private SwerveDriveKinematics kinematics;
+  public SwerveDriveKinematics kinematics;
 
   // By default we use a Pigeon for our gyroscope. But if you use another
   // gyroscope, like a NavX, you can change this.
@@ -267,7 +267,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             states[3].angle.getRadians()
     );
 
-    var gyroAngle = Rotation2d.fromDegrees(-navX.getAngle());
+    var gyroAngle = Rotation2d.fromDegrees(-gyro.getGyroHeading().getDegrees());
     pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
 
     field.setRobotPose(odometry.getPoseMeters());
