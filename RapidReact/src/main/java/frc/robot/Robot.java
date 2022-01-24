@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.Logger;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,7 +18,9 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.BitBucketsSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
+import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
 
   private AutonomousSubsystem autonomousSubsystem;
   private DrivetrainSubsystem drivetrainSubsystem;
+  private IntakeSubsystem intakeSubsystem;
   private Field2d field;
 
   public static enum BitBucketsTrajectory {
@@ -68,6 +70,10 @@ public class Robot extends TimedRobot {
     // Add Subsystems Here
     this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+    this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
+
+    // create a new field to update
+    SmartDashboard.putData("Field", field);
 
     autonomousSubsystem.field = field;
     drivetrainSubsystem.field = field;
@@ -75,9 +81,9 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem.setDefaultCommand(
       new DefaultDriveCommand(
         drivetrainSubsystem,
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveForward)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveStrafe)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.SwerveRotation))
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
+        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
       )
     );
 
@@ -110,8 +116,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
-    this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
   }
 
   /**
@@ -188,5 +192,11 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+
+    //Intake buttons
+    buttons.intake.whenPressed(intakeSubsystem::spinForward);
+    buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
+    buttons.intake.whenReleased(intakeSubsystem::stopSpin);
+    buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
   }
 }

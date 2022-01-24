@@ -16,6 +16,7 @@ public class Config {
   // Climber
   // Drive
   // Intake
+  // Vision
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Enablers
@@ -52,11 +53,13 @@ public class Config {
   public int backRightModuleSteerEncoder = 9;
 
   // Intake Subsystem
+  public static int INTAKE_MOTOR_ID = 13;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
+  public VisionConfig vision = new VisionConfig();
 
   // Autonomous Config
   public class AutonomousConfig {
@@ -95,8 +98,6 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
-    public Pose2d defaultStartingPosition;
-
     public double drivetrainTrackWidth_meters = 0.3937; // set trackwidth
 
     public double drivetrainWheelBase_meters = 0.3937; // set wheelbase
@@ -109,15 +110,22 @@ public class Config {
 
     public double backRightModuleSteerOffset = -Math.toRadians(60.9); // set back right steer offset
 
-    public DriveConfig() {
-      defaultStartingPosition = new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0));
-    }
+    public DriveConfig() {}
   }
 
   // Intake Config
   public class IntakeConfig {
 
     public IntakeConfig() {}
+  }
+
+  public class VisionConfig {
+
+    public double targetHeight = 0;
+    public double cameraHeight = 0;
+    public double verticalCameraAngle = 0;
+
+    public VisionConfig() {}
   }
 
   public Config() {}
