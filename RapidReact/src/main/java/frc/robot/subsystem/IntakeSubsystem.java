@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.config.Config;
+import frc.robot.log.LogLevel;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
@@ -26,16 +27,19 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void disable() {}
 
   public void spinForward() {
-    intake.set(ControlMode.PercentOutput, 0.5);
+    intake.set(ControlMode.PercentOutput, 0.75);
+    logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
   }
 
 
   public void spinBackward() {
-    intake.set(ControlMode.PercentOutput, -0.5);
+    intake.set(ControlMode.PercentOutput, -0.75);
+    logger().logString(LogLevel.GENERAL, "intakeState", "Outtaking");
   }
 
   public void stopSpin() {
     intake.set(ControlMode.PercentOutput, 0);
+    logger().logString(LogLevel.GENERAL, "intakeState", "Stopped");
   }
 
   // public void toggle() {
