@@ -1,6 +1,7 @@
 package frc.swervelib;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -190,20 +191,19 @@ public class SwerveDrivetrainModel {
     }
   }
 
-  public Command createCommandForTrajectory(PathPlannerTrajectory trajectory, DrivetrainSubsystem m_drive, SwerveDriveKinematics kinematics) {
-    SwerveControllerCommandPP swerveControllerCommand = new SwerveControllerCommandPP(
+  public PPSwerveControllerCommand createCommandForTrajectory(PathPlannerTrajectory trajectory, DrivetrainSubsystem m_drive, SwerveDriveKinematics kinematics) {
+    return new PPSwerveControllerCommand(
       trajectory,
       // TODO: is this curEstPose correct? Not sure if this is set outside of the sim
-      () -> curEstPose, // Functional interface to feed supplier
+      () -> m_drive.odometry.getPoseMeters(), // Functional interface to feed supplier
       kinematics,
       // Position controllers
       SwerveConstants.XPIDCONTROLLER,
       SwerveConstants.YPIDCONTROLLER,
       thetaController,
-      commandStates -> this.states = commandStates,
+      m_drive::setStates,
       m_drive
     );
-    return swerveControllerCommand;
   }
 
   public ArrayList<SwerveModule> getRealModules() {

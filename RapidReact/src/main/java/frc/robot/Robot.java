@@ -4,12 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
 import frc.robot.log.LogTestSubsystem;
@@ -46,8 +50,8 @@ public class Robot extends TimedRobot {
   public static enum BitBucketsTrajectory {
     FarLeft,
     NearRight,
+    PathPlanner
   }
-
   private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
 
   /**
@@ -63,6 +67,7 @@ public class Robot extends TimedRobot {
 
     trajectoryChooser.setDefaultOption("Far Left", BitBucketsTrajectory.FarLeft);
     trajectoryChooser.addOption("Near Right", BitBucketsTrajectory.NearRight);
+    trajectoryChooser.addOption("PathPlanner", BitBucketsTrajectory.PathPlanner);
     SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
 
     // Add Subsystems Here
@@ -115,6 +120,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    //this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
   }
 
   /**
@@ -144,6 +150,11 @@ public class Robot extends TimedRobot {
       case NearRight:
         drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
         autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
+        break;
+      case PathPlanner:
+        FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
+        drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
+        c.schedule();
         break;
     }
   }
