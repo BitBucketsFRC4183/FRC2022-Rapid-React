@@ -199,13 +199,17 @@ public class Robot extends TimedRobot {
     buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
 
     //Shooter BUttons
-    buttons.hubShoot.whenPressed(() -> shooterSubsystem.shootTop());
+    buttons.hubShoot.whenPressed(shooterSubsystem::shootTop);
     buttons.hubShoot.whenReleased(shooterSubsystem::stopShootTop);
-    buttons.lowShoot.whenPressed(() -> {
+
+    buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
+    buttons.lowShoot.whenReleased(shooterSubsystem::stopShootLow);
+
+    buttons.tarmacShoot.whenPressed(() -> {
       shooterSubsystem.shootTarmac();
       drivetrainSubsystem.orient();
     });
-    buttons.lowShoot.whenReleased(shooterSubsystem::stopShootTarmac);
+    buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShootTarmac);
 
   }
 }
