@@ -1,13 +1,14 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
 
 public class ShooterSubsystem extends BitBucketsSubsystem {
 
-  private TalonSRX roller1;
-  private TalonSRX roller2;
+  private CANSparkMax roller1;
+  private CANSparkMax roller2;
 
   public ShooterSubsystem(Config config) {
     super(config);
