@@ -18,7 +18,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     logger().logString(LogLevel.GENERAL, "shoot_state", "TopShooting");
   }
 
-  public void stopShootTop() {
+  public void stopShoot() {
     logger().logString(LogLevel.GENERAL, "shoot_state", "Idling");
   }
 
@@ -26,16 +26,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     logger().logString(LogLevel.GENERAL, "shoot_state", "LowShooting");
   }
 
-  public void stopShootLow() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "Idling");
-  }
-
   public void shootTarmac() {
     logger().logString(LogLevel.GENERAL, "shoot_state", "TarmacShooting");
-  }
-
-  public void stopShootTarmac() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "Idling");
   }
 
   @Override
