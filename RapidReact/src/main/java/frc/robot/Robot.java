@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.config.Config;
@@ -117,6 +118,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    //this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
   }
 
   /**
@@ -148,7 +150,7 @@ public class Robot extends TimedRobot {
         autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
         break;
       case PathPlanner:
-        FollowTrajectoryCommand c = new FollowTrajectoryCommand("New New Path", this.drivetrainSubsystem);
+        FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
         drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
         c.schedule();
         break;
