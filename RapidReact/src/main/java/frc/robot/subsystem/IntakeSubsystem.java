@@ -49,11 +49,13 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void toggle() {
     if (toggleState == false) {
         intakeSolenoid.set(Value.kForward);
+        logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
         toggleState = true;
     }
     
     else {
-        intakeSolenoid.set(Value.kOff);
+        intakeSolenoid.set(Value.kReverse);
+        logger().logString(LogLevel.GENERAL, "intakeState", "Off");
         toggleState = false; 
     }
   }
