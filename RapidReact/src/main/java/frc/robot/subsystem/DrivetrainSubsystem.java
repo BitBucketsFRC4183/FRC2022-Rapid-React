@@ -206,6 +206,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       };
     drivetrainModel = new SwerveDrivetrainModel(modules, gyro, this.kinematics, field, config.auto.farLeftStart);
   }
+
+  public void orient() {
+    // do something here.
+
+
+
+  }
   
   public void zeroGyroscope()
   {

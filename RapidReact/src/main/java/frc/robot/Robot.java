@@ -15,10 +15,7 @@ import frc.robot.log.LogLevel;
 import frc.robot.log.LogTestSubsystem;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
-import frc.robot.subsystem.AutonomousSubsystem;
-import frc.robot.subsystem.BitBucketsSubsystem;
-import frc.robot.subsystem.DrivetrainSubsystem;
-import frc.robot.subsystem.IntakeSubsystem;
+import frc.robot.subsystem.*;
 import frc.robot.utils.MathUtils;
 
 import java.util.ArrayList;
@@ -42,6 +39,7 @@ public class Robot extends TimedRobot {
 
   private AutonomousSubsystem autonomousSubsystem;
   private DrivetrainSubsystem drivetrainSubsystem;
+  private ShooterSubsystem shooterSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
 
@@ -71,6 +69,7 @@ public class Robot extends TimedRobot {
     this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
     this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
+    this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
@@ -198,5 +197,15 @@ public class Robot extends TimedRobot {
     buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
     buttons.intake.whenReleased(intakeSubsystem::stopSpin);
     buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
+
+    //Shooter BUttons
+    buttons.hubShoot.whenPressed(() -> shooterSubsystem.shootTop());
+    buttons.hubShoot.whenReleased(shooterSubsystem::stopShootTop);
+    buttons.lowShoot.whenPressed(() -> {
+      shooterSubsystem.shootTarmac();
+      drivetrainSubsystem.orient();
+    });
+    buttons.lowShoot.whenReleased(shooterSubsystem::stopShootTarmac);
+
   }
 }
