@@ -12,14 +12,16 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private CANSparkMax roller1;
   private CANSparkMax roller2;
 
+  private float hubShootSpeed = 5000;
+
   public ShooterSubsystem(Config config) {
     super(config);
   }
 
   public void shootTop() {
     logger().logString(LogLevel.GENERAL, "shoot_state", "TopShooting");
-    roller1.getPIDController().setReference(5000, ControlType.kVelocity, 0);
-    roller2.getPIDController().setReference(5000, ControlType.kVelocity, 0);
+    roller1.getPIDController().setReference(hubShootSpeed, ControlType.kVelocity, 0);
+    roller2.getPIDController().setReference(hubShootSpeed, ControlType.kVelocity, 0);
   }
 
   public void stopShoot() {
@@ -38,6 +40,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+    logger().logNum(LogLevel.GENERAL, "HubShootSpeed", hubShootSpeed);
+    logger()
+      .subscribeNum(
+        "HubShootSpeed",
+        value -> {
+          this.hubShootSpeed = value.floatValue();
+        }
+      );
     roller1 = MotorUtils.makeSpark(config.shooter.roller1);
     roller2 = MotorUtils.makeSpark(config.shooter.roller2);
   }

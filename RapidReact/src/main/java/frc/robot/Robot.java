@@ -21,7 +21,6 @@ import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +49,9 @@ public class Robot extends TimedRobot {
   public static enum BitBucketsTrajectory {
     FarLeft,
     NearRight,
-    PathPlanner
+    PathPlanner,
   }
+
   private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
 
   /**
@@ -71,25 +71,37 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
 
     // Add Subsystems Here
-    this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
-    this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
-    this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
-    this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
+    if (config.enableAutonomousSubsystem) {
+      this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
+    }
+    if (config.enableDriveSubsystem) {
+      this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+    }
+    if (config.enableIntakeSubsystem) {
+      this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
+    }
+    if (config.enableShooterSubsystem) {
+      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
+    }
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
-    autonomousSubsystem.field = field;
-    drivetrainSubsystem.field = field;
+    if (config.enableAutonomousSubsystem) {
+      autonomousSubsystem.field = field;
+    }
+    if (config.enableDriveSubsystem) {
+      drivetrainSubsystem.field = field;
 
-    drivetrainSubsystem.setDefaultCommand(
-      new DefaultDriveCommand(
-        drivetrainSubsystem,
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
-      )
-    );
+      drivetrainSubsystem.setDefaultCommand(
+        new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
+        )
+      );
+    }
 
     // Configure the button bindings
     this.configureButtonBindings();
@@ -141,21 +153,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
-    switch (trajectoryChooser.getSelected()) {
-      case FarLeft:
-        drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
-        autonomousSubsystem.setTrajectory(config.auto.farLeftStartTrajectory);
-        break;
-      case NearRight:
-        drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
-        autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
-        break;
-      case PathPlanner:
-        FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
-        drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
-        c.schedule();
-        break;
+    if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
+      drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
+      switch (trajectoryChooser.getSelected()) {
+        case FarLeft:
+          drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
+          autonomousSubsystem.setTrajectory(config.auto.farLeftStartTrajectory);
+          break;
+        case NearRight:
+          drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
+          autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
+          break;
+        case PathPlanner:
+          FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
+          drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
+          c.schedule();
+          break;
+      }
     }
   }
 
@@ -201,26 +215,33 @@ public class Robot extends TimedRobot {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    if (config.enableDriveSubsystem) {
+      buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    }
 
     //Intake buttons
-    buttons.intake.whenPressed(intakeSubsystem::spinForward);
-    buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
-    buttons.intake.whenReleased(intakeSubsystem::stopSpin);
-    buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
+    if (config.enableIntakeSubsystem) {
+      buttons.intake.whenPressed(intakeSubsystem::spinForward);
+      buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
+      buttons.intake.whenReleased(intakeSubsystem::stopSpin);
+      buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
+    }
 
     //Shooter BUttons
-    buttons.hubShoot.whenPressed(shooterSubsystem::shootTop);
-    buttons.hubShoot.whenReleased(shooterSubsystem::stopShoot);
+    if (config.enableShooterSubsystem) {
+      buttons.hubShoot.whenPressed(shooterSubsystem::shootTop);
+      buttons.hubShoot.whenReleased(shooterSubsystem::stopShoot);
 
-    buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
-    buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
+      buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
+      buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
 
-    buttons.tarmacShoot.whenPressed(() -> {
-      shooterSubsystem.shootTarmac();
-      drivetrainSubsystem.orient();
-    });
-    buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
-
+      buttons.tarmacShoot.whenPressed(
+        () -> {
+          shooterSubsystem.shootTarmac();
+          drivetrainSubsystem.orient();
+        }
+      );
+      buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
+    }
   }
 }
