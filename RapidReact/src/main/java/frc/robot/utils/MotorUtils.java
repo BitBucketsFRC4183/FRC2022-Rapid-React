@@ -6,6 +6,10 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import frc.robot.config.MotorConfig;
 
 public class MotorUtils {
@@ -171,6 +175,37 @@ public class MotorUtils {
     motor.configVoltageCompSaturation(11.5);
   }
 
+  public static void motorInit(CANSparkMax motor, MotorConfig motorConfig) {
+    /* Configure Sensor Source for velocity PID */
+    RelativeEncoder encoder;
+
+    motor.restoreFactoryDefaults();
+
+    // brushless motors can't be inverted
+    // encoder.setInverted(settings.sensorPhase);
+
+    /* Set acceleration and vcruise velocity - see documentation */
+    SparkMaxPIDController pidController = motor.getPIDController();
+
+    // configure position PID constants
+    pidController.setFF(motorConfig.positionPIDF.getKF(), positionSlot);
+    pidController.setP(motorConfig.positionPIDF.getKP(), positionSlot);
+    pidController.setD(motorConfig.positionPIDF.getKD(), positionSlot);
+    pidController.setI(motorConfig.positionPIDF.getKI(), positionSlot);
+    pidController.setIZone(motorConfig.positionPIDF.getIZone(), positionSlot);
+
+    // configure velocity PID constants
+    pidController.setFF(motorConfig.velocityPIDF.getKF(), velocitySlot);
+    pidController.setP(motorConfig.velocityPIDF.getKP(), velocitySlot);
+    pidController.setI(motorConfig.velocityPIDF.getKD(), velocitySlot);
+    pidController.setD(motorConfig.velocityPIDF.getKI(), velocitySlot);
+    pidController.setIZone(motorConfig.velocityPIDF.getIZone(), velocitySlot);
+    motor.setInverted(motorConfig.inverted);
+    encoder = motor.getEncoder();
+    /* Zero the sensor */
+    encoder.setPosition(0);
+  }
+
   public static WPI_TalonSRX makeSRX(MotorConfig motorConfig) {
     WPI_TalonSRX motor = new WPI_TalonSRX(motorConfig.id);
     motorInit(motor, motorConfig);
@@ -179,6 +214,12 @@ public class MotorUtils {
 
   public static WPI_TalonFX makeFX(MotorConfig motorConfig) {
     WPI_TalonFX motor = new WPI_TalonFX(motorConfig.id);
+    motorInit(motor, motorConfig);
+    return motor;
+  }
+
+  public static CANSparkMax makeSpark(MotorConfig motorConfig) {
+    CANSparkMax motor = new CANSparkMax(motorConfig.id, MotorType.kBrushless);
     motorInit(motor, motorConfig);
     return motor;
   }

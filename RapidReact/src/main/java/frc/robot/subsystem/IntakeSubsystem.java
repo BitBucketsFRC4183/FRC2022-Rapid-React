@@ -3,12 +3,16 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
   private WPI_TalonSRX intake;
+  public boolean toggleState;
+  DoubleSolenoid intakeSolenoid;
   
   public IntakeSubsystem(Config config) {
     super(config);
@@ -16,7 +20,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    intake = new WPI_TalonSRX(Config.INTAKE_MOTOR_ID);
+    intake = new WPI_TalonSRX(Config.intakeMotor_ID);
   }
 
   @Override
@@ -42,15 +46,17 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     logger().logString(LogLevel.GENERAL, "intakeState", "Stopped");
   }
 
-  // public void toggle() {
-  //   if (toggleState == false) {
-  //       intakeSolenoid.set(Value.kForward);
-  //       toggleState = true;
-  //   }
+  public void toggle() {
+    if (toggleState == false) {
+        intakeSolenoid.set(Value.kForward);
+        logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
+        toggleState = true;
+    }
     
-  //   else {
-  //       intakeSolenoid.set(Value.kReverse);
-  //       toggleState = false; 
-  //   }
-  // }
+    else {
+        intakeSolenoid.set(Value.kReverse);
+        logger().logString(LogLevel.GENERAL, "intakeState", "Off");
+        toggleState = false; 
+    }
+  }
 }
