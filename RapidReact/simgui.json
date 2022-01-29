@@ -1,40 +1,125 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "SPARK MAX [14]": {
+        "name": "Roller1 [ID:14]"
+      },
+      "SPARK MAX [15]": {
+        "name": "Roller2 [ID:15]"
+      },
+      "Talon FX[1]": {
+        "name": "backRightModuleDriveMotor [ID:1]"
+      },
+      "Talon FX[1]/Fwd Limit": {
+        "name": "backRightModuleDriveMotor/Fwd Limit [ID:1]"
+      },
+      "Talon FX[1]/Integrated Sensor": {
+        "name": "backRightModuleDriveMotor/Integrated Sensor [ID:1]"
+      },
+      "Talon FX[1]/Rev Limit": {
+        "name": "backRightModuleDriveMotor/Rev Limit [ID:1]"
+      },
+      "Talon FX[2]": {
+        "name": "backRightModuleSteerMotor [ID:2]"
+      },
+      "Talon FX[2]/Fwd Limit": {
+        "name": "backRightModuleSteerMotor/Fwd Limit [ID:2]"
+      },
+      "Talon FX[2]/Integrated Sensor": {
+        "name": "backRightModuleSteerMotor/Integrated Sensor [ID:2]"
+      },
+      "Talon FX[2]/Rev Limit": {
+        "name": "backRightModuleSteerMotor/Rev Limit [ID:2]"
+      },
+      "Talon FX[3]": {
+        "name": "backLeftModuleDriveMotor [ID:3]"
+      },
+      "Talon FX[3]/Fwd Limit": {
+        "name": "backLeftModuleDriveMotor/Fwd Limit [ID:3]"
+      },
+      "Talon FX[3]/Integrated Sensor": {
+        "name": "backLeftModuleDriveMotor/Integrated Sensor [ID:3]"
+      },
+      "Talon FX[3]/Rev Limit": {
+        "name": "backLeftModuleDriveMotor/Rev Limit [ID:3]"
+      },
+      "Talon FX[4]": {
+        "name": "backLeftModuleSteerMotor [ID:4]"
+      },
+      "Talon FX[4]/Fwd Limit": {
+        "name": "backLeftModuleSteerMotor/Fwd Limit [ID:4]"
+      },
+      "Talon FX[4]/Integrated Sensor": {
+        "name": "backLeftModuleSteerMotor/Integrated Sensor [ID:4]"
+      },
+      "Talon FX[4]/Rev Limit": {
+        "name": "backLeftModuleSteerMotor/Rev Limit [ID:4]"
+      },
       "Talon FX[5]": {
-        "header": {
-          "open": true
-        }
+        "name": "frontLeftModuleDriveMotor [ID:5]"
       },
       "Talon FX[5]/Fwd Limit": {
-        "header": {
-          "open": true
-        }
+        "name": "frontLeftModuleDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
+        "name": "frontLeftModuleDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
-        "header": {
-          "open": true
-        }
+        "name": "frontLeftModuleDriveMotor/Rev Limit [ID:5]"
       },
       "Talon FX[6]": {
-        "header": {
-          "open": true
-        }
+        "name": "frontLeftModuleSteerMotor [ID:6]"
+      },
+      "Talon FX[6]/Fwd Limit": {
+        "name": "frontLeftModuleSteerMotor/Fwd Limit [ID:6]"
+      },
+      "Talon FX[6]/Integrated Sensor": {
+        "name": "frontLeftModuleSteerMotor/Integrated Sensor [ID:6]"
+      },
+      "Talon FX[6]/Rev Limit": {
+        "name": "frontLeftModuleSteerMotor/Rev Limit [ID:6]"
       },
       "Talon FX[7]": {
-        "header": {
-          "open": true
-        }
+        "name": "frontRightModuleDriveMotor [ID:7]"
+      },
+      "Talon FX[7]/Fwd Limit": {
+        "name": "frontRightModuleDriveMotor/Fwd Limit [ID:7]"
+      },
+      "Talon FX[7]/Integrated Sensor": {
+        "name": "frontRightModuleDriveMotor/Integrated Sensor [ID:7]"
+      },
+      "Talon FX[7]/Rev Limit": {
+        "name": "frontRightModuleDriveMotor/Rev Limit [ID:7]"
+      },
+      "Talon FX[8]": {
+        "name": "frontRightModuleSteerMotor [ID:8]"
+      },
+      "Talon FX[8]/Fwd Limit": {
+        "name": "frontRightModuleSteerMotor/Fwd Limit [ID:8]"
+      },
+      "Talon FX[8]/Integrated Sensor": {
+        "name": "frontRightModuleSteerMotor/Integrated Sensor [ID:8]"
+      },
+      "Talon FX[8]/Rev Limit": {
+        "name": "frontRightModuleSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
-        "header": {
-          "open": true
-        }
+        "name": "Intake Motor [ID:13]"
+      },
+      "Talon SRX[13]/Analog In": {
+        "name": "Intake Motor/Analog In [ID:13]"
+      },
+      "Talon SRX[13]/Fwd Limit": {
+        "name": "Intake Motor/Fwd Limit [ID:13]"
+      },
+      "Talon SRX[13]/Pulse Width Input": {
+        "name": "Intake Motor/Width Input [ID:13]"
+      },
+      "Talon SRX[13]/Quad Encoder": {
+        "name": "Intake Motor/Quad Encoder [ID:13]"
+      },
+      "Talon SRX[13]/Rev Limit": {
+        "name": "Intake Motor/Rev Limit [ID:13]"
       }
     },
     "RoboRIO": {
