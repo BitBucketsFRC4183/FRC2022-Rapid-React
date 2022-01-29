@@ -26,6 +26,7 @@ import frc.swervelib.SdsModuleConfigurations;
 import frc.swervelib.SwerveDrivetrainModel;
 import frc.swervelib.SwerveModule;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
@@ -54,7 +55,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public double maxAngularVelocity_radiansPerSecond;
 
   // Instance Variables
-  private SwerveDriveKinematics kinematics;
+  public SwerveDriveKinematics kinematics;
 
   // By default we use a Pigeon for our gyroscope. But if you use another
   // gyroscope, like a NavX, you can change this.
@@ -63,7 +64,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   // cause the angle reading to increase until it wraps back over to zero.
   //  Remove if you are using a Pigeon
   //  Uncomment if you are using a NavX
-  private Gyroscope gyro;
+  public Gyroscope gyro;
 
   // Swerve Modules
   private SwerveModule moduleFrontLeft;
@@ -80,11 +81,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private ChassisSpeeds chassisSpeeds;
 
   private Pose2d pose;
-  private SwerveDriveOdometry odometry;
+  public SwerveDriveOdometry odometry;
 
   public Field2d field;
 
-  SwerveDrivetrainModel drivetrainModel;
+  public SwerveDrivetrainModel drivetrainModel;
 
   @Override
   public void init() {
@@ -138,7 +139,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
     // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
-
+    
     // By default we will use Falcon 500s in standard configuration. But if you use
     // a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
@@ -150,11 +151,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         // This can either be STANDARD or FAST depending on your gear configuration
         Mk4SwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
-        config.frontLeftModuleDriveMotor,
+        config.frontLeftModuleDriveMotor_ID,
         // This is the ID of the steer motor
-        config.frontLeftModuleSteerMotor,
+        config.frontLeftModuleSteerMotor_ID,
         // This is the ID of the steer encoder
-        config.frontLeftModuleSteerEncoder,
+        config.frontLeftModuleSteerEncoder_ID,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
         config.drive.frontLeftModuleSteerOffset,
         "FL"
@@ -165,9 +166,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.frontRightModuleDriveMotor,
-        config.frontRightModuleSteerMotor,
-        config.frontRightModuleSteerEncoder,
+        config.frontRightModuleDriveMotor_ID,
+        config.frontRightModuleSteerMotor_ID,
+        config.frontRightModuleSteerEncoder_ID,
         config.drive.frontRightModuleSteerOffset,
         "FR"
       );
@@ -176,9 +177,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.backLeftModuleDriveMotor,
-        config.backLeftModuleSteerMotor,
-        config.backLeftModuleSteerEncoder,
+        config.backLeftModuleDriveMotor_ID,
+        config.backLeftModuleSteerMotor_ID,
+        config.backLeftModuleSteerEncoder_ID,
         config.drive.backLeftModuleSteerOffset,
         "BL"
       );
@@ -187,24 +188,23 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.backRightModuleDriveMotor,
-        config.backRightModuleSteerMotor,
-        config.backRightModuleSteerEncoder,
+        config.backRightModuleDriveMotor_ID,
+        config.backRightModuleSteerMotor_ID,
+        config.backRightModuleSteerEncoder_ID,
         config.drive.backRightModuleSteerOffset,
         "BR"
       );
 
     // We will also create a list of all the modules so we can easily access them later
-    modules =
-      new ArrayList<SwerveModule>() {
-        {
-          add(moduleFrontLeft);
-          add(moduleFrontRight);
-          add(moduleBackLeft);
-          add(moduleBackRight);
-        }
-      };
+    modules = new ArrayList<>(List.of(moduleFrontLeft, moduleFrontRight, moduleBackLeft, moduleBackRight));
     drivetrainModel = new SwerveDrivetrainModel(modules, gyro, this.kinematics, field, config.auto.farLeftStart);
+  }
+
+  public void orient() {
+    // do something here.
+
+
+
   }
   
   public void zeroGyroscope()
@@ -225,13 +225,22 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   @Override
-  public void periodic() {
-    drivetrainModel.setModuleStates(chassisSpeeds);
-    SwerveModuleState[] states = drivetrainModel.getSwerveModuleStates();
+  public void simulationPeriodic() {
+    this.setStates(this.drivetrainModel.getSwerveModuleStates());
+    this.drivetrainModel.update(false, this.config.maxVoltage);
+  }
 
+  @Override
+  public void periodic() {
+      drivetrainModel.setModuleStates(chassisSpeeds);
+      this.setStates(drivetrainModel.getSwerveModuleStates());
+  }
+
+  public void setStates(SwerveModuleState[] states)
+  {
     if (states != null) {
       SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
-      
+
       modules.get(0).set(states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[0].angle.getRadians());
       modules.get(1).set(states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[1].angle.getRadians());
       modules.get(2).set(states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[2].angle.getRadians());
@@ -243,18 +252,15 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     }
 
     var gyroAngle = gyro.getGyroHeading();
-    pose = odometry.update(gyroAngle, states[0], states[1], states[2], states[3]);
-    
+    pose = odometry.update(gyroAngle.times(-1), states[0], states[1], states[2], states[3]);
+
     field.setRobotPose(pose);
+    field.getObject("Robot").setPose(this.field.getRobotPose());
   }
 
   public void setOdometry(Pose2d startingPosition) {
-    odometry =
-    new SwerveDriveOdometry(
-        kinematics,
-        gyro.getGyroHeading(),
-        startingPosition
-        );
+    this.gyro.setAngle(startingPosition.getRotation());
+    odometry = new SwerveDriveOdometry(kinematics, gyro.getGyroHeading().times(-1), startingPosition);
 
     if (Robot.isSimulation()) {
       drivetrainModel.modelReset(startingPosition);
