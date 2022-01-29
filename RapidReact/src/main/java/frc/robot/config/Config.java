@@ -16,6 +16,7 @@ public class Config {
   // Climber
   // Drive
   // Intake
+  // Shooter
   // Vision
 
   //////////////////////////////////////////////////////////////////////////////
@@ -36,29 +37,35 @@ public class Config {
   // Climber Subsystem
 
   // Drive Subsystem
-  public int frontLeftModuleDriveMotor = 5;
-  public int frontLeftModuleSteerMotor = 6;
-  public int frontLeftModuleSteerEncoder = 11;
+  public int frontLeftModuleDriveMotor_ID = 5;
+  public int frontLeftModuleSteerMotor_ID = 6;
+  public int frontLeftModuleSteerEncoder_ID = 11;
 
-  public int frontRightModuleDriveMotor = 7;
-  public int frontRightModuleSteerMotor = 8;
-  public int frontRightModuleSteerEncoder = 12;
+  public int frontRightModuleDriveMotor_ID = 7;
+  public int frontRightModuleSteerMotor_ID = 8;
+  public int frontRightModuleSteerEncoder_ID = 12;
 
-  public int backLeftModuleDriveMotor = 3;
-  public int backLeftModuleSteerMotor = 4;
-  public int backLeftModuleSteerEncoder = 10;
+  public int backLeftModuleDriveMotor_ID = 3;
+  public int backLeftModuleSteerMotor_ID = 4;
+  public int backLeftModuleSteerEncoder_ID = 10;
 
-  public int backRightModuleDriveMotor = 1;
-  public int backRightModuleSteerMotor = 2;
-  public int backRightModuleSteerEncoder = 9;
+  public int backRightModuleDriveMotor_ID = 1;
+  public int backRightModuleSteerMotor_ID = 2;
+  public int backRightModuleSteerEncoder_ID = 9;
 
   // Intake Subsystem
-  public static int INTAKE_MOTOR_ID = 13;
+  public static int intakeMotor_ID = 13;
+
+  public int shooterRoller1_ID = 14;
+  public int shooterRoller2_ID = 15;
+
+  // Shooter
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
+  public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
 
   // Autonomous Config
@@ -119,6 +126,15 @@ public class Config {
     public IntakeConfig() {}
   }
 
+  // Shooter Config
+  public class ShooterConfig {
+
+    public MotorConfig roller1 = new MotorConfig();
+    public MotorConfig roller2 = new MotorConfig();
+
+    public ShooterConfig() {}
+  }
+
   public class VisionConfig {
 
     public double targetHeight = 0;
@@ -128,5 +144,14 @@ public class Config {
     public VisionConfig() {}
   }
 
-  public Config() {}
+  public Config() {
+    //////////////////////////////////////////////////////////////////////////////
+    // Motor Configuration
+
+    shooter.roller1.id = shooterRoller1_ID;
+    shooter.roller1.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+
+    shooter.roller2.id = shooterRoller2_ID;
+    shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+  }
 }
