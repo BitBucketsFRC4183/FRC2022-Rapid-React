@@ -1,5 +1,6 @@
 package frc.robot.log;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public class SharedLogger implements Logger {
   }
 
   @Override
-  public void subscribeNum(String path, Consumer<Number> consumer) {
+  public void subscribeNum(String path, Consumer<Double> consumer, Double defaultDouble) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -68,12 +69,14 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getDouble());
         },
-        0
+              EntryListenerFlags.kUpdate
       );
+
+    consumer.accept(defaultDouble);
   }
 
   @Override
-  public void subscribeString(String path, Consumer<String> consumer) {
+  public void subscribeString(String path, Consumer<String> consumer, String defaultString) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -83,12 +86,14 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getString());
         },
-        0
+        EntryListenerFlags.kUpdate
       );
+
+    consumer.accept(defaultString);
   }
 
   @Override
-  public void subscribeBool(String path, Consumer<Boolean> consumer) {
+  public void subscribeBool(String path, Consumer<Boolean> consumer, Boolean defaultBool) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -98,7 +103,10 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getBoolean());
         },
-        0
+        EntryListenerFlags.kUpdate
       );
+
+    consumer.accept(defaultBool);
+
   }
 }

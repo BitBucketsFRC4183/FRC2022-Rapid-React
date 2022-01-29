@@ -14,7 +14,7 @@ public interface Logger {
   void logNum(LogLevel level, String path, Number data);
   void logSend(LogLevel level, String path, Sendable sendable);
 
-  void subscribeNum(String path, Consumer<Number> consumer);
-  void subscribeString(String path, Consumer<String> consumer);
-  void subscribeBool(String path, Consumer<Boolean> consumer);
+  void subscribeNum(String path, Consumer<Double> consumer, Double defaultDouble);
+  void subscribeString(String path, Consumer<String> consumer, String defaultString);
+  void subscribeBool(String path, Consumer<Boolean> consumer, Boolean defaultBool);
 }
