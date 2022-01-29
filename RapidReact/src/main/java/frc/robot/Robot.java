@@ -21,7 +21,6 @@ import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +49,9 @@ public class Robot extends TimedRobot {
   public static enum BitBucketsTrajectory {
     FarLeft,
     NearRight,
-    PathPlanner
+    PathPlanner,
   }
+
   private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
 
   /**
@@ -72,7 +72,9 @@ public class Robot extends TimedRobot {
 
     // Add Subsystems Here
     this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
-    this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+    if (config.enableDriveSubsystem) {
+      this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
+    }
     this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
     this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
 
@@ -80,16 +82,18 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Field", field);
 
     autonomousSubsystem.field = field;
-    drivetrainSubsystem.field = field;
+    if (config.enableDriveSubsystem) {
+      drivetrainSubsystem.field = field;
 
-    drivetrainSubsystem.setDefaultCommand(
-      new DefaultDriveCommand(
-        drivetrainSubsystem,
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
-        () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
-      )
-    );
+      drivetrainSubsystem.setDefaultCommand(
+        new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
+        )
+      );
+    }
 
     // Configure the button bindings
     this.configureButtonBindings();
@@ -201,8 +205,9 @@ public class Robot extends TimedRobot {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
-    buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
-
+    if (config.enableDriveSubsystem) {
+      buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+    }
     //Intake buttons
     buttons.intake.whenPressed(intakeSubsystem::spinForward);
     buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
@@ -216,11 +221,12 @@ public class Robot extends TimedRobot {
     buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
     buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
 
-    buttons.tarmacShoot.whenPressed(() -> {
-      shooterSubsystem.shootTarmac();
-      drivetrainSubsystem.orient();
-    });
+    buttons.tarmacShoot.whenPressed(
+      () -> {
+        shooterSubsystem.shootTarmac();
+        drivetrainSubsystem.orient();
+      }
+    );
     buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
-
   }
 }
