@@ -20,8 +20,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public void shootTop() {
     logger().logString(LogLevel.GENERAL, "shoot_state", "TopShooting");
-    roller1.getPIDController().setReference(hubShootSpeed, ControlType.kVelocity, 0);
     roller2.getPIDController().setReference(hubShootSpeed, ControlType.kVelocity, 0);
+    roller1.getPIDController().setReference(hubShootSpeed, ControlType.kVelocity, 0);
   }
 
   public void stopShoot() {
