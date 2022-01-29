@@ -139,7 +139,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
     // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
-
+    
     // By default we will use Falcon 500s in standard configuration. But if you use
     // a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
@@ -151,11 +151,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         // This can either be STANDARD or FAST depending on your gear configuration
         Mk4SwerveModuleHelper.GearRatio.L2,
         // This is the ID of the drive motor
-        config.frontLeftModuleDriveMotor,
+        config.frontLeftModuleDriveMotor_ID,
         // This is the ID of the steer motor
-        config.frontLeftModuleSteerMotor,
+        config.frontLeftModuleSteerMotor_ID,
         // This is the ID of the steer encoder
-        config.frontLeftModuleSteerEncoder,
+        config.frontLeftModuleSteerEncoder_ID,
         // This is how much the steer encoder is offset from true zero (In our case, zero is facing straight forward)
         config.drive.frontLeftModuleSteerOffset,
         "FL"
@@ -166,9 +166,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.frontRightModuleDriveMotor,
-        config.frontRightModuleSteerMotor,
-        config.frontRightModuleSteerEncoder,
+        config.frontRightModuleDriveMotor_ID,
+        config.frontRightModuleSteerMotor_ID,
+        config.frontRightModuleSteerEncoder_ID,
         config.drive.frontRightModuleSteerOffset,
         "FR"
       );
@@ -177,9 +177,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.backLeftModuleDriveMotor,
-        config.backLeftModuleSteerMotor,
-        config.backLeftModuleSteerEncoder,
+        config.backLeftModuleDriveMotor_ID,
+        config.backLeftModuleSteerMotor_ID,
+        config.backLeftModuleSteerEncoder_ID,
         config.drive.backLeftModuleSteerOffset,
         "BL"
       );
@@ -188,9 +188,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       Mk4SwerveModuleHelper.createFalcon500(
         tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
         Mk4SwerveModuleHelper.GearRatio.L2,
-        config.backRightModuleDriveMotor,
-        config.backRightModuleSteerMotor,
-        config.backRightModuleSteerEncoder,
+        config.backRightModuleDriveMotor_ID,
+        config.backRightModuleSteerMotor_ID,
+        config.backRightModuleSteerEncoder_ID,
         config.drive.backRightModuleSteerOffset,
         "BR"
       );
