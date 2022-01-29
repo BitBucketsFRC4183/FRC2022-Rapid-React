@@ -23,7 +23,7 @@ public class Config {
   // Subsystem Enablers
   public boolean enableAutonomousSubsystem = true;
   public boolean enableClimberSubsystem = true;
-  public boolean enableDriveSubsystem = true;
+  public boolean enableDriveSubsystem = false;
   public boolean enableIntakeSubsystem = true;
 
   //////////////////////////////////////////////////////////////////////////////
