@@ -1,12 +1,12 @@
-package frc.robot.utils.modifiedswervelib;
+package frc.swervelib.rev;
 
 import java.util.Objects;
 
-public class WPI_TalonFXSteerConfiguration<EncoderConfiguration> {
+public class NeoSteerConfiguration<EncoderConfiguration> {
     private final int motorPort;
     private final EncoderConfiguration encoderConfiguration;
 
-    public WPI_TalonFXSteerConfiguration(int motorPort, EncoderConfiguration encoderConfiguration) {
+    public NeoSteerConfiguration(int motorPort, EncoderConfiguration encoderConfiguration) {
         this.motorPort = motorPort;
         this.encoderConfiguration = encoderConfiguration;
     }
@@ -23,7 +23,7 @@ public class WPI_TalonFXSteerConfiguration<EncoderConfiguration> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WPI_TalonFXSteerConfiguration<?> that = (WPI_TalonFXSteerConfiguration<?>) o;
+        NeoSteerConfiguration<?> that = (NeoSteerConfiguration<?>) o;
         return getMotorPort() == that.getMotorPort() && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 
@@ -34,7 +34,7 @@ public class WPI_TalonFXSteerConfiguration<EncoderConfiguration> {
 
     @Override
     public String toString() {
-        return "WPI_TalonFXSteerConfiguration{" +
+        return "NeoSteerConfiguration{" +
                 "motorPort=" + motorPort +
                 ", encoderConfiguration=" + encoderConfiguration +
                 '}';

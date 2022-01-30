@@ -1,18 +1,17 @@
-package frc.robot.utils.modifiedswervelib;
+package frc.swervelib.ctre;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.swervedrivespecialties.swervelib.DriveController;
-import com.swervedrivespecialties.swervelib.DriveControllerFactory;
-import com.swervedrivespecialties.swervelib.ModuleConfiguration;
-import com.swervedrivespecialties.swervelib.ctre.CtreUtils;
+import edu.wpi.first.math.system.plant.DCMotor;
+import frc.swervelib.DriveController;
+import frc.swervelib.DriveControllerFactory;
+import frc.swervelib.ModuleConfiguration;
 
-public final class WPI_TalonFXDriveControllerFactoryBuilder {
+public final class Falcon500DriveControllerFactoryBuilder {
     private static final double TICKS_PER_ROTATION = 2048.0;
 
     private static final int CAN_TIMEOUT_MS = 250;
@@ -21,7 +20,7 @@ public final class WPI_TalonFXDriveControllerFactoryBuilder {
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
 
-    public WPI_TalonFXDriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
+    public Falcon500DriveControllerFactoryBuilder withVoltageCompensation(double nominalVoltage) {
         this.nominalVoltage = nominalVoltage;
         return this;
     }
@@ -34,7 +33,7 @@ public final class WPI_TalonFXDriveControllerFactoryBuilder {
         return new FactoryImplementation();
     }
 
-    public WPI_TalonFXDriveControllerFactoryBuilder withCurrentLimit(double currentLimit) {
+    public Falcon500DriveControllerFactoryBuilder withCurrentLimit(double currentLimit) {
         this.currentLimit = currentLimit;
         return this;
     }
@@ -88,11 +87,11 @@ public final class WPI_TalonFXDriveControllerFactoryBuilder {
     }
 
     private class ControllerImplementation implements DriveController {
-        private final TalonFX motor;
+        private final WPI_TalonFX motor;
         private final double sensorVelocityCoefficient;
-        private final double nominalVoltage = hasVoltageCompensation() ? WPI_TalonFXDriveControllerFactoryBuilder.this.nominalVoltage : 12.0;
+        private final double nominalVoltage = hasVoltageCompensation() ? Falcon500DriveControllerFactoryBuilder.this.nominalVoltage : 12.0;
 
-        private ControllerImplementation(TalonFX motor, double sensorVelocityCoefficient) {
+        private ControllerImplementation(WPI_TalonFX motor, double sensorVelocityCoefficient) {
             this.motor = motor;
             this.sensorVelocityCoefficient = sensorVelocityCoefficient;
         }
@@ -103,8 +102,32 @@ public final class WPI_TalonFXDriveControllerFactoryBuilder {
         }
 
         @Override
+        public void setDriveEncoder(double position, double velocity) {
+            // Position is in revolutions.  Velocity is in RPM
+            // TalonFX wants steps for postion.  Steps per 100ms for velocity.  Falcon integrated encoder has 2048 CPR.
+            motor.getSimCollection().setIntegratedSensorRawPosition((int) (position * 2048));
+            // Divide by 600 to go from RPM to Rotations per 100ms.  Multiply by encoder ticks per revolution.
+            motor.getSimCollection().setIntegratedSensorVelocity((int) (velocity / 600 * 2048));
+        }
+
+        @Override
+        public void resetEncoder() {
+            motor.setSelectedSensorPosition(0);
+        }
+
+        @Override
+        public DCMotor getDriveMotor() {
+            return DCMotor.getFalcon500(1);
+        }
+
+        @Override
         public double getStateVelocity() {
             return motor.getSelectedSensorVelocity() * sensorVelocityCoefficient;
+        }
+
+        @Override
+        public double getOutputVoltage() {
+            return motor.getMotorOutputVoltage();
         }
     }
 }

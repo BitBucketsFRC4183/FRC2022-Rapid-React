@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Object that holds DashboardConfig values.
@@ -15,58 +16,53 @@ import java.util.*;
  *
  * @see DashboardKey
  */
-public class DashboardConfig
-{
-    private EnumSet<DashboardKey> enabledDashboardKeys;
+public class DashboardConfig {
 
-    /**
-     * By default, all DashboardKeys are enabled
-     */
-    public DashboardConfig()
-    {
-        this.enabledDashboardKeys = EnumSet.allOf(DashboardKey.class);
-    }
+  private EnumSet<DashboardKey> enabledDashboardKeys;
 
-    /**
-     * Returns true if the DashboardKey is enabled, and false otherwise. Used in the BitBucketsSubsystem#updateDashboard method to determine whether to actually push the Dashboard update.
-     * @param key DashboardKey to check.
-     * @return true if the DashboardKey is enabled, and false if not.
-     */
-    public boolean isEnabled(DashboardKey key)
-    {
-        return this.enabledDashboardKeys.contains(key);
-    }
+  /**
+   * By default, all DashboardKeys are enabled
+   */
+  public DashboardConfig() {
+    this.enabledDashboardKeys = EnumSet.allOf(DashboardKey.class);
+  }
 
-    /**
-     * Enable certain DashboardKeys. Since they are stored as a Set, there won't be duplicates.
-     * @param enabled DashboardKeys to enable.
-     * @return DashboardConfig object, for chaining.
-     */
-    public DashboardConfig addEnabled(DashboardKey... enabled)
-    {
-        this.enabledDashboardKeys.addAll(List.of(enabled));
-        return this;
-    }
+  /**
+   * Returns true if the DashboardKey is enabled, and false otherwise. Used in the BitBucketsSubsystem#updateDashboard method to determine whether to actually push the Dashboard update.
+   * @param key DashboardKey to check.
+   * @return true if the DashboardKey is enabled, and false if not.
+   */
+  public boolean isEnabled(DashboardKey key) {
+    return this.enabledDashboardKeys.contains(key);
+  }
 
-    /**
-     * Enable only the provided DashboardKeys. Note: THIS WILL DISABLE ALL OTHER DASHBOARDKEYS!
-     * @param enabled DashboardKeys to enable.
-     * @return DashboardConfig object, for chaining.
-     */
-    public DashboardConfig onlyEnabled(DashboardKey... enabled)
-    {
-        this.enabledDashboardKeys = EnumSet.copyOf(List.of(enabled));
-        return this;
-    }
+  /**
+   * Enable certain DashboardKeys. Since they are stored as a Set, there won't be duplicates.
+   * @param enabled DashboardKeys to enable.
+   * @return DashboardConfig object, for chaining.
+   */
+  public DashboardConfig addEnabled(DashboardKey... enabled) {
+    this.enabledDashboardKeys.addAll(List.of(enabled));
+    return this;
+  }
 
-    /**
-     * Disable certain DashboardKeys safely.
-     * @param disabled DashboardKeys to disable.
-     * @return DashboardConfig object, for chaining.
-     */
-    public DashboardConfig addDisabled(DashboardKey... disabled)
-    {
-        this.enabledDashboardKeys.removeIf(d -> List.of(disabled).contains(d));
-        return this;
-    }
+  /**
+   * Enable only the provided DashboardKeys. Note: THIS WILL DISABLE ALL OTHER DASHBOARDKEYS!
+   * @param enabled DashboardKeys to enable.
+   * @return DashboardConfig object, for chaining.
+   */
+  public DashboardConfig onlyEnabled(DashboardKey... enabled) {
+    this.enabledDashboardKeys = EnumSet.copyOf(List.of(enabled));
+    return this;
+  }
+
+  /**
+   * Disable certain DashboardKeys safely.
+   * @param disabled DashboardKeys to disable.
+   * @return DashboardConfig object, for chaining.
+   */
+  public DashboardConfig addDisabled(DashboardKey... disabled) {
+    this.enabledDashboardKeys.removeIf(d -> List.of(disabled).contains(d));
+    return this;
+  }
 }

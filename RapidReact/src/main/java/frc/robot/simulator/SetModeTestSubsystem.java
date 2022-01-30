@@ -5,6 +5,7 @@ import frc.robot.config.Config;
 import frc.robot.subsystem.BitBucketsSubsystem;
 
 public class SetModeTestSubsystem extends BitBucketsSubsystem {
+
     public SetModeTestSubsystem(Config config) {
         super(config);
     }
@@ -23,4 +24,5 @@ public class SetModeTestSubsystem extends BitBucketsSubsystem {
     public void disable() {
 
     }
+
 }

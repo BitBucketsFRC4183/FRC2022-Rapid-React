@@ -1,8 +1,6 @@
-import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
-
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2022.1.1"
+    id "edu.wpi.first.GradleRIO" version "2022.2.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -47,12 +45,9 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
-def desktopPlatform = System.getProperty("os.arch") == "aarch64" ? "osxx86-64" : wpi.platforms.desktop
-
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
-
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
@@ -62,15 +57,15 @@ dependencies {
     roborioRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.roborio)
     roborioRelease wpi.java.vendor.jniRelease(wpi.platforms.roborio)
 
-    nativeDebug wpi.java.deps.wpilibJniDebug(desktopPlatform)
-    nativeDebug wpi.java.vendor.jniDebug(desktopPlatform)
+    nativeDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.desktop)
+    nativeDebug wpi.java.vendor.jniDebug(wpi.platforms.desktop)
     simulationDebug wpi.sim.enableDebug()
 
-    nativeRelease wpi.java.deps.wpilibJniRelease(desktopPlatform)
-    nativeRelease wpi.java.vendor.jniRelease(desktopPlatform)
+    nativeRelease wpi.java.deps.wpilibJniRelease(wpi.platforms.desktop)
+    nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
+    simulationRelease wpi.sim.enableRelease()
 
     testImplementation 'junit:junit:4.12'
-
 }
 
 // Simulation configuration (e.g. environment variables).
@@ -84,6 +79,10 @@ jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+repositories {
+    mavenCentral()
 }
 
 // Configure jar and deploy tasks
