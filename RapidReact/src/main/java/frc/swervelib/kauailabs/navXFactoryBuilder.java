@@ -1,7 +1,6 @@
 package frc.swervelib.kauailabs;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 import edu.wpi.first.math.geometry.Rotation2d;

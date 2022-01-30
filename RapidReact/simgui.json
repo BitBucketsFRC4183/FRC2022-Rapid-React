@@ -1,40 +1,125 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "SPARK MAX [14]": {
+        "name": "Roller1 [ID:14]"
+      },
+      "SPARK MAX [15]": {
+        "name": "Roller2 [ID:15]"
+      },
+      "Talon FX[1]": {
+        "name": "BRDriveMotor [ID:1]"
+      },
+      "Talon FX[1]/Fwd Limit": {
+        "name": "BRDriveMotor/Fwd Limit [ID:1]"
+      },
+      "Talon FX[1]/Integrated Sensor": {
+        "name": "BRDriveMotor/Integrated Sensor [ID:1]"
+      },
+      "Talon FX[1]/Rev Limit": {
+        "name": "BRDriveMotor/Rev Limit [ID:1]"
+      },
+      "Talon FX[2]": {
+        "name": "BRSteerMotor [ID:2]"
+      },
+      "Talon FX[2]/Fwd Limit": {
+        "name": "BRSteerMotor/Fwd Limit [ID:2]"
+      },
+      "Talon FX[2]/Integrated Sensor": {
+        "name": "BRSteerMotor/Integrated Sensor [ID:2]"
+      },
+      "Talon FX[2]/Rev Limit": {
+        "name": "BRSteerMotor/Rev Limit [ID:2]"
+      },
+      "Talon FX[3]": {
+        "name": "BLDriveMotor [ID:3]"
+      },
+      "Talon FX[3]/Fwd Limit": {
+        "name": "BLDriveMotor/Fwd Limit [ID:3]"
+      },
+      "Talon FX[3]/Integrated Sensor": {
+        "name": "BLDriveMotor/Integrated Sensor [ID:3]"
+      },
+      "Talon FX[3]/Rev Limit": {
+        "name": "BLDriveMotor/Rev Limit [ID:3]"
+      },
+      "Talon FX[4]": {
+        "name": "BLSteerMotor [ID:4]"
+      },
+      "Talon FX[4]/Fwd Limit": {
+        "name": "BLSteerMotor/Fwd Limit [ID:4]"
+      },
+      "Talon FX[4]/Integrated Sensor": {
+        "name": "BLSteerMotor/Integrated Sensor [ID:4]"
+      },
+      "Talon FX[4]/Rev Limit": {
+        "name": "BLSteerMotor/Rev Limit [ID:4]"
+      },
       "Talon FX[5]": {
-        "header": {
-          "open": true
-        }
+        "name": "FLDriveMotor [ID:5]"
       },
       "Talon FX[5]/Fwd Limit": {
-        "header": {
-          "open": true
-        }
+        "name": "FLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
+        "name": "FLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
-        "header": {
-          "open": true
-        }
+        "name": "FLDriveMotor/Rev Limit [ID:5]"
       },
       "Talon FX[6]": {
-        "header": {
-          "open": true
-        }
+        "name": "FLSteerMotor [ID:6]"
+      },
+      "Talon FX[6]/Fwd Limit": {
+        "name": "FLSteerMotor/Fwd Limit [ID:6]"
+      },
+      "Talon FX[6]/Integrated Sensor": {
+        "name": "FLSteerMotor/Integrated Sensor [ID:6]"
+      },
+      "Talon FX[6]/Rev Limit": {
+        "name": "FLSteerMotor/Rev Limit [ID:6]"
       },
       "Talon FX[7]": {
-        "header": {
-          "open": true
-        }
+        "name": "FRDriveMotor [ID:7]"
+      },
+      "Talon FX[7]/Fwd Limit": {
+        "name": "FRDriveMotor/Fwd Limit [ID:7]"
+      },
+      "Talon FX[7]/Integrated Sensor": {
+        "name": "FRDriveMotor/Integrated Sensor [ID:7]"
+      },
+      "Talon FX[7]/Rev Limit": {
+        "name": "FRDriveMotor/Rev Limit [ID:7]"
+      },
+      "Talon FX[8]": {
+        "name": "FRSteerMotor [ID:8]"
+      },
+      "Talon FX[8]/Fwd Limit": {
+        "name": "FRSteerMotor/Fwd Limit [ID:8]"
+      },
+      "Talon FX[8]/Integrated Sensor": {
+        "name": "FRSteerMotor/Integrated Sensor [ID:8]"
+      },
+      "Talon FX[8]/Rev Limit": {
+        "name": "FRSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
-        "header": {
-          "open": true
-        }
+        "name": "Intake Motor [ID:13]"
+      },
+      "Talon SRX[13]/Analog In": {
+        "name": "Intake Motor/Analog In [ID:13]"
+      },
+      "Talon SRX[13]/Fwd Limit": {
+        "name": "Intake Motor/Fwd Limit [ID:13]"
+      },
+      "Talon SRX[13]/Pulse Width Input": {
+        "name": "Intake Motor/Width Input [ID:13]"
+      },
+      "Talon SRX[13]/Quad Encoder": {
+        "name": "Intake Motor/Quad Encoder [ID:13]"
+      },
+      "Talon SRX[13]/Rev Limit": {
+        "name": "Intake Motor/Rev Limit [ID:13]"
       }
     },
     "RoboRIO": {
@@ -50,6 +135,7 @@
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
+      "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
@@ -111,13 +197,13 @@
         "Simulated Robot": {
           "image": "images/robot.png"
         },
-        "Swerve Modules": {
-          "image": "images/swerve_module.png",
+        "Swerve s": {
+          "image": "images/swerve_.png",
           "length": 0.30480000376701355,
           "width": 0.30480000376701355
         },
-        "SwerveModules": {
-          "image": "images/swerve_module.png",
+        "Swerves": {
+          "image": "images/swerve_.png",
           "length": 0.30480000376701355,
           "width": 0.30480000376701355
         },
