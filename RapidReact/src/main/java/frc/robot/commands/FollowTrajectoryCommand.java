@@ -21,8 +21,6 @@ public class FollowTrajectoryCommand extends InstantCommand
     @Override
     public void schedule()
     {
-        this.drive.stop();
-
         this.drive.setOdometry(this.trajectory.getInitialPose());
         this.drive.field.setRobotPose(this.trajectory.getInitialPose());
         this.drive.gyro.setAngle(this.trajectory.getInitialPose().getRotation());

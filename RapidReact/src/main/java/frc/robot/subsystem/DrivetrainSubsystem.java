@@ -208,7 +208,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
   
   public Rotation2d getGyroscopeRotation() {
-    return new Rotation2d(); //gyro.getGyroHeading();
+    return this.gyro.getGyroHeading();
   }
 
   public DrivetrainSubsystem(Config config) {
@@ -259,10 +259,15 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       drivetrainModel.modelReset(startingPosition);
     }
   }
+
+  public void zeroStates()
+  {
+    this.stop();
+    this.setStates(new SwerveModuleState[]{new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation())});
+  }
   
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-    this.setStates(new SwerveModuleState[]{new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d())});
   }
   
   @Override

@@ -154,6 +154,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
+      this.drivetrainSubsystem.zeroStates();
+
       switch (trajectoryChooser.getSelected()) {
         case FarLeft:
           drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
