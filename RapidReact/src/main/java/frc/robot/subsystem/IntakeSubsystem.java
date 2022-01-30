@@ -21,7 +21,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    intake = new WPI_TalonSRX(Config.INTAKE_MOTOR_ID);
+    intake = new WPI_TalonSRX(Config.intakeMotor_ID);
     intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
   }
 
