@@ -6,18 +6,23 @@ import frc.robot.subsystem.BitBucketsSubsystem;
 
 public class SetModeTestSubsystem extends BitBucketsSubsystem {
 
-  public SetModeTestSubsystem(Config config) {
-    super(config);
-  }
+    public SetModeTestSubsystem(Config config) {
+        super(config);
+    }
 
-  @Override
-  public void init() {
-    DriverStation.inAutonomous(true);
-  }
+    @Override
+    public void init() {
+        DriverStation.inAutonomous(true);
+    }
 
-  @Override
-  public void periodic() {}
+    @Override
+    public void periodic() {
 
-  @Override
-  public void disable() {}
+    }
+
+    @Override
+    public void disable() {
+
+    }
+
 }

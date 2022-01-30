@@ -1,5 +1,6 @@
 package frc.robot.log;
 
+
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,8 +35,22 @@ public class SharedLogger implements Logger {
     if (LEVEL.shouldLog(level)) {
       executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
     }
-    //does nothing
-  }
+
+
+    @Override
+    public void logSend(LogLevel level, String path, Sendable sendable) {
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(
+                    () -> SmartDashboard.putData(
+                            String.format("%s/%s", subsystemName, path), sendable
+                    )
+            );
+        }
+    }
+
+    @Override
+    public void subscribeNum(String path, Consumer<Number> consumer) {
+        SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {
 
   @Override
   public void logBool(LogLevel level, String path, boolean data) {

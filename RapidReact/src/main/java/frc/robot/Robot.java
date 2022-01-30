@@ -111,7 +111,9 @@ public class Robot extends TimedRobot {
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
+
     // Subsystem Initialize Loop
+
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
