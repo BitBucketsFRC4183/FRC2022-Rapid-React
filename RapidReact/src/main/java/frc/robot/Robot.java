@@ -19,7 +19,6 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +45,8 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
-  private boolean driverPressed;
-  private boolean operatorPressed;
+  private boolean driverClimbEnabledPressed;
+  private boolean operatorClimbEnabledPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
@@ -115,7 +114,6 @@ public class Robot extends TimedRobot {
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
-
     // Subsystem Initialize Loop
 
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
@@ -173,7 +171,12 @@ public class Robot extends TimedRobot {
           command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
           break;
         default:
-          this.autonomousSubsystem.logger().logString(LogLevel.GENERAL, "autonpath", "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+          this.autonomousSubsystem.logger()
+            .logString(
+              LogLevel.GENERAL,
+              "autonpath",
+              "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
+            );
           return;
       }
 
@@ -255,18 +258,26 @@ public class Robot extends TimedRobot {
     }
 
     //Climber buttons
-    buttons.operatorEnableClimber.whenPressed(()-> {
-      operatorPressed = true;
-      if (operatorPressed && driverPressed){
-        climberSubsystem.enableClimber();
-      }
-    }).whenReleased(() -> operatorPressed = false);
-    buttons.driverEnableClimber.whenPressed(()-> {
-      driverPressed = true;
-      if(operatorPressed && driverPressed){
-        climberSubsystem.enableClimber();
-      }
-    }).whenReleased(() -> driverPressed = false);
+    buttons.operatorEnableClimber
+      .whenPressed(
+        () -> {
+          operatorClimbEnabledPressed = true;
+          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+            climberSubsystem.enableClimber();
+          }
+        }
+      )
+      .whenReleased(() -> operatorClimbEnabledPressed = false);
+    buttons.driverEnableClimber
+      .whenPressed(
+        () -> {
+          driverClimbEnabledPressed = true;
+          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+            climberSubsystem.enableClimber();
+          }
+        }
+      )
+      .whenReleased(() -> driverClimbEnabledPressed = false);
     buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
     buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
     buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
