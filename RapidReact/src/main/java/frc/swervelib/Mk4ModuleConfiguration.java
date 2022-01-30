@@ -1,8 +1,8 @@
 package frc.swervelib;
 
-import java.util.Objects;
-
 import edu.wpi.first.math.system.plant.DCMotor;
+
+import java.util.Objects;
 
 /**
  * Additional Mk4 module configuration parameters.

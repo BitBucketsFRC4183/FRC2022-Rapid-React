@@ -3,9 +3,6 @@ package frc.swervelib;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import frc.swervelib.ctre.*;
-import frc.swervelib.rev.NeoDriveControllerFactoryBuilder;
-import frc.swervelib.rev.NeoSteerConfiguration;
-import frc.swervelib.rev.NeoSteerControllerFactoryBuilder;
 import frc.wpiClasses.QuadSwerveSim;
 import frc.wpiClasses.SwerveModuleSim;
 

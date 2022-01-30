@@ -1,6 +1,7 @@
 package frc.robot.log;
 
 import edu.wpi.first.util.sendable.Sendable;
+
 import java.util.function.Consumer;
 
 public interface Logger {

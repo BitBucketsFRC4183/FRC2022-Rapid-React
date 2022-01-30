@@ -2,7 +2,6 @@ package frc.swervelib.ctre;
 
 import com.ctre.phoenix.sensors.BasePigeonSimCollection;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.swervelib.Gyroscope;
 

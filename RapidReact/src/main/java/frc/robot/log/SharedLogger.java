@@ -3,6 +3,7 @@ package frc.robot.log;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
