@@ -32,25 +32,11 @@ public class SharedLogger implements Logger {
 
   @Override
   public void logString(LogLevel level, String path, String data) {
-    if (LEVEL.shouldLog(level)) {
-      executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
-    }
 
-
-    @Override
-    public void logSend(LogLevel level, String path, Sendable sendable) {
-        if (LEVEL.shouldLog(level)) {
-            executor().execute(
-                    () -> SmartDashboard.putData(
-                            String.format("%s/%s", subsystemName, path), sendable
-                    )
-            );
-        }
-    }
-
-    @Override
-    public void subscribeNum(String path, Consumer<Number> consumer) {
-        SmartDashboard.getEntry(String.format("%s/%s", subsystemName, path)).addListener((entry) -> {
+      if (LEVEL.shouldLog(level)) {
+          executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
+      }
+  }
 
   @Override
   public void logBool(LogLevel level, String path, boolean data) {
