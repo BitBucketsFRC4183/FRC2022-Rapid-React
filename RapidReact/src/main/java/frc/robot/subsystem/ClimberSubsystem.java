@@ -5,12 +5,20 @@ import frc.robot.log.LogLevel;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class ClimberSubsystem extends BitBucketsSubsystem {
   
     private WPI_TalonSRX climber;
     private boolean enabledClimber;
     private boolean disabledClimber;
+    private boolean fixedHook;
+    private boolean elevatorToggle;
+    private boolean elevatorExtend;
+    private boolean elevatorRetract;
+    private boolean autoClimb;
+    private boolean toggleState;
+    DoubleSolenoid climberSolenoid;
 
     public ClimberSubsystem(Config config) {
       super(config);
@@ -38,25 +46,44 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     public void disableClimber(){
       disabledClimber = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "climberDisabled");
     }
 
     public void fixedHookToggler(){ //uses R1 button
-      
+      fixedHook = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "fixedHookEnabled");
     }
 
     public void elevatorToggle(){ //uses 4 button
-
+      elevatorToggle = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "elevatorEnabled");
     }
 
     public void elevatorExtend(){ //uses up button
-
+      elevatorExtend = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "elevatorExtend");
     }
 
     public void elevatorRetract(){ //uses down button
-
+      elevatorRetract = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "elevatorRetract");
     }
 
     public void climbAuto(){ //uses TPAD button
+      autoClimb = true;
+      logger().logString(LogLevel.GENERAL, "climb_state", "time2autoclimb");
 
+    public void toggle() {
+    if (toggleState == false) {
+        climberSolenoid.set(Value.kForward);
+        logger().logString(LogLevel.GENERAL, "climb_state", "ClimbTime");
+        toggleState = true;
+    }
+    
+    else {
+        climberSolenoid.set(Value.kReverse);
+        logger().logString(LogLevel.GENERAL, "climb_state", "NotClimbTime");
+        toggleState = false; 
+    }  
   }
 }  
