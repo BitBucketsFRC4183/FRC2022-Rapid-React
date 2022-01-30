@@ -32,6 +32,7 @@ import java.util.List;
  * build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
 
   private Buttons buttons;
@@ -44,6 +45,9 @@ public class Robot extends TimedRobot {
   private ShooterSubsystem shooterSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
+  private ClimberSubsystem climberSubsystem;
+  private boolean driverPressed;
+  private boolean operatorPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
@@ -79,6 +83,7 @@ public class Robot extends TimedRobot {
     if (config.enableShooterSubsystem) {
       this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
     }
+    this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
@@ -248,5 +253,24 @@ public class Robot extends TimedRobot {
       );
       buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
     }
+
+    //Climber buttons
+    buttons.operatorEnableClimber.whenPressed(()-> {
+      operatorPressed = true;
+      if (operatorPressed && driverPressed){
+        climberSubsystem.enableClimber();
+      }
+    }).whenReleased(() -> operatorPressed = false);
+    buttons.driverEnableClimber.whenPressed(()-> {
+      driverPressed = true;
+      if(operatorPressed && driverPressed){
+        climberSubsystem.enableClimber();
+      }
+    }).whenReleased(() -> driverPressed = false);
+    buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
+    buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
+    buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+    buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+    buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
   }
 }
