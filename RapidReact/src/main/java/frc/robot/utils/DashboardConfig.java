@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Object that holds DashboardConfig values.

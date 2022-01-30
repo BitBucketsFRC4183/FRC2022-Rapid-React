@@ -8,15 +8,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.config.PID;
 import frc.robot.subsystem.DrivetrainSubsystem;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class FollowTrajectoryCommand extends InstantCommand
 {

@@ -3,7 +3,6 @@ package frc.swervelib.rev;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.swervelib.DriveController;
 import frc.swervelib.DriveControllerFactory;
