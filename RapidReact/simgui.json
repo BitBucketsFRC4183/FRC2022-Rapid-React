@@ -2,6 +2,9 @@
   "HALProvider": {
     "Other Devices": {
       "SPARK MAX [14]": {
+        "header": {
+          "open": true
+        },
         "name": "Roller1 [ID:14]"
       },
       "SPARK MAX [15]": {
@@ -107,6 +110,9 @@
         "name": "FRSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
+        "header": {
+          "open": true
+        },
         "name": "Intake Motor [ID:13]"
       },
       "Talon SRX[13]/Analog In": {
@@ -136,6 +142,7 @@
       "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Autonomous Path Chooser": "String Chooser",
