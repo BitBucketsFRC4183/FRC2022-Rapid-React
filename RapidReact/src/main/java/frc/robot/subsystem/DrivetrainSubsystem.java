@@ -123,7 +123,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     this.initializeModules();
 
-    setOdometry(config.auto.farLeftStart);
+    setOdometry(new Pose2d());
   }
 
   private void initializeModules() {
