@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -35,10 +36,10 @@ public class SwerveDrivetrainModel {
   Pose2d curEstPose;
   SwerveModuleState[] states;
   ProfiledPIDController thetaController = new ProfiledPIDController(
-    SwerveConstants.THETACONTROLLERkP,
-    0,
-    0,
-    SwerveConstants.THETACONTROLLERCONSTRAINTS
+    0.0001,
+    0.001,
+    0.001,
+    new TrapezoidProfile.Constraints(500, 800)
   );
 
   public SwerveDrivetrainModel(ArrayList<SwerveModule> realModules, Gyroscope gyro, SwerveDriveKinematics _kinematics, Field2d field, Pose2d startPosition) {
@@ -54,7 +55,7 @@ public class SwerveDrivetrainModel {
       simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(3)));
     }
 
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    //thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // TODO: move these to config
     double mass_kg = Units.lbsToKilograms(140);
@@ -190,8 +191,7 @@ public class SwerveDrivetrainModel {
   public PPSwerveControllerCommand createCommandForTrajectory(PathPlannerTrajectory trajectory, DrivetrainSubsystem m_drive, SwerveDriveKinematics kinematics) {
     return new PPSwerveControllerCommand(
       trajectory,
-      // TODO: is this curEstPose correct? Not sure if this is set outside of the sim
-      () -> m_drive.odometry.getPoseMeters(), // Functional interface to feed supplier
+      () -> trajectory.getInitialPose(),
       kinematics,
       // Position controllers
       SwerveConstants.XPIDCONTROLLER,

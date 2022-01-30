@@ -208,7 +208,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
   
   public Rotation2d getGyroscopeRotation() {
-    return gyro.getGyroHeading();
+    return new Rotation2d(); //gyro.getGyroHeading();
   }
 
   public DrivetrainSubsystem(Config config) {
@@ -221,8 +221,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void simulationPeriodic() {
-    this.setStates(this.drivetrainModel.getSwerveModuleStates());
-    this.drivetrainModel.update(false, this.config.maxVoltage);
+    //this.setStates(this.drivetrainModel.getSwerveModuleStates());
+    //this.drivetrainModel.update(false, this.config.maxVoltage);
   }
 
   @Override
@@ -240,22 +240,20 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       modules.get(1).set(states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[1].angle.getRadians());
       modules.get(2).set(states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[2].angle.getRadians());
       modules.get(3).set(states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[3].angle.getRadians());
+
+      pose = odometry.update(gyro.getGyroHeading(), states[0], states[1], states[2], states[3]);
     }
 
     if (Robot.isSimulation()) {
       drivetrainModel.update(DriverStation.isDisabled(), this.config.maxVoltage);
     }
 
-    var gyroAngle = gyro.getGyroHeading();
-    pose = odometry.update(gyroAngle.times(-1), states[0], states[1], states[2], states[3]);
-
     field.setRobotPose(pose);
-    field.getObject("Robot").setPose(this.field.getRobotPose());
   }
 
   public void setOdometry(Pose2d startingPosition) {
     this.gyro.setAngle(startingPosition.getRotation());
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getGyroHeading().times(-1), startingPosition);
+    odometry = new SwerveDriveOdometry(kinematics, this.gyro.getGyroHeading(), startingPosition);
 
     if (Robot.isSimulation()) {
       drivetrainModel.modelReset(startingPosition);
@@ -264,6 +262,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+    this.setStates(new SwerveModuleState[]{new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d()), new SwerveModuleState(0, new Rotation2d())});
   }
   
   @Override

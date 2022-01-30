@@ -18,6 +18,7 @@ import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class Robot extends TimedRobot {
     FarLeft,
     NearRight,
     PathPlanner,
+    PathPlannerDriveBackwards
   }
   private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
 
@@ -64,6 +66,7 @@ public class Robot extends TimedRobot {
     trajectoryChooser.setDefaultOption("Far Left", BitBucketsTrajectory.FarLeft);
     trajectoryChooser.addOption("Near Right", BitBucketsTrajectory.NearRight);
     trajectoryChooser.addOption("PathPlanner", BitBucketsTrajectory.PathPlanner);
+    trajectoryChooser.addOption("PathPlanner - Drive Backwards", BitBucketsTrajectory.PathPlannerDriveBackwards);
     SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
 
     // Add Subsystems Here
@@ -164,6 +167,11 @@ public class Robot extends TimedRobot {
           FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
           drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
           c.schedule();
+          break;
+        case PathPlannerDriveBackwards:
+          FollowTrajectoryCommand command = new FollowTrajectoryCommand("Drive Backwards", this.drivetrainSubsystem);
+          this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
+          command.schedule();
           break;
       }
     }
