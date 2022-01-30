@@ -104,6 +104,9 @@
         "name": "FRSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
+        "header": {
+          "open": true
+        },
         "name": "Intake Motor [ID:13]"
       },
       "Talon SRX[13]/Analog In": {
