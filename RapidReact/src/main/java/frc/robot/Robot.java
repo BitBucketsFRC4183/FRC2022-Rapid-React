@@ -158,10 +158,10 @@ public class Robot extends TimedRobot {
 
       switch (this.autonomousPathChooser.getSelected()) {
         case PATH_PLANNER_GENERIC:
-          command = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
+          command = new FollowTrajectoryCommand(config.auto.genericPath, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
-          command = new FollowTrajectoryCommand("Drive Backwards", this.drivetrainSubsystem);
+          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
           break;
         default:
           this.autonomousSubsystem.logger().logString(LogLevel.GENERAL, "autonpath", "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
