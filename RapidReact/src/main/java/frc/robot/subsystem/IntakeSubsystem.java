@@ -11,9 +11,12 @@ import frc.robot.log.LogLevel;
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
   private WPI_TalonSRX intake;
+  //a boolean that checks whether the intake is running (true for on, false for off)
   public boolean toggleState;
+  //double solenoid is used for the intake PCM
   DoubleSolenoid intakeSolenoid;
 
+  //sends value of motor speed to Smart Dashboard
  double percentOutput = 0.75;
   
   public IntakeSubsystem(Config config) {
@@ -25,6 +28,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
     intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
 
+    //shows the speed of intake on the smart dashboard
     logger().subscribeNum("outputSpeed",(e) -> {
         percentOutput = e.doubleValue();
     }, 0.75);
@@ -40,6 +44,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     intake.set(0);
   }
 
+  //intaking, outtaking, and stop the intake
   public void spinForward() {
     intake.set(ControlMode.PercentOutput, percentOutput);
     logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
@@ -55,6 +60,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     logger().logString(LogLevel.GENERAL, "intakeState", "Stopped");
   }
 
+  //toggles turning the intake on or off
   public void toggle() {
     if (toggleState == false) {
         intakeSolenoid.set(Value.kForward);
