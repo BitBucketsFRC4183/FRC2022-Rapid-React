@@ -1,7 +1,9 @@
 package frc.robot.log;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -58,7 +60,7 @@ public class SharedLogger implements Logger {
   }
 
   @Override
-  public void subscribeNum(String path, Consumer<Number> consumer) {
+  public void subscribeNum(String path, Consumer<Double> consumer, Double defaultDouble) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -68,12 +70,14 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getDouble());
         },
-        0
+              EntryListenerFlags.kUpdate
       );
+
+    executor().execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), defaultDouble));
   }
 
   @Override
-  public void subscribeString(String path, Consumer<String> consumer) {
+  public void subscribeString(String path, Consumer<String> consumer, String defaultString) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -83,12 +87,14 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getString());
         },
-        0
+        EntryListenerFlags.kUpdate
       );
+
+    executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), defaultString));
   }
 
   @Override
-  public void subscribeBool(String path, Consumer<Boolean> consumer) {
+  public void subscribeBool(String path, Consumer<Boolean> consumer, Boolean defaultBool) {
     SmartDashboard
       .getEntry(String.format("%s/%s", subsystemName, path))
       .addListener(
@@ -98,7 +104,10 @@ public class SharedLogger implements Logger {
           );
           consumer.accept(entry.value.getBoolean());
         },
-        0
+        EntryListenerFlags.kUpdate
       );
+
+    executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), defaultBool));
+
   }
 }

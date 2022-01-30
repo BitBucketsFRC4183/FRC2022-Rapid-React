@@ -2,6 +2,7 @@ package frc.wpiClasses;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+
 import java.util.Objects;
 
 public class ForceAtPose2d {

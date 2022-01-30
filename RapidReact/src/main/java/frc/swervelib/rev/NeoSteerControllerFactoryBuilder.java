@@ -1,11 +1,13 @@
 package frc.swervelib.rev;
 
-import com.revrobotics.*;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
-
-import frc.swervelib.*;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import frc.swervelib.*;
 
 import static frc.swervelib.rev.RevUtils.checkNeoError;
 
