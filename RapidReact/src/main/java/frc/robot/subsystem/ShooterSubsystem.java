@@ -81,5 +81,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void periodic() {}
 
   @Override
-  public void disable() {}
+  public void disable() {
+    roller1.set(0);
+    roller2.set(0);
+  }
 }
