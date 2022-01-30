@@ -190,7 +190,6 @@
           "image": "images/robot.png"
         },
         "Swerve Modules": {
-          "image": "/Users/saptarshimallick/Documents/Coding/FRC2022-Rapid-React/RapidReact/images/swerve_module.png",
           "length": 0.30480000376701355,
           "weight": 2.0,
           "width": 0.30480000376701355
