@@ -27,9 +27,9 @@ public class SwerveDrivetrainModel {
   ArrayList<SwerveModuleSim> simModules = new ArrayList<>(QuadSwerveSim.NUM_MODULES);
 
   Field2d field;
-  Gyroscope gyro;
+  public Gyroscope gyro;
 
-  SwerveDrivePoseEstimator poseEstimator;
+  public SwerveDrivePoseEstimator poseEstimator;
 
   SwerveDriveKinematics kinematics;
 
