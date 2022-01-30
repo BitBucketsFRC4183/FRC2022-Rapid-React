@@ -65,6 +65,9 @@
         "name": "FLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
+        "header": {
+          "open": true
+        },
         "name": "FLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
@@ -127,11 +130,6 @@
       "Talon SRX[13]/Rev Limit": {
         "name": "Intake Motor/Rev Limit [ID:13]"
       }
-    },
-    "RoboRIO": {
-      "window": {
-        "visible": true
-      }
     }
   },
   "NTProvider": {
@@ -147,6 +145,7 @@
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Autonomous Path Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/Trajectory Chooser": "String Chooser"
@@ -177,6 +176,11 @@
           "visible": true
         }
       },
+      "/SmartDashboard/Autonomous Path Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "Robot": {
           "image": "images/robot.png",
@@ -184,6 +188,12 @@
         },
         "Simulated Robot": {
           "image": "images/robot.png"
+        },
+        "Swerve Modules": {
+          "image": "/Users/saptarshimallick/Documents/Coding/FRC2022-Rapid-React/RapidReact/images/swerve_module.png",
+          "length": 0.30480000376701355,
+          "weight": 2.0,
+          "width": 0.30480000376701355
         },
         "Swerve s": {
           "image": "images/swerve_.png",
@@ -209,11 +219,6 @@
         },
         "units": "feet",
         "width": 16.459199905395508,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Trajectory Chooser": {
         "window": {
           "visible": true
         }

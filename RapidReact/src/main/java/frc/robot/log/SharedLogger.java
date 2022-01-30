@@ -15,100 +15,100 @@ import java.util.function.Consumer;
  */
 public class SharedLogger implements Logger {
 
-  //config
-  private static final LogLevel LEVEL = LogLevel.GENERAL;
+    //config
+    private static final LogLevel LEVEL = LogLevel.GENERAL;
 
-  private static Executor cachedExecutor; //scalar
-  private final String subsystemName;
+    private static Executor cachedExecutor; //scalar
+    private final String subsystemName;
 
-  public SharedLogger(String subsystemName) {
-    this.subsystemName = subsystemName;
-  }
-
-  Executor executor() {
-    //cringe and bad
-    return Objects.requireNonNullElseGet(cachedExecutor, () -> cachedExecutor = Executors.newSingleThreadExecutor());
-  }
-
-  @Override
-  public void logString(LogLevel level, String path, String data) {
-
-      if (LEVEL.shouldLog(level)) {
-          executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
-      }
-  }
-
-  @Override
-  public void logBool(LogLevel level, String path, boolean data) {
-    if (LEVEL.shouldLog(level)) {
-      executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), data));
+    public SharedLogger(String subsystemName) {
+        this.subsystemName = subsystemName;
     }
-  }
 
-  @Override
-  public void logNum(LogLevel level, String path, Number data) {
-    if (LEVEL.shouldLog(level)) {
-      executor()
-        .execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), data.doubleValue()));
+    Executor executor() {
+        //cringe and bad
+        return Objects.requireNonNullElseGet(cachedExecutor, () -> cachedExecutor = Executors.newSingleThreadExecutor());
     }
-  }
 
-  @Override
-  public void logSend(LogLevel level, String path, Sendable sendable) {
-    if (LEVEL.shouldLog(level)) {
-      executor().execute(() -> SmartDashboard.putData(String.format("%s/%s", subsystemName, path), sendable));
+    @Override
+    public void logString(LogLevel level, String path, String data) {
+
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
+        }
     }
-  }
 
-  @Override
-  public void subscribeNum(String path, Consumer<Double> consumer, Double defaultDouble) {
-    SmartDashboard
-      .getEntry(String.format("%s/%s", subsystemName, path))
-      .addListener(
-        entry -> {
-          if (!entry.value.isDouble()) throw new IllegalStateException(
-            "Expected a double on listener but got an alien"
-          );
-          consumer.accept(entry.value.getDouble());
-        },
-              EntryListenerFlags.kUpdate
-      );
+    @Override
+    public void logBool(LogLevel level, String path, boolean data) {
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), data));
+        }
+    }
 
-    executor().execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), defaultDouble));
-  }
+    @Override
+    public void logNum(LogLevel level, String path, Number data) {
+        if (LEVEL.shouldLog(level)) {
+            executor()
+                    .execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), data.doubleValue()));
+        }
+    }
 
-  @Override
-  public void subscribeString(String path, Consumer<String> consumer, String defaultString) {
-    SmartDashboard
-      .getEntry(String.format("%s/%s", subsystemName, path))
-      .addListener(
-        entry -> {
-          if (!entry.value.isString()) throw new IllegalStateException(
-            "Expected a double on listener but got an alien"
-          );
-          consumer.accept(entry.value.getString());
-        },
-        EntryListenerFlags.kUpdate
-      );
+    @Override
+    public void logSend(LogLevel level, String path, Sendable sendable) {
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(() -> SmartDashboard.putData(String.format("%s/%s", subsystemName, path), sendable));
+        }
+    }
 
-    executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), defaultString));
-  }
+    @Override
+    public void subscribeNum(String path, Consumer<Double> consumer, Double defaultDouble) {
+        SmartDashboard
+                .getEntry(String.format("%s/%s", subsystemName, path))
+                .addListener(
+                        entry -> {
+                            if (!entry.value.isDouble()) throw new IllegalStateException(
+                                    "Expected a double on listener but got an alien"
+                            );
+                            consumer.accept(entry.value.getDouble());
+                        },
+                        EntryListenerFlags.kUpdate
+                );
 
-  @Override
-  public void subscribeBool(String path, Consumer<Boolean> consumer, Boolean defaultBool) {
-    SmartDashboard
-      .getEntry(String.format("%s/%s", subsystemName, path))
-      .addListener(
-        entry -> {
-          if (!entry.value.isBoolean()) throw new IllegalStateException(
-            "Expected a double on listener but got an alien"
-          );
-          consumer.accept(entry.value.getBoolean());
-        },
-        EntryListenerFlags.kUpdate
-      );
+        executor().execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), defaultDouble));
+    }
 
-    executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), defaultBool));
+    @Override
+    public void subscribeString(String path, Consumer<String> consumer, String defaultString) {
+        SmartDashboard
+                .getEntry(String.format("%s/%s", subsystemName, path))
+                .addListener(
+                        entry -> {
+                            if (!entry.value.isString()) throw new IllegalStateException(
+                                    "Expected a double on listener but got an alien"
+                            );
+                            consumer.accept(entry.value.getString());
+                        },
+                        EntryListenerFlags.kUpdate
+                );
 
-  }
+        executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), defaultString));
+    }
+
+    @Override
+    public void subscribeBool(String path, Consumer<Boolean> consumer, Boolean defaultBool) {
+        SmartDashboard
+                .getEntry(String.format("%s/%s", subsystemName, path))
+                .addListener(
+                        entry -> {
+                            if (!entry.value.isBoolean()) throw new IllegalStateException(
+                                    "Expected a double on listener but got an alien"
+                            );
+                            consumer.accept(entry.value.getBoolean());
+                        },
+                        EntryListenerFlags.kUpdate
+                );
+
+        executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), defaultBool));
+
+    }
 }

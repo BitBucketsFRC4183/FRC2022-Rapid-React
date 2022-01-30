@@ -18,10 +18,12 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import frc.robot.config.Config;
+import frc.robot.log.LogLevel;
 import frc.swervelib.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
@@ -121,7 +123,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     this.initializeModules();
 
-    setOdometry(config.auto.farLeftStart);
+    setOdometry(new Pose2d());
   }
 
   private void initializeModules() {
@@ -192,7 +194,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     // We will also create a list of all the modules so we can easily access them later
     modules = new ArrayList<>(List.of(moduleFrontLeft, moduleFrontRight, moduleBackLeft, moduleBackRight));
-    drivetrainModel = new SwerveDrivetrainModel(modules, gyro, this.kinematics, field, config.auto.farLeftStart);
+    drivetrainModel = new SwerveDrivetrainModel(modules, gyro, this.kinematics, field, field.getRobotPose());
   }
 
   public void orient() {
@@ -205,10 +207,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void zeroGyroscope()
   {
     gyro.zeroGyroscope();
+    this.drivetrainModel.gyro.zeroGyroscope();
   }
   
   public Rotation2d getGyroscopeRotation() {
-    return gyro.getGyroHeading();
+    return this.gyro.getGyroHeading();
   }
 
   public DrivetrainSubsystem(Config config) {
@@ -221,14 +224,16 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void simulationPeriodic() {
-    this.setStates(this.drivetrainModel.getSwerveModuleStates());
-    this.drivetrainModel.update(false, this.config.maxVoltage);
+    //this.setStates(this.drivetrainModel.getSwerveModuleStates());
+    //this.drivetrainModel.update(false, this.config.maxVoltage);
   }
 
   @Override
   public void periodic() {
       drivetrainModel.setModuleStates(chassisSpeeds);
       this.setStates(drivetrainModel.getSwerveModuleStates());
+
+      this.dumpInfo();
   }
 
   public void setStates(SwerveModuleState[] states)
@@ -240,26 +245,46 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       modules.get(1).set(states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[1].angle.getRadians());
       modules.get(2).set(states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[2].angle.getRadians());
       modules.get(3).set(states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[3].angle.getRadians());
+
+      pose = odometry.update(Robot.isSimulation() ? gyro.getGyroHeading() : this.drivetrainModel.gyro.getGyroHeading(), states[0], states[1], states[2], states[3]);
     }
 
     if (Robot.isSimulation()) {
       drivetrainModel.update(DriverStation.isDisabled(), this.config.maxVoltage);
     }
 
-    var gyroAngle = gyro.getGyroHeading();
-    pose = odometry.update(gyroAngle.times(-1), states[0], states[1], states[2], states[3]);
-
     field.setRobotPose(pose);
-    field.getObject("Robot").setPose(this.field.getRobotPose());
   }
 
   public void setOdometry(Pose2d startingPosition) {
     this.gyro.setAngle(startingPosition.getRotation());
-    odometry = new SwerveDriveOdometry(kinematics, gyro.getGyroHeading().times(-1), startingPosition);
+    odometry = new SwerveDriveOdometry(kinematics, this.gyro.getGyroHeading(), startingPosition);
 
     if (Robot.isSimulation()) {
       drivetrainModel.modelReset(startingPosition);
     }
+
+    System.out.println("Starting Position: " + startingPosition);
+    //this.dumpInfo();
+  }
+
+  private void dumpInfo()
+  {
+    StringJoiner s = new StringJoiner("\n")
+            .add("-----------------")
+            .add("Robot Position: " + this.pose)
+            .add("Odometry Position: " + this.odometry.getPoseMeters())
+            .add("Drivetrain Gyro Heading: " + this.gyro.getGyroHeading())
+            .add("Drivetrain Model Gyro Heading: " + this.drivetrainModel.gyro.getGyroHeading())
+            .add("-----------------");
+
+    this.logger().logString(LogLevel.DEBUG, "drivetrain/odometry", s.toString());
+  }
+
+  public void zeroStates()
+  {
+    this.stop();
+    this.setStates(new SwerveModuleState[]{new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation())});
   }
   
   public void stop() {
