@@ -72,7 +72,7 @@ public class SharedLogger implements Logger {
               EntryListenerFlags.kUpdate
       );
 
-    consumer.accept(defaultDouble);
+    executor().execute(() -> SmartDashboard.putNumber(String.format("%s/%s", subsystemName, path), defaultDouble));
   }
 
   @Override
@@ -89,7 +89,7 @@ public class SharedLogger implements Logger {
         EntryListenerFlags.kUpdate
       );
 
-    consumer.accept(defaultString);
+    executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), defaultString));
   }
 
   @Override
@@ -106,7 +106,7 @@ public class SharedLogger implements Logger {
         EntryListenerFlags.kUpdate
       );
 
-    consumer.accept(defaultBool);
+    executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), defaultBool));
 
   }
 }
