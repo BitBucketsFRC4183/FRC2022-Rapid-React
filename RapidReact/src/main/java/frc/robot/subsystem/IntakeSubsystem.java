@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
@@ -12,6 +13,8 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   private WPI_TalonSRX intake;
   public boolean toggleState;
   DoubleSolenoid intakeSolenoid;
+
+ double percentOutput = 0.75;
   
   public IntakeSubsystem(Config config) {
     super(config);
@@ -20,6 +23,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   @Override
   public void init() {
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
+    intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+
+    logger().subscribeNum("outputSpeed",(e) -> {
+        percentOutput = e.doubleValue();
+    }, 0.75);
+    
   }
 
   @Override
@@ -30,13 +39,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void disable() {}
 
   public void spinForward() {
-    intake.set(ControlMode.PercentOutput, 0.75);
+    intake.set(ControlMode.PercentOutput, percentOutput);
     logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
   }
 
-
   public void spinBackward() {
-    intake.set(ControlMode.PercentOutput, -0.75);
+    intake.set(ControlMode.PercentOutput, percentOutput);
     logger().logString(LogLevel.GENERAL, "intakeState", "Outtaking");
   }
 

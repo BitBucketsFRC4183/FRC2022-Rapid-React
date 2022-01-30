@@ -17,7 +17,9 @@ import frc.robot.log.LogTestSubsystem;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
+import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,13 +45,7 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
 
-  public static enum BitBucketsTrajectory {
-    FarLeft,
-    NearRight,
-    PathPlanner,
-  }
-
-  private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -62,10 +58,13 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    trajectoryChooser.setDefaultOption("Far Left", BitBucketsTrajectory.FarLeft);
-    trajectoryChooser.addOption("Near Right", BitBucketsTrajectory.NearRight);
-    trajectoryChooser.addOption("PathPlanner", BitBucketsTrajectory.PathPlanner);
-    SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
+    this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
+    this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
+    this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+
+    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
+
+    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
 
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
@@ -111,7 +110,9 @@ public class Robot extends TimedRobot {
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
+
     // Subsystem Initialize Loop
+
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
@@ -152,21 +153,27 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
-      switch (trajectoryChooser.getSelected()) {
-        case FarLeft:
-          drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
-          autonomousSubsystem.setTrajectory(config.auto.farLeftStartTrajectory);
+      this.drivetrainSubsystem.zeroStates();
+
+      FollowTrajectoryCommand command;
+
+      switch (this.autonomousPathChooser.getSelected()) {
+        case NOTHING:
+          command = new FollowTrajectoryCommand(config.auto.nothingPath, this.drivetrainSubsystem);
           break;
-        case NearRight:
-          drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
-          autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
+        case PATH_PLANNER_GENERIC:
+          command = new FollowTrajectoryCommand(config.auto.genericPath, this.drivetrainSubsystem);
           break;
-        case PathPlanner:
-          FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
-          drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
-          c.schedule();
+        case PATH_PLANNER_DRIVE_BACKWARDS:
+          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
           break;
+        default:
+          this.autonomousSubsystem.logger().logString(LogLevel.GENERAL, "autonpath", "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+          return;
       }
+
+      this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
+      command.schedule();
     }
   }
 
@@ -222,6 +229,7 @@ public class Robot extends TimedRobot {
       buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
       buttons.intake.whenReleased(intakeSubsystem::stopSpin);
       buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
+      buttons.toggleIntake.whenPressed(intakeSubsystem::toggle);
     }
 
     //Shooter BUttons

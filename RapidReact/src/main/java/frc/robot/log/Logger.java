@@ -5,6 +5,8 @@ import edu.wpi.first.util.sendable.Sendable;
 import java.util.function.Consumer;
 
 public interface Logger {
+
+
   /**
    * Log a string
    * @param path the path, such as "motorSpeed"

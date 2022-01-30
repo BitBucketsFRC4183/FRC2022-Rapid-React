@@ -3,21 +3,19 @@ package frc.robot.commands;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.config.Config;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
 public class FollowTrajectoryCommand extends InstantCommand
 {
-    private PathPlannerTrajectory trajectory;
+    private final PathPlannerTrajectory trajectory;
     private DrivetrainSubsystem drive;
 
     public FollowTrajectoryCommand(String trajectoryPath, DrivetrainSubsystem drive)
     {
-        this.trajectory = PathPlanner.loadPath(trajectoryPath, 5, 8);
+        this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 5, 8);
         this.drive = drive;
     }
 
@@ -30,20 +28,6 @@ public class FollowTrajectoryCommand extends InstantCommand
         this.drive.drivetrainModel.setKnownPose(this.trajectory.getInitialPose());
 
         this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
-
-        PIDController xy = new PIDController(0.0001, -0.0001, -0.0001);
-        ProfiledPIDController t = new ProfiledPIDController(0.0001, 0.0001, 0.0001, new TrapezoidProfile.Constraints(drive.maxVelocity_metersPerSecond, drive.maxAngularVelocity_radiansPerSecond));
-
-//        PPSwerveControllerCommand followPath = new PPSwerveControllerCommand(
-//                this.trajectory,
-//                () -> this.drive.field.getRobotPose(),
-//                drive.kinematics,
-//                xy,
-//                xy,
-//                t,
-//                drive::setStates,
-//                drive
-//        );
 
         PPSwerveControllerCommand followPath = this.drive.drivetrainModel.createCommandForTrajectory(this.trajectory, this.drive, this.drive.kinematics);
 
