@@ -14,9 +14,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private float hubShootSpeedTop = 5400;
   private float hubShootSpeedBottom = 5200;
 
+  //for shuffleboard config (this is ib)
+  double topShooterSpeed;
+  double bottonShooterSpeed;
+
   public ShooterSubsystem(Config config) {
     super(config);
   }
+
 
   public void shootTop() {
     logger().logString(LogLevel.GENERAL, "shoot_state", "TopShooting");
@@ -59,6 +64,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
                     5200.0
 
             );
+    
+    logger().subscribeNum("topShooterSpeed",(e) -> {
+        topShooterSpeed = e.doubleValue();
+      }, 5400.0);
+
+    logger().subscribeNum("bottonShooterSpeed",(e) -> {
+        bottonShooterSpeed = e.doubleValue();
+    }, 5200.0);
 
     roller1 = MotorUtils.makeSpark(config.shooter.roller1);
     roller2 = MotorUtils.makeSpark(config.shooter.roller2);

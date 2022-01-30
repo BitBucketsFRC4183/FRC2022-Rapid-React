@@ -2,6 +2,9 @@
   "HALProvider": {
     "Other Devices": {
       "SPARK MAX [14]": {
+        "header": {
+          "open": true
+        },
         "name": "Roller1 [ID:14]"
       },
       "SPARK MAX [15]": {
@@ -136,8 +139,12 @@
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/AutonomousSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
+      "/LiveWindow/ShooterSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Field": "Field2d",
