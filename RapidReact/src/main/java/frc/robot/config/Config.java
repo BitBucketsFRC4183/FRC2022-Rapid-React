@@ -64,6 +64,7 @@ public class Config {
   // Autonomous Config
   public class AutonomousConfig {
 
+    public String nothingPath = "Nothing";
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 

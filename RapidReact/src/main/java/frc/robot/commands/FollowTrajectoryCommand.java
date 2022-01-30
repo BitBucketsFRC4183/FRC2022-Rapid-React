@@ -5,16 +5,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.config.Config;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
 public class FollowTrajectoryCommand extends InstantCommand
 {
-    private PathPlannerTrajectory trajectory;
+    private final PathPlannerTrajectory trajectory;
     private DrivetrainSubsystem drive;
 
     public FollowTrajectoryCommand(String trajectoryPath, DrivetrainSubsystem drive)
     {
-        this.trajectory = PathPlanner.loadPath(trajectoryPath, 5, 8);
+        this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 5, 8);
         this.drive = drive;
     }
 
