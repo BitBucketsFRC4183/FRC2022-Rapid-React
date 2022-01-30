@@ -1,16 +1,6 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [14]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [15]": {
-        "header": {
-          "open": true
-        }
-      },
       "Talon FX[5]": {
         "header": {
           "open": true
@@ -60,7 +50,6 @@
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
-      "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
@@ -165,9 +154,6 @@
     },
     "SmartDashboard": {
       "DrivetrainSubsystem": {
-        "open": true
-      },
-      "ShooterSubsystem": {
         "open": true
       },
       "Trajectory Chooser": {
