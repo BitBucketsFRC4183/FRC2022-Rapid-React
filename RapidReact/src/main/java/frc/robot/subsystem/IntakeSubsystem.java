@@ -36,7 +36,9 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   }
 
   @Override
-  public void disable() {}
+  public void disable() {
+    intake.set(0);
+  }
 
   public void spinForward() {
     intake.set(ControlMode.PercentOutput, percentOutput);
