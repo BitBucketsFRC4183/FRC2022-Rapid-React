@@ -1,5 +1,6 @@
 package frc.robot.log;
 
+
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,23 +25,24 @@ public class SharedLogger implements Logger {
         this.subsystemName = subsystemName;
     }
 
-  Executor executor() {
-    //cringe and bad
-    return Objects.requireNonNullElseGet(cachedExecutor, () -> cachedExecutor = Executors.newSingleThreadExecutor());
-  }
+    Executor executor() {
+        //cringe and bad
+        return Objects.requireNonNullElseGet(cachedExecutor, () -> cachedExecutor = Executors.newSingleThreadExecutor());
+    }
 
-  @Override
-  public void logString(LogLevel level, String path, String data) {
+    @Override
+    public void logString(LogLevel level, String path, String data) {
 
-      if (LEVEL.shouldLog(level)) {
-          executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
-      }
-  }
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
+        }
+    }
 
-  @Override
-  public void logBool(LogLevel level, String path, boolean data) {
-    if (LEVEL.shouldLog(level)) {
-      executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), data));
+    @Override
+    public void logBool(LogLevel level, String path, boolean data) {
+        if (LEVEL.shouldLog(level)) {
+            executor().execute(() -> SmartDashboard.putBoolean(String.format("%s/%s", subsystemName, path), data));
+        }
     }
 
     @Override
