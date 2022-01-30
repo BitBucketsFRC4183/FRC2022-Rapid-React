@@ -55,7 +55,7 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-  public static int CLIMBER_MOTOR_ID = 14;
+  public static int climberMotor_ID = 16;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
