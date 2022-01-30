@@ -17,6 +17,7 @@ import frc.robot.log.LogTestSubsystem;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
+import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 
 import java.util.ArrayList;
@@ -44,13 +45,7 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
 
-  public static enum BitBucketsTrajectory {
-    FarLeft,
-    NearRight,
-    PathPlanner,
-    PathPlannerDriveBackwards
-  }
-  private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -63,11 +58,10 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    trajectoryChooser.setDefaultOption("Far Left", BitBucketsTrajectory.FarLeft);
-    trajectoryChooser.addOption("Near Right", BitBucketsTrajectory.NearRight);
-    trajectoryChooser.addOption("PathPlanner", BitBucketsTrajectory.PathPlanner);
-    trajectoryChooser.addOption("PathPlanner - Drive Backwards", BitBucketsTrajectory.PathPlannerDriveBackwards);
-    SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
+    this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
+    this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+
+    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
 
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
@@ -158,26 +152,22 @@ public class Robot extends TimedRobot {
       drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
       this.drivetrainSubsystem.zeroStates();
 
-      switch (trajectoryChooser.getSelected()) {
-        case FarLeft:
-          drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
-          autonomousSubsystem.setTrajectory(config.auto.farLeftStartTrajectory);
+      FollowTrajectoryCommand command;
+
+      switch (this.autonomousPathChooser.getSelected()) {
+        case PATH_PLANNER_GENERIC:
+          command = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
           break;
-        case NearRight:
-          drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
-          autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
+        case PATH_PLANNER_DRIVE_BACKWARDS:
+          command = new FollowTrajectoryCommand("Drive Backwards", this.drivetrainSubsystem);
           break;
-        case PathPlanner:
-          FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
-          drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
-          c.schedule();
-          break;
-        case PathPlannerDriveBackwards:
-          FollowTrajectoryCommand command = new FollowTrajectoryCommand("Drive Backwards", this.drivetrainSubsystem);
-          this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
-          command.schedule();
-          break;
+        default:
+          this.autonomousSubsystem.logger().logString(LogLevel.GENERAL, "autonpath", "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+          return;
       }
+
+      this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
+      command.schedule();
     }
   }
 
