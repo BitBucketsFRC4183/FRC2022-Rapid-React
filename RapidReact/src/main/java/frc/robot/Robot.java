@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
     this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
 
+    this.autonomousPathChooser.setDefaultOption("Default (REPLACE WITH THE NONE PATH)", AutonomousPath.PATH_PLANNER_GENERIC);
+
     SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
 
     // Add Subsystems Here
