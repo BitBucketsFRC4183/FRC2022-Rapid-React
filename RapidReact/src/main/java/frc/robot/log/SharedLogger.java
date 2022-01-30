@@ -32,6 +32,7 @@ public class SharedLogger implements Logger {
 
   @Override
   public void logString(LogLevel level, String path, String data) {
+
       if (LEVEL.shouldLog(level)) {
           executor().execute(() -> SmartDashboard.putString(String.format("%s/%s", subsystemName, path), data));
       }

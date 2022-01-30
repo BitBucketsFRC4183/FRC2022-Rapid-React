@@ -224,6 +224,7 @@ public class Robot extends TimedRobot {
       buttons.outtake.whenPressed(intakeSubsystem::spinBackward);
       buttons.intake.whenReleased(intakeSubsystem::stopSpin);
       buttons.outtake.whenReleased(intakeSubsystem::stopSpin);
+      buttons.toggleIntake.whenPressed(intakeSubsystem::toggle);
     }
 
     //Shooter BUttons
