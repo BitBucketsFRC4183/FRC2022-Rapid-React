@@ -82,7 +82,9 @@ public class Robot extends TimedRobot {
     if (config.enableShooterSubsystem) {
       this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
     }
-    this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
+    if (config.enableClimberSubsystem) {
+      this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
+    }
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
@@ -258,30 +260,37 @@ public class Robot extends TimedRobot {
     }
 
     //Climber buttons
-    buttons.operatorEnableClimber
-      .whenPressed(
-        () -> {
-          operatorClimbEnabledPressed = true;
-          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-            climberSubsystem.enableClimber();
+    if (config.enableClimberSubsystem) {
+      buttons.operatorEnableClimber
+        .whenPressed(
+          () -> {
+            operatorClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
           }
-        }
-      )
-      .whenReleased(() -> operatorClimbEnabledPressed = false);
-    buttons.driverEnableClimber
-      .whenPressed(
-        () -> {
-          driverClimbEnabledPressed = true;
-          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-            climberSubsystem.enableClimber();
+        )
+        .whenReleased(() -> operatorClimbEnabledPressed = false);
+      buttons.driverEnableClimber
+        .whenPressed(
+          () -> {
+            driverClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
           }
-        }
-      )
-      .whenReleased(() -> driverClimbEnabledPressed = false);
-    buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
-    buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
-    buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
-    buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
-    buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
+        )
+        .whenReleased(() -> driverClimbEnabledPressed = false);
+      buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
+      buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
+
+      buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+      buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
+
+      buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+      buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+
+      buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
+    }
   }
 }
