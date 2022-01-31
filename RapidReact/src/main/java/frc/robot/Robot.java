@@ -19,7 +19,6 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import java.util.List;
  * build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
 
   private Buttons buttons;
@@ -44,6 +44,9 @@ public class Robot extends TimedRobot {
   private ShooterSubsystem shooterSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
+  private ClimberSubsystem climberSubsystem;
+  private boolean driverClimbEnabledPressed;
+  private boolean operatorClimbEnabledPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
@@ -79,6 +82,7 @@ public class Robot extends TimedRobot {
     if (config.enableShooterSubsystem) {
       this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
     }
+    this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
@@ -109,7 +113,6 @@ public class Robot extends TimedRobot {
     }
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
-
 
     // Subsystem Initialize Loop
 
@@ -168,7 +171,12 @@ public class Robot extends TimedRobot {
           command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
           break;
         default:
-          this.autonomousSubsystem.logger().logString(LogLevel.GENERAL, "autonpath", "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+          this.autonomousSubsystem.logger()
+            .logString(
+              LogLevel.GENERAL,
+              "autonpath",
+              "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
+            );
           return;
       }
 
@@ -248,5 +256,32 @@ public class Robot extends TimedRobot {
       );
       buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
     }
+
+    //Climber buttons
+    buttons.operatorEnableClimber
+      .whenPressed(
+        () -> {
+          operatorClimbEnabledPressed = true;
+          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+            climberSubsystem.enableClimber();
+          }
+        }
+      )
+      .whenReleased(() -> operatorClimbEnabledPressed = false);
+    buttons.driverEnableClimber
+      .whenPressed(
+        () -> {
+          driverClimbEnabledPressed = true;
+          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+            climberSubsystem.enableClimber();
+          }
+        }
+      )
+      .whenReleased(() -> driverClimbEnabledPressed = false);
+    buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
+    buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
+    buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+    buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+    buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
   }
 }

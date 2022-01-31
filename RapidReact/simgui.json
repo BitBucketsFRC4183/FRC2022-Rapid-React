@@ -136,6 +136,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/AutonomousSubsystem": "Subsystem",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
@@ -231,6 +232,9 @@
       }
     },
     "SmartDashboard": {
+      "ClimberSubsystem": {
+        "open": true
+      },
       "DrivetrainSubsystem": {
         "open": true
       },

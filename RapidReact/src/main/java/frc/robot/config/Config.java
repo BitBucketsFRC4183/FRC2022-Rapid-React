@@ -54,6 +54,9 @@ public class Config {
 
   // Shooter
 
+  //Climber Subsystem
+  public static int climberMotor_ID = 16;
+
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
