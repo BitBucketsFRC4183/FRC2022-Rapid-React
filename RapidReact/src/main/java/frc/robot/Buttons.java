@@ -29,7 +29,6 @@ public class Buttons {
   JoystickButton toggleFixedHook = new JoystickButton(operatorControl, PS4Constants.R1.getId());
   JoystickButton toggleElevator = new JoystickButton(operatorControl, PS4Constants.L1.getId());
   JoystickButton climbAuto = new JoystickButton(operatorControl, PS4Constants.TRACKPAD.getId());
-
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up
 }
