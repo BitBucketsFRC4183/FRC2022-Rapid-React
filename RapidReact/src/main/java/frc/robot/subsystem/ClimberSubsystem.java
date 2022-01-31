@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
@@ -11,7 +12,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private WPI_TalonSRX climber;
   private boolean enabledClimber;
-  private boolean disabledClimber;
   private boolean fixedHookToggleState;
   private boolean elevatorToggle;
   private boolean autoClimb;
@@ -25,6 +25,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   @Override
   public void init() {
     climber = new WPI_TalonSRX(Config.climberMotor_ID);
+    elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
+    fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
   }
 
   @Override
@@ -39,7 +41,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void disableClimber() {
-    disabledClimber = true;
+    enabledClimber = false;
     logger().logString(LogLevel.GENERAL, "climb_state", "climberDisabled");
   }
 
