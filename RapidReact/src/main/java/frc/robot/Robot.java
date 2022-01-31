@@ -258,30 +258,32 @@ public class Robot extends TimedRobot {
     }
 
     //Climber buttons
-    buttons.operatorEnableClimber
-      .whenPressed(
-        () -> {
-          operatorClimbEnabledPressed = true;
-          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-            climberSubsystem.enableClimber();
+    if (config.enableClimberSubsystem) {
+      buttons.operatorEnableClimber
+        .whenPressed(
+          () -> {
+            operatorClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
           }
-        }
-      )
-      .whenReleased(() -> operatorClimbEnabledPressed = false);
-    buttons.driverEnableClimber
-      .whenPressed(
-        () -> {
-          driverClimbEnabledPressed = true;
-          if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-            climberSubsystem.enableClimber();
+        )
+        .whenReleased(() -> operatorClimbEnabledPressed = false);
+      buttons.driverEnableClimber
+        .whenPressed(
+          () -> {
+            driverClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
           }
-        }
-      )
-      .whenReleased(() -> driverClimbEnabledPressed = false);
-    buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
-    buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
-    buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
-    buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
-    buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
+        )
+        .whenReleased(() -> driverClimbEnabledPressed = false);
+      buttons.toggleFixedHook.whenPressed(climberSubsystem::fixedHookToggler);
+      buttons.toggleElevator.whenPressed(climberSubsystem::elevatorToggle);
+      buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+      buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+      buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
+    }
   }
 }
