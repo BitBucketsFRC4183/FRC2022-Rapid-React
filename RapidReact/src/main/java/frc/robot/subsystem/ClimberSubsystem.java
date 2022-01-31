@@ -33,7 +33,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void periodic() {}
 
   @Override
-  public void disable() {}
+  public void disable() {
+    climber.set(0);
+  }
 
   public void enableClimber() { // uses 2 PS button
     enabledClimber = true;
