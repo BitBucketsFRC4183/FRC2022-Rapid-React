@@ -25,9 +25,11 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    climber = new WPI_TalonSRX(Config.climberMotor_ID);
-    elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
-    fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
+    climber = new WPI_TalonSRX(config.climberMotor_ID);
+    if (config.enablePneumatics) {
+      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+      fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.fixedHookSolenoid_ID1, config.fixedHookSolenoid_ID2);
+    }
 
     logger()
       .subscribeNum(
@@ -58,13 +60,15 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void fixedHookToggler() { //uses R1 button
-    fixedHookToggleState = !fixedHookToggleState;
-    if (fixedHookToggleState == false) {
-      fixedHookSolenoid.set(Value.kForward);
-      logger().logString(LogLevel.GENERAL, "fixedHookToggle_state", "fixedHookTime");
-    } else {
-      fixedHookSolenoid.set(Value.kReverse);
-      logger().logString(LogLevel.GENERAL, "fixedHookToggle_state", "fixedHookTime");
+    if (config.enablePneumatics) {
+      fixedHookToggleState = !fixedHookToggleState;
+      if (fixedHookToggleState == false) {
+        fixedHookSolenoid.set(Value.kForward);
+        logger().logString(LogLevel.GENERAL, "fixedHookToggle_state", "fixedHookTime");
+      } else {
+        fixedHookSolenoid.set(Value.kReverse);
+        logger().logString(LogLevel.GENERAL, "fixedHookToggle_state", "fixedHookTime");
+      }
     }
   }
 
@@ -89,13 +93,19 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void elevatorToggle() {
-    elevatorToggle = !elevatorToggle;
-    if (elevatorToggle == false) {
-      elevatorSolenoid.set(Value.kForward);
-      logger().logString(LogLevel.GENERAL, "elevatorToggle_state", "ClimbTime");
-    } else {
-      elevatorSolenoid.set(Value.kReverse);
-      logger().logString(LogLevel.GENERAL, "elevatorToggle_state", "NotClimbTime");
+    if (config.enablePneumatics) {
+      elevatorToggle = !elevatorToggle;
+      if (elevatorToggle == false) {
+        elevatorSolenoid.set(Value.kForward);
+        logger().logString(LogLevel.GENERAL, "elevatorToggle_state", "ClimbTime");
+      } else {
+        elevatorSolenoid.set(Value.kReverse);
+        logger().logString(LogLevel.GENERAL, "elevatorToggle_state", "NotClimbTime");
+      }
     }
+  }
+
+  public boolean getEnabledClimber(){
+    return enabledClimber;
   }
 }
