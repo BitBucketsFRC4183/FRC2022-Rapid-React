@@ -98,4 +98,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       logger().logString(LogLevel.GENERAL, "elevatorToggle_state", "NotClimbTime");
     }
   }
+
+  public boolean getEnabledClimber(){
+    return enabledClimber;
+  }
 }
