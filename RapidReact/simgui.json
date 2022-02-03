@@ -65,9 +65,6 @@
         "name": "FLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
-        "header": {
-          "open": true
-        },
         "name": "FLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
@@ -110,9 +107,6 @@
         "name": "FRSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
-        "header": {
-          "open": true
-        },
         "name": "Intake Motor [ID:13]"
       },
       "Talon SRX[13]/Analog In": {
@@ -129,6 +123,15 @@
       },
       "Talon SRX[13]/Rev Limit": {
         "name": "Intake Motor/Rev Limit [ID:13]"
+      },
+      "Talon SRX[17]": {
+        "header": {
+          "open": true
+        },
+        "name": "Feeder1 [ID:17]"
+      },
+      "Talon SRX[18]": {
+        "name": "Feeder2 [ID:18]"
       }
     }
   },
