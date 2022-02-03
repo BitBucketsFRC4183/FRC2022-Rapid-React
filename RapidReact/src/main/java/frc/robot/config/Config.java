@@ -11,13 +11,15 @@ public class Config {
   // Vision
 
   //////////////////////////////////////////////////////////////////////////////
-  // Subsystem Enablers
+  // Enablers
   public boolean enableAutonomousSubsystem = true;
   public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
+
+  public boolean enablePneumatics = true;
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
