@@ -1,15 +1,5 @@
 package frc.robot.config;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
-
-import java.util.List;
-
 public class Config {
 
   // List of subsystem names:
@@ -21,7 +11,7 @@ public class Config {
   // Vision
 
   //////////////////////////////////////////////////////////////////////////////
-  // Subsystem Enablers
+  // Enablers
   public boolean enableAutonomousSubsystem = true;
   public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
@@ -29,11 +19,13 @@ public class Config {
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
 
+  public boolean enablePneumatics = true;
+
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
   public int maxVoltage = 12;
 
-  // Motor IDs
+  // Motor & Pneumatic IDs
 
   // Autonomous Subsystem
 
@@ -59,10 +51,28 @@ public class Config {
   // Intake Subsystem
   public static int intakeMotor_ID = 13;
 
+  // Shooter
   public int shooterRoller1_ID = 14;
   public int shooterRoller2_ID = 15;
 
+  
+  public int shooterFeeder1_ID = 17;
+  public int shooterFeeder2_ID = 18;
+
+
+  public int intakeSolenoid_ID1 = 0;
+  public int intakeSolenoid_ID2 = 1;
+
   // Shooter
+
+  //Climber Subsystem
+  public int climberMotor_ID = 16;
+
+  public int elevatorSolenoid_ID1 = 2;
+  public int elevatorSolenoid_ID2 = 3;
+
+  public int fixedHookSolenoid_ID1 = 4;
+  public int fixedHookSolenoid_ID2 = 5;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
@@ -74,27 +84,9 @@ public class Config {
   // Autonomous Config
   public class AutonomousConfig {
 
-    // Starting positions
-    // Farleft X:6.3, Y:5, R:135
-    public Pose2d farLeftStart = new Pose2d(new Translation2d(6.3, 5), Rotation2d.fromDegrees(135));
-    // NearLeft
-    // NearRight X:6.8, Y:2.8, R:210
-    public Pose2d nearRightStart = new Pose2d(new Translation2d(6.8, 2.8), Rotation2d.fromDegrees(210));
-    // FarRight
-
-    // Trajectories
-    public Trajectory farLeftStartTrajectory = TrajectoryGenerator.generateTrajectory(
-      farLeftStart,
-      List.of(new Translation2d(4.9, 6.4), new Translation2d(4.3, 5.7)),
-      new Pose2d(7.25, 4.5, Rotation2d.fromDegrees(-25)),
-      new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
-    );
-    public Trajectory nearRightStartTrajectory = TrajectoryGenerator.generateTrajectory(
-      nearRightStart,
-      List.of(new Translation2d(4.9, 1.9), new Translation2d(7, 1.7)),
-      new Pose2d(7.8, 3.2, Rotation2d.fromDegrees(65)),
-      new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0))
-    );
+    public String nothingPath = "Nothing";
+    public String genericPath = "Path";
+    public String driveBackwardsPath = "Drive Backwards";
 
     public AutonomousConfig() {}
   }

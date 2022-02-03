@@ -17,6 +17,7 @@ import frc.robot.log.LogTestSubsystem;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
+import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.List;
  * build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
 
   private Buttons buttons;
@@ -42,14 +44,11 @@ public class Robot extends TimedRobot {
   private ShooterSubsystem shooterSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
+  private ClimberSubsystem climberSubsystem;
+  private boolean driverClimbEnabledPressed;
+  private boolean operatorClimbEnabledPressed;
 
-  public static enum BitBucketsTrajectory {
-    FarLeft,
-    NearRight,
-    PathPlanner,
-  }
-
-  private static final SendableChooser<BitBucketsTrajectory> trajectoryChooser = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -62,10 +61,13 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    trajectoryChooser.setDefaultOption("Far Left", BitBucketsTrajectory.FarLeft);
-    trajectoryChooser.addOption("Near Right", BitBucketsTrajectory.NearRight);
-    trajectoryChooser.addOption("PathPlanner", BitBucketsTrajectory.PathPlanner);
-    SmartDashboard.putData("Trajectory Chooser", trajectoryChooser);
+    this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
+    this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
+    this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+
+    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
+
+    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
 
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
@@ -79,6 +81,9 @@ public class Robot extends TimedRobot {
     }
     if (config.enableShooterSubsystem) {
       this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
+    }
+    if (config.enableClimberSubsystem) {
+      this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
 
     // create a new field to update
@@ -110,7 +115,6 @@ public class Robot extends TimedRobot {
     }
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
-
 
     // Subsystem Initialize Loop
 
@@ -154,21 +158,32 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
-      switch (trajectoryChooser.getSelected()) {
-        case FarLeft:
-          drivetrainSubsystem.setOdometry(config.auto.farLeftStart);
-          autonomousSubsystem.setTrajectory(config.auto.farLeftStartTrajectory);
+      this.drivetrainSubsystem.zeroStates();
+
+      FollowTrajectoryCommand command;
+
+      switch (this.autonomousPathChooser.getSelected()) {
+        case NOTHING:
+          command = new FollowTrajectoryCommand(config.auto.nothingPath, this.drivetrainSubsystem);
           break;
-        case NearRight:
-          drivetrainSubsystem.setOdometry(config.auto.nearRightStart);
-          autonomousSubsystem.setTrajectory(config.auto.nearRightStartTrajectory);
+        case PATH_PLANNER_GENERIC:
+          command = new FollowTrajectoryCommand(config.auto.genericPath, this.drivetrainSubsystem);
           break;
-        case PathPlanner:
-          FollowTrajectoryCommand c = new FollowTrajectoryCommand("Path", this.drivetrainSubsystem);
-          drivetrainSubsystem.setOdometry(c.getTrajectory().getInitialPose());
-          c.schedule();
+        case PATH_PLANNER_DRIVE_BACKWARDS:
+          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
           break;
+        default:
+          this.autonomousSubsystem.logger()
+            .logString(
+              LogLevel.GENERAL,
+              "autonpath",
+              "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
+            );
+          return;
       }
+
+      this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
+      command.schedule();
     }
   }
 
@@ -218,6 +233,38 @@ public class Robot extends TimedRobot {
       buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
     }
 
+    //Shooter BUttons and Climber Buttons
+    buttons.hubShootOrFixedHookToggle.whenPressed(() -> {
+      if (climberSubsystem.getEnabledClimber() && config.enableClimberSubsystem){
+        climberSubsystem.fixedHookToggler();
+      }
+      else if ((climberSubsystem.getEnabledClimber() == false) && (config.enableShooterSubsystem)){
+        shooterSubsystem.shootTop();
+      }
+    });
+    buttons.hubShootOrFixedHookToggle.whenReleased(() -> {
+      if (config.enableShooterSubsystem){
+        shooterSubsystem.stopShoot();
+      }
+    });
+
+    buttons.tarmacShootOrToggleElevator.whenPressed(
+        () -> {
+          if (climberSubsystem.getEnabledClimber() && config.enableClimberSubsystem){
+            climberSubsystem.elevatorToggle();
+          }
+          else if ((climberSubsystem.getEnabledClimber() == false) && (config.enableShooterSubsystem)){
+            shooterSubsystem.shootTarmac();
+            drivetrainSubsystem.orient();
+          }
+        }
+      );
+    buttons.tarmacShootOrToggleElevator.whenReleased(() -> {
+      if (config.enableShooterSubsystem){
+        shooterSubsystem.stopShoot();
+      }
+    });
+
     //Intake buttons
     if (config.enableIntakeSubsystem) {
       buttons.intake.whenPressed(intakeSubsystem::spinForward);
@@ -229,19 +276,40 @@ public class Robot extends TimedRobot {
 
     //Shooter BUttons
     if (config.enableShooterSubsystem) {
-      buttons.hubShoot.whenPressed(shooterSubsystem::shootTop);
-      buttons.hubShoot.whenReleased(shooterSubsystem::stopShoot);
-
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
+    }
 
-      buttons.tarmacShoot.whenPressed(
-        () -> {
-          shooterSubsystem.shootTarmac();
-          drivetrainSubsystem.orient();
-        }
-      );
-      buttons.tarmacShoot.whenReleased(shooterSubsystem::stopShoot);
+    //Climber buttons
+    if (config.enableClimberSubsystem) {
+      buttons.operatorEnableClimber
+        .whenPressed(
+          () -> {
+            operatorClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
+          }
+        )
+        .whenReleased(() -> operatorClimbEnabledPressed = false);
+      buttons.driverEnableClimber
+        .whenPressed(
+          () -> {
+            driverClimbEnabledPressed = true;
+            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberSubsystem.enableClimber();
+            }
+          }
+        )
+        .whenReleased(() -> driverClimbEnabledPressed = false);
+
+      buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+      buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
+
+      buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+      buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+
+      buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
     }
   }
 }

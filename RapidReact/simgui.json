@@ -2,6 +2,9 @@
   "HALProvider": {
     "Other Devices": {
       "SPARK MAX [14]": {
+        "header": {
+          "open": true
+        },
         "name": "Roller1 [ID:14]"
       },
       "SPARK MAX [15]": {
@@ -120,11 +123,15 @@
       },
       "Talon SRX[13]/Rev Limit": {
         "name": "Intake Motor/Rev Limit [ID:13]"
-      }
-    },
-    "RoboRIO": {
-      "window": {
-        "visible": true
+      },
+      "Talon SRX[17]": {
+        "header": {
+          "open": true
+        },
+        "name": "Feeder1 [ID:17]"
+      },
+      "Talon SRX[18]": {
+        "name": "Feeder2 [ID:18]"
       }
     }
   },
@@ -132,37 +139,23 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/AutonomousSubsystem": "Subsystem",
+      "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-
+      "/LiveWindow/IntakeSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
+      "/LiveWindow/ShooterSubsystem": "Subsystem",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Autonomous Path Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/Trajectory Chooser": "String Chooser"
     },
     "windows": {
       "/FMSInfo": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/AutonomousSubsystem": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/DrivetrainSubsystem": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/Ungrouped/Scheduler": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/Ungrouped/navX-Sensor[4]": {
         "window": {
           "visible": true
         }
@@ -174,6 +167,11 @@
         },
         "Simulated Robot": {
           "image": "images/robot.png"
+        },
+        "Swerve Modules": {
+          "length": 0.30480000376701355,
+          "weight": 2.0,
+          "width": 0.30480000376701355
         },
         "Swerve s": {
           "image": "images/swerve_.png",
@@ -202,11 +200,6 @@
         "window": {
           "visible": true
         }
-      },
-      "/SmartDashboard/Trajectory Chooser": {
-        "window": {
-          "visible": true
-        }
       }
     }
   },
@@ -217,7 +210,13 @@
       }
     },
     "SmartDashboard": {
+      "ClimberSubsystem": {
+        "open": true
+      },
       "DrivetrainSubsystem": {
+        "open": true
+      },
+      "ShooterSubsystem": {
         "open": true
       },
       "Trajectory Chooser": {
