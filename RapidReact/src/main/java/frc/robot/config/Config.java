@@ -49,10 +49,12 @@ public class Config {
   // Intake Subsystem
   public static int intakeMotor_ID = 13;
 
+  // Shooter
   public int shooterRoller1_ID = 14;
   public int shooterRoller2_ID = 15;
-
-  // Shooter
+  
+  public int shooterFeeder1_ID = 17;
+  public int shooterFeeder2_ID = 18;
 
   //Climber Subsystem
   public static int climberMotor_ID = 16;
