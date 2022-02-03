@@ -25,10 +25,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    climber = new WPI_TalonSRX(Config.climberMotor_ID);
+    climber = new WPI_TalonSRX(config.climberMotor_ID);
     if (config.enablePneumatics) {
-      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
-      fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 4, 5);
+      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+      fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.fixedHookSolenoid_ID1, config.fixedHookSolenoid_ID2);
     }
 
     logger()
