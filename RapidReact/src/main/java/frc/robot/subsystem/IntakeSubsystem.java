@@ -3,8 +3,8 @@ package frc.robot.subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
 
@@ -17,8 +17,8 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   DoubleSolenoid intakeSolenoid;
 
   //sends value of motor speed to Smart Dashboard
- double percentOutput = 0.75;
-  
+  double percentOutput = 0.75;
+
   public IntakeSubsystem(Config config) {
     super(config);
   }
@@ -26,18 +26,23 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   @Override
   public void init() {
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
-    intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    if (config.enablePneumatics) {
+      intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    }
 
     //shows the speed of intake on the smart dashboard
-    logger().subscribeNum("outputSpeed",(e) -> {
-        percentOutput = e.doubleValue();
-    }, 0.75);
-    
+    logger()
+      .subscribeNum(
+        "outputSpeed",
+        e -> {
+          percentOutput = e.doubleValue();
+        },
+        0.75
+      );
   }
 
   @Override
-  public void periodic() {
-  }
+  public void periodic() {}
 
   @Override
   public void disable() {
@@ -62,16 +67,16 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //toggles turning the intake on or off
   public void toggle() {
-    if (toggleState == false) {
+    if (config.enablePneumatics) {
+      if (toggleState == false) {
         intakeSolenoid.set(Value.kForward);
         logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
         toggleState = true;
-    }
-    
-    else {
+      } else {
         intakeSolenoid.set(Value.kReverse);
         logger().logString(LogLevel.GENERAL, "intakeState", "Off");
-        toggleState = false; 
+        toggleState = false;
+      }
     }
   }
 }
