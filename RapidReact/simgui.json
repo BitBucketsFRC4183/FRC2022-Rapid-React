@@ -157,31 +157,6 @@
           "visible": true
         }
       },
-      "/LiveWindow/AutonomousSubsystem": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/DrivetrainSubsystem": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/Ungrouped/Scheduler": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/LiveWindow/Ungrouped/navX-Sensor[4]": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Autonomous Path Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "Robot": {
           "image": "images/robot.png",
@@ -236,6 +211,9 @@
         "open": true
       },
       "DrivetrainSubsystem": {
+        "open": true
+      },
+      "ShooterSubsystem": {
         "open": true
       },
       "Trajectory Chooser": {

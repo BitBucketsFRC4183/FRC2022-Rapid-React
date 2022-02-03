@@ -104,4 +104,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       }
     }
   }
+
+  public boolean getEnabledClimber(){
+    return enabledClimber;
+  }
 }
