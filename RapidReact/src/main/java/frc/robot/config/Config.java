@@ -25,7 +25,7 @@ public class Config {
   // General Stuff
   public int maxVoltage = 12;
 
-  // Motor IDs
+  // Motor & Pneumatic IDs
 
   // Autonomous Subsystem
 
@@ -54,10 +54,19 @@ public class Config {
   public int shooterRoller1_ID = 14;
   public int shooterRoller2_ID = 15;
 
+  public int intakeSolenoid_ID1 = 0;
+  public int intakeSolenoid_ID2 = 1;
+
   // Shooter
 
   //Climber Subsystem
-  public static int climberMotor_ID = 16;
+  public int climberMotor_ID = 16;
+
+  public int elevatorSolenoid_ID1 = 2;
+  public int elevatorSolenoid_ID2 = 3;
+
+  public int fixedHookSolenoid_ID1 = 4;
+  public int fixedHookSolenoid_ID2 = 5;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs

@@ -27,7 +27,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void init() {
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
     if (config.enablePneumatics) {
-      intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+      intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
     }
 
     //shows the speed of intake on the smart dashboard
