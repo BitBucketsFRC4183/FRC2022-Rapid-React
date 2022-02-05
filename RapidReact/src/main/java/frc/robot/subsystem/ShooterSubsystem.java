@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import frc.robot.config.Config;
-import frc.robot.log.LogLevel;
+import frc.robot.log.*;
 import frc.robot.utils.MotorUtils;
 
 public class ShooterSubsystem extends BitBucketsSubsystem {
@@ -16,31 +16,30 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private TalonSRX feeder1;
   private TalonSRX feeder2;
 
-  private float hubShootSpeedTop = 5400;
-  private float hubShootSpeedBottom = 5200;
+  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 5400.0);
+  private final Changeable<Double> bottomSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", 5200.0);
+  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", 0.5);
+  private final Changeable<Double> feeder2PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederTwoPercentOutput", 0.5);
 
-  //for shuffleboard config (this is ib)
-  double topShooterSpeed;
-  double bottomShooterSpeed;
-  double feeder1PercentOutput = .5;
-  double feeder2PercentOutput = .5;
+  private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
 
   public ShooterSubsystem(Config config) {
     super(config);
   }
 
   public void shootTop() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "TopShooting");
-    roller1.getPIDController().setReference(hubShootSpeedTop, ControlType.kVelocity, MotorUtils.velocitySlot);
-    roller2.getPIDController().setReference(hubShootSpeedBottom, ControlType.kVelocity, MotorUtils.velocitySlot);
-    if (true) { //In place of isUpToSpeed()
-      feeder1.set(ControlMode.PercentOutput, feeder1PercentOutput);
-      feeder2.set(ControlMode.PercentOutput, feeder2PercentOutput);
-    }
+    shootState.log("TopShooting");
+    roller1.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    roller2.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+
+    //?????
+    //In place of isUpToSpeed()
+    feeder1.set(ControlMode.PercentOutput, feeder1PO.currentValue());
+    feeder2.set(ControlMode.PercentOutput, feeder2PO.currentValue());
   }
 
   public void stopShoot() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "Idling");
+    shootState.log("Idling");
     roller1.set(0);
     roller2.set(0);
     feeder1.set(ControlMode.Current, 0);
@@ -48,63 +47,15 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public void shootLow() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "LowShooting");
+    shootState.log("LowShooting");
   }
 
   public void shootTarmac() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "TarmacShooting");
+    shootState.log("TarmacShooting");
   }
 
   @Override
   public void init() {
-    logger()
-            .subscribeNum(
-                    "HubShootSpeedTop",
-                    value -> {
-                      this.hubShootSpeedTop = value.floatValue();
-                    },
-                    5400.0
-
-            );
-
-    logger()
-            .subscribeNum(
-                    "HubShootSpeedBottom",
-                    value -> {
-                      this.hubShootSpeedTop = value.floatValue();
-                    },
-                    5200.0
-
-            );
-    
-    logger().subscribeNum("topShooterSpeed",(e) -> {
-        topShooterSpeed = e.doubleValue();
-      }, 5400.0);
-
-    logger().subscribeNum("bottomShooterSpeed",(e) -> {
-        bottomShooterSpeed = e.doubleValue();
-    }, 5200.0);
-
-    logger()
-            .subscribeNum(
-                    "feeder1PercentOutput",
-                    value -> {
-                      this.feeder1PercentOutput = value.floatValue();
-                    },
-                    feeder1PercentOutput
-
-            );
-    
-    logger()
-    .subscribeNum(
-            "feeder2PercentOutput",
-            value -> {
-              this.feeder2PercentOutput = value.floatValue();
-            },
-            feeder2PercentOutput
-
-    );
-
     roller1 = MotorUtils.makeSpark(config.shooter.roller1);
     roller2 = MotorUtils.makeSpark(config.shooter.roller2);
     feeder1 = new WPI_TalonSRX(config.shooterFeeder1_ID);
@@ -112,7 +63,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToSpeed() {
-    return (roller1.getEncoder().getVelocity() > topShooterSpeed) && (roller2.getEncoder().getVelocity() > bottomShooterSpeed);
+    return (roller1.getEncoder().getVelocity() > topSpeed.currentValue()) && (roller2.getEncoder().getVelocity() > bottomSpeed.currentValue());
   }
 
   @Override
