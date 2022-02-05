@@ -11,7 +11,7 @@ public enum LogLevel {
     this.level = level;
   }
 
-  boolean shouldLog(LogLevel logLevel) {
+  public boolean shouldLog(LogLevel logLevel) {
     return logLevel.level >= this.level;
   }
 }
