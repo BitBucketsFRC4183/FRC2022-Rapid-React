@@ -49,15 +49,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climber.set(0);
   }
 
-  public void enableClimber() { // uses 2 PS button
-    enabledClimber = true;
-    logger().logString(LogLevel.GENERAL, "climb_state", "climberEnabled");
+  public void toggleClimberEnabled() { // uses 2 PS button
+    enabledClimber = !enabledClimber;
+    
+    if (enabledClimber){
+      logger().logString(LogLevel.GENERAL, "climb_state", "climberEnabled");
+    } else{
+      logger().logString(LogLevel.GENERAL, "climb_state", "climberDisabled");
+    }
   }
 
-  public void disableClimber() {
-    enabledClimber = false;
-    logger().logString(LogLevel.GENERAL, "climb_state", "climberDisabled");
-  }
+
 
   public void fixedHookToggler() { //uses R1 button
     if (config.enablePneumatics) {
