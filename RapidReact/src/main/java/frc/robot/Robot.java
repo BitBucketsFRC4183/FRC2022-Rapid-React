@@ -14,8 +14,7 @@ import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
-import frc.robot.log.LogLevel;
-import frc.robot.log.LogTestSubsystem;
+import frc.robot.log.*;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
@@ -36,6 +35,8 @@ import java.util.List;
  */
 
 public class Robot extends TimedRobot {
+
+  private final Loggable<String> info = BucketLog.loggable(Put.STRING, "general/info");
 
   private Buttons buttons;
   private Config config;
@@ -182,12 +183,8 @@ public class Robot extends TimedRobot {
                   .complete();
           break;
         default:
-          this.autonomousSubsystem.logger()
-            .logString(
-              LogLevel.GENERAL,
-              "autonpath",
-              "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
-            );
+          info.log(LogLevel.CRITICAL, "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+
           return;
       }
 
@@ -198,7 +195,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "still in auton!!");
+
+    info.log(LogLevel.GENERAL, "Still in autonomous");
   }
 
   /** This function is called once when teleop is enabled. */
@@ -295,7 +293,7 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.enableClimber();
+              climberSubsystem.toggleClimberEnabled();
             }
           }
         )
@@ -305,7 +303,7 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.enableClimber();
+              climberSubsystem.toggleClimberEnabled();
             }
           }
         )

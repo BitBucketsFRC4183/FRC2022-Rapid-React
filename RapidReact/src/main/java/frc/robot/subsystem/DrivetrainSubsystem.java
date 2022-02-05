@@ -18,7 +18,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
 import frc.robot.config.Config;
+import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
+import frc.robot.log.Loggable;
+import frc.robot.log.Put;
 import frc.swervelib.*;
 
 import java.util.ArrayList;
@@ -83,6 +86,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public Field2d field;
 
   public SwerveDrivetrainModel drivetrainModel;
+
+  private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
 
   @Override
   public void init() {
@@ -279,7 +284,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             .add("Drivetrain Model Gyro Heading: " + this.drivetrainModel.gyro.getGyroHeading())
             .add("-----------------");
 
-    this.logger().logString(LogLevel.DEBUG, "drivetrain/odometry", s.toString());
+    odometryLoggable.log(LogLevel.DEBUG, s.toString());
+
   }
 
   public void zeroStates(Pose2d start)
