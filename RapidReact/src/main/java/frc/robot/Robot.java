@@ -256,7 +256,7 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.enableClimber();
+              climberSubsystem.toggleClimberEnabled();
             }
           }
         )
@@ -266,7 +266,7 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.enableClimber();
+              climberSubsystem.toggleClimberEnabled();
             }
           }
           )
