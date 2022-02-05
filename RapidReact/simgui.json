@@ -65,6 +65,9 @@
         "name": "FLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
+        "header": {
+          "open": true
+        },
         "name": "FLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
@@ -163,6 +166,16 @@
           "visible": true
         }
       },
+      "/LiveWindow/Ungrouped/Scheduler": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Autonomous Path Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/Field": {
         "Robot": {
           "image": "images/robot.png",
@@ -172,6 +185,7 @@
           "image": "images/robot.png"
         },
         "Swerve Modules": {
+          "image": "/Users/saptarshimallick/Documents/Coding/FRC2022-Rapid-React/RapidReact/images/swerve_module.png",
           "length": 0.30480000376701355,
           "weight": 2.0,
           "width": 0.30480000376701355
@@ -200,6 +214,11 @@
         },
         "units": "feet",
         "width": 16.459199905395508,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Orientation Chooser": {
         "window": {
           "visible": true
         }
