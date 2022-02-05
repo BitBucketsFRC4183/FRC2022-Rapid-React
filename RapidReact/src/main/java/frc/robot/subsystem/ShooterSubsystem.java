@@ -31,6 +31,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private float hubShootSpeedDeadband = 100;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
+  private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
+  private final Loggable<Double> roller2OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller2OutputVel");
 
   FlywheelSim flywheelSim;
   EncoderSim encoderSim;
@@ -60,17 +62,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public void shootTop() {
     shootState.log("TopShooting");
+
     roller1.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     roller2.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     shooterState = ShooterState.TOP;
-  }
-
-  public void stopShoot() {
-    logger().logString(LogLevel.GENERAL, "shoot_state", "Idling");
-    roller1.set(0);
-    roller2.set(0);
-    feeder1.set(ControlMode.Current, 0);
-    feeder2.set(ControlMode.Current, 0);
   }
 
   public void shootLow() {
@@ -84,8 +79,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   void turnOnFeeders() {
-    feeder1.set(ControlMode.PercentOutput, feeder1PercentOutput);
-    feeder2.set(ControlMode.PercentOutput, feeder2PercentOutput);
+    feeder1.set(ControlMode.PercentOutput, feeder1PO.currentValue());
+    feeder2.set(ControlMode.PercentOutput, feeder2PO.currentValue());
   }
 
   void turnOffFeeders() {
@@ -109,7 +104,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
       encoder.reset();
       encoderSim = new EncoderSim(encoder);
     }
-
   }
 
   boolean motorIsInSpeedDeadband(CANSparkMax motor, double speed) {
@@ -120,7 +114,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToSpeed() {
-    return motorIsInSpeedDeadband(roller1, hubShootSpeedTop) && motorIsInSpeedDeadband(roller2, hubShootSpeedBottom);
+    return motorIsInSpeedDeadband(roller1, topSpeed.currentValue()) && motorIsInSpeedDeadband(roller2, bottomSpeed.currentValue());
   }
 
   @Override
@@ -149,8 +143,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     // flywheelSim.update(Constants.kRobotMainLoopPeriod);
     // encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
-    logger().logNum(LogLevel.GENERAL, "Roller1OutputVel", roller1.getEncoder().getVelocity());
-    logger().logNum(LogLevel.GENERAL, "Roller2OutputVel", roller2.getEncoder().getVelocity());
+    roller1OutputVelLoggable.log(roller1.getEncoder().getVelocity());
+    roller2OutputVelLoggable.log(roller2.getEncoder().getVelocity());
   }
 
   @Override
