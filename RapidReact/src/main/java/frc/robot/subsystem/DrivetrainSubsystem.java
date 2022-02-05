@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import com.revrobotics.REVPhysicsSim;
+
 public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   // Measure the drivetrain's maximum velocity or calculate the theoretical.
