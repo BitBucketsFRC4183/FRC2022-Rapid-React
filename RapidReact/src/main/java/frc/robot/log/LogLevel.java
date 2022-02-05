@@ -1,5 +1,8 @@
 package frc.robot.log;
 
+/**
+ * Level to log at
+ */
 public enum LogLevel {
   DEBUG(0),
   GENERAL(1),

@@ -7,7 +7,7 @@ public interface Put<T> {
     void put(String path, T put);
     T convert(Object object);
 
-    Put<Double> DOUBLE = new Put<Double>() {
+    Put<Double> DOUBLE = new Put<>() {
         @Override
         public void put(String path, Double put) {
             SmartDashboard.putNumber(path, put);
@@ -21,7 +21,7 @@ public interface Put<T> {
         }
     };
 
-    Put<String> STRING = new Put<String>() {
+    Put<String> STRING = new Put<>() {
         @Override
         public void put(String path, String put) {
             SmartDashboard.putString(path, put);
@@ -35,7 +35,7 @@ public interface Put<T> {
         }
     };
 
-    Put<Boolean> BOOL = new Put<Boolean>() {
+    Put<Boolean> BOOL = new Put<>() {
         @Override
         public void put(String path, Boolean put) {
             SmartDashboard.putBoolean(path, put);

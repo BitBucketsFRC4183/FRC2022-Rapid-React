@@ -15,10 +15,39 @@ public class BucketLog {
 
     private final static Executor executor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Make a loggable
+     * @param put type of data to put
+     * @param path the path of the data
+     * @param <T> type
+     * @return a new loggable
+     */
     public static <T> Loggable<T> loggable(Put<T> put, String path) {
-        return new DefaultLoggable<>(executor, path, put, defaultLogLevel, baseLogLevel);
+        return loggable(defaultLogLevel, put, path);
     }
 
+    /**
+     * Make a loggable with default level
+     * @param level the default level
+     * @param put the data to put
+     * @param path the path of the data
+     * @param <T> type
+     * @return a new loggable
+     */
+    public static <T> Loggable<T> loggable(LogLevel level, Put<T> put, String path) {
+        return new DefaultLoggable<>(executor, path, put, level, baseLogLevel);
+    }
+
+    /**
+     * Make a changeable, an object representing a value that can be changed in smart dashboard
+     * and then read from, expecting an accurate value.
+     *
+     * @param put type of data to put to dashboard
+     * @param path the path of the object
+     * @param defaultValue initial data to put
+     * @param <T> type
+     * @return a changeable
+     */
     public static <T> Changeable<T> changeable(Put<T> put, String path, T defaultValue) {
 
         Changeable<T> changeable = new DefaultChangeable<>(put, defaultValue);
@@ -30,5 +59,6 @@ public class BucketLog {
 
         return changeable;
     }
+
 
 }
