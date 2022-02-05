@@ -7,7 +7,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LogTestSubsystem extends BitBucketsSubsystem {
 
-  final AtomicInteger counter = new AtomicInteger();
+  private final AtomicInteger counter = new AtomicInteger();
+
+  private final Loggable<Boolean> logBool = BucketLog.loggable(Put.BOOL, "test/isReady");
+  private final Loggable<Double> logNum = BucketLog.loggable(Put.DOUBLE, "test/periodic");
+
 
   public LogTestSubsystem(Config config) {
     super(config);
@@ -16,12 +20,12 @@ public class LogTestSubsystem extends BitBucketsSubsystem {
   //simulate cool values for the simulator
   @Override
   public void init() {
-    logger().logBool(LogLevel.GENERAL, "isReady", true);
+    logBool.log(LogLevel.GENERAL, true);
   }
 
   @Override
   public void periodic() {
-    logger().logNum(LogLevel.GENERAL, "periodic", counter.incrementAndGet());
+    logNum.log(LogLevel.GENERAL, (double) counter.incrementAndGet());
   }
 
   @Override

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.config.Config;
-import frc.robot.log.LogLevel;
+import frc.robot.log.*;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
@@ -16,8 +16,10 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   //double solenoid is used for the intake PCM
   DoubleSolenoid intakeSolenoid;
 
-  //sends value of motor speed to Smart Dashboard
-  double percentOutput = 0.75;
+
+  //dashboard stuff
+  private final Changeable<Double> percentOutput = BucketLog.changeable(Put.DOUBLE, "intake/percentOutput", 0.75);
+  private final Loggable<String> intakeState = BucketLog.loggable(Put.STRING, "intake/intakeState");
 
   public IntakeSubsystem(Config config) {
     super(config);
@@ -31,14 +33,6 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     }
 
     //shows the speed of intake on the smart dashboard
-    logger()
-      .subscribeNum(
-        "outputSpeed",
-        e -> {
-          percentOutput = e.doubleValue();
-        },
-        0.75
-      );
   }
 
   @Override
@@ -51,30 +45,30 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //intaking, outtaking, and stop the intake
   public void spinForward() {
-    intake.set(ControlMode.PercentOutput, percentOutput);
-    logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
+    intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    intakeState.log("intaking");
   }
 
   public void spinBackward() {
-    intake.set(ControlMode.PercentOutput, percentOutput);
-    logger().logString(LogLevel.GENERAL, "intakeState", "Outtaking");
+    intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    intakeState.log("outtaking");
   }
 
   public void stopSpin() {
     intake.set(ControlMode.PercentOutput, 0);
-    logger().logString(LogLevel.GENERAL, "intakeState", "Stopped");
+    intakeState.log("stopped");
   }
 
   //toggles turning the intake on or off
   public void toggle() {
     if (config.enablePneumatics) {
-      if (toggleState == false) {
+      if (!toggleState) {
         intakeSolenoid.set(Value.kForward);
-        logger().logString(LogLevel.GENERAL, "intakeState", "Intaking");
+        intakeState.log("intaking");
         toggleState = true;
       } else {
         intakeSolenoid.set(Value.kReverse);
-        logger().logString(LogLevel.GENERAL, "intakeState", "Off");
+        intakeState.log("off");
         toggleState = false;
       }
     }
