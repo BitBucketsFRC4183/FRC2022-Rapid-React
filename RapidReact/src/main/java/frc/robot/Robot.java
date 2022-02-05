@@ -66,9 +66,8 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
-    this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Split (PathPlanner)", AutonomousPath.PATH_PLANNER_SPLIT);
+    this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("Complex – Example", AutonomousPath.PATH_PLANNER_SPLIT);
 
     this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
 
@@ -168,9 +167,6 @@ public class Robot extends TimedRobot {
       switch (this.autonomousPathChooser.getSelected()) {
         case NOTHING:
           command = new AutonomousFollowPathCommand(config.auto.nothingPath, this.autonomousSubsystem, this.drivetrainSubsystem);
-          break;
-        case PATH_PLANNER_GENERIC:
-          command = new AutonomousFollowPathCommand(config.auto.genericPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
           command = new AutonomousFollowPathCommand(config.auto.driveBackwardsPath, this.autonomousSubsystem, this.drivetrainSubsystem);
