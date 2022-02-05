@@ -1,5 +1,8 @@
 package frc.robot.log;
 
+/**
+ * Level to log at
+ */
 public enum LogLevel {
   DEBUG(0),
   GENERAL(1),
@@ -11,7 +14,7 @@ public enum LogLevel {
     this.level = level;
   }
 
-  boolean shouldLog(LogLevel logLevel) {
+  public boolean shouldLog(LogLevel logLevel) {
     return logLevel.level >= this.level;
   }
 }
