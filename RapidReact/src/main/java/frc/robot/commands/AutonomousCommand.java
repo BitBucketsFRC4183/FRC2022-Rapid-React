@@ -26,14 +26,14 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
     {
-        this.addCommands(new FollowTrajectoryCommand(pathPlanner, this.auto, this.drive));
+        this.addCommands(new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive));
         return this;
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner, double delayBeforeStart)
     {
         this.addCommands(new WaitCommand(delayBeforeStart)
-                .andThen(new FollowTrajectoryCommand(pathPlanner, this.auto, this.drive)));
+                .andThen(new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)));
         return this;
     }
 
@@ -53,7 +53,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     public AutonomousCommand executeParallel(String pathPlanner, SubsystemAction action)
     {
         this.addCommands(
-                new FollowTrajectoryCommand(pathPlanner, this.auto, this.drive)
+                new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)
                         .alongWith(this.actionToCommand(action)));
         return this;
     }
@@ -62,7 +62,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     {
         this.addCommands(new WaitCommand(delayBeforeStart)
                         .andThen(
-                                new FollowTrajectoryCommand(pathPlanner, this.auto, this.drive)
+                                new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)
                                         .alongWith(this.actionToCommand(action))));
         return this;
     }

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutonomousCommand;
+import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.config.Config;
 import frc.robot.log.LogLevel;
 import frc.robot.log.LogTestSubsystem;
@@ -166,13 +166,13 @@ public class Robot extends TimedRobot {
       Command command;
       switch (this.autonomousPathChooser.getSelected()) {
         case NOTHING:
-          command = new FollowTrajectoryCommand(config.auto.nothingPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          command = new AutonomousFollowPathCommand(config.auto.nothingPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_GENERIC:
-          command = new FollowTrajectoryCommand(config.auto.genericPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          command = new AutonomousFollowPathCommand(config.auto.genericPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
-          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          command = new AutonomousFollowPathCommand(config.auto.driveBackwardsPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_SPLIT:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)

@@ -10,13 +10,13 @@ import frc.robot.log.LogLevel;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
-public class FollowTrajectoryCommand extends SequentialCommandGroup
+public class AutonomousFollowPathCommand extends SequentialCommandGroup
 {
     private final PathPlannerTrajectory trajectory;
     private AutonomousSubsystem auto;
     private DrivetrainSubsystem drive;
 
-    public FollowTrajectoryCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
+    public AutonomousFollowPathCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
     {
         this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 5, 8);
         this.auto = auto;
