@@ -6,7 +6,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
+import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
+import frc.robot.log.Loggable;
+import frc.robot.log.Put;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
@@ -15,6 +18,8 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     private final PathPlannerTrajectory trajectory;
     private AutonomousSubsystem auto;
     private DrivetrainSubsystem drive;
+
+    private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/followPathState");
 
     public AutonomousFollowPathCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
     {
@@ -34,7 +39,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     private InstantCommand setup()
     {
         return new InstantCommand(() ->{
-            this.drive.logger().logString(LogLevel.GENERAL, "auto/followState", "Starting to Follow a Trajectory!");
+            this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
             this.drive.drivetrainModel.resetPID(this.trajectory.getInitialPose().getRotation().getRadians());
             this.drive.setOdometry(this.trajectory.getInitialPose());
             this.drive.field.setRobotPose(this.trajectory.getInitialPose());
@@ -54,7 +59,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
             Pose2d targetEnd = this.trajectory.getEndState().poseMeters;
 
             double distance = Math.pow(Math.pow(actualEnd.getX() - targetEnd.getX(), 2) + Math.pow(actualEnd.getY() - targetEnd.getY(), 2), 0.5);
-            this.drive.logger().logString(LogLevel.GENERAL, "auto/followState", "Completed following a Trajectory! Distance Error from Target: " + distance);
+            this.state.log(LogLevel.GENERAL, "Completed following a Trajectory! Distance Error from Target: " + distance);
         });
     }
 }

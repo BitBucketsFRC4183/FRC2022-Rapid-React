@@ -3,7 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
+import frc.robot.log.Loggable;
+import frc.robot.log.Put;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.robot.subsystem.IntakeSubsystem;
@@ -15,6 +18,8 @@ public class AutonomousCommand extends SequentialCommandGroup
     private DrivetrainSubsystem drive;
     private IntakeSubsystem intake;
     private ShooterSubsystem shooter;
+
+    private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/commandState");
 
     public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter)
     {
@@ -85,9 +90,9 @@ public class AutonomousCommand extends SequentialCommandGroup
     @Override
     public void schedule()
     {
-        this.auto.logger().logString(LogLevel.GENERAL, "auto/commandState", "Autonomous Command Starting!");
+        this.state.log(LogLevel.GENERAL, "Autonomous Command Starting!");
         super.schedule();
-        this.auto.logger().logString(LogLevel.GENERAL, "auto/commandState", "Autonomous Command Completed!");
+        this.state.log(LogLevel.GENERAL, "Autonomous Command Completed!");
     }
 
     public interface SubsystemAction

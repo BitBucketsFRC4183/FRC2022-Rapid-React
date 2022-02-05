@@ -162,7 +162,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
-      drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
+      this.info.log(LogLevel.GENERAL, "auton started");
 
       Command command;
       switch (this.autonomousPathChooser.getSelected()) {
