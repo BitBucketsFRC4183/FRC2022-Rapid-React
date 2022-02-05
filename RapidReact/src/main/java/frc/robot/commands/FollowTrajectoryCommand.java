@@ -2,46 +2,59 @@ package frc.robot.commands;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
+import frc.robot.log.LogLevel;
+import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
 
-public class FollowTrajectoryCommand extends InstantCommand
+public class FollowTrajectoryCommand extends SequentialCommandGroup
 {
     private final PathPlannerTrajectory trajectory;
+    private AutonomousSubsystem auto;
     private DrivetrainSubsystem drive;
 
-    public FollowTrajectoryCommand(String trajectoryPath, DrivetrainSubsystem drive)
+    public FollowTrajectoryCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
     {
         this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 5, 8);
+        this.auto = auto;
         this.drive = drive;
+
+        this.addCommands(
+                this.setup(),
+
+                this.drive.drivetrainModel.createCommandForTrajectory(this.trajectory, this.drive, this.drive.kinematics),
+
+                this.printError()
+        );
     }
 
-    @Override
-    public void schedule()
+    private InstantCommand setup()
     {
-        this.drive.setOdometry(this.trajectory.getInitialPose());
-        this.drive.field.setRobotPose(this.trajectory.getInitialPose());
-        this.drive.gyro.setAngle(this.trajectory.getInitialPose().getRotation());
-        this.drive.drivetrainModel.setKnownPose(this.trajectory.getInitialPose());
+        return new InstantCommand(() ->{
+            this.drive.logger().logString(LogLevel.GENERAL, "auto/followState", "Starting to Follow a Trajectory!");
+            this.drive.drivetrainModel.resetPID(this.trajectory.getInitialPose().getRotation().getRadians());
+            this.drive.setOdometry(this.trajectory.getInitialPose());
+            this.drive.field.setRobotPose(this.trajectory.getInitialPose());
+            //this.drive.gyro.setAngle(this.trajectory.getInitialPose().getRotation());
+            //this.drive.drivetrainModel.setKnownPose(this.trajectory.getInitialPose());
 
-        this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
+            this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
 
-        PPSwerveControllerCommand followPath = this.drive.drivetrainModel.createCommandForTrajectory(this.trajectory, this.drive, this.drive.kinematics);
-
-        followPath.schedule();
-
-        Pose2d actualEnd = this.drive.field.getRobotPose();
-        Pose2d targetEnd = this.trajectory.getEndState().poseMeters;
-
-        double distance = Math.pow(Math.pow(actualEnd.getX() - targetEnd.getX(), 2) + Math.pow(actualEnd.getY() - targetEnd.getY(), 2), 0.5);
-        System.out.println("Distance from Path Target: " + distance);
+            this.drive.zeroStates(this.trajectory.getInitialPose());
+        });
     }
 
-    public PathPlannerTrajectory getTrajectory()
+    private InstantCommand printError()
     {
-        return this.trajectory;
+        return new InstantCommand(() -> {
+            Pose2d actualEnd = this.drive.field.getRobotPose();
+            Pose2d targetEnd = this.trajectory.getEndState().poseMeters;
+
+            double distance = Math.pow(Math.pow(actualEnd.getX() - targetEnd.getX(), 2) + Math.pow(actualEnd.getY() - targetEnd.getY(), 2), 0.5);
+            this.drive.logger().logString(LogLevel.GENERAL, "auto/followState", "Completed following a Trajectory! Distance Error from Target: " + distance);
+        });
     }
 }

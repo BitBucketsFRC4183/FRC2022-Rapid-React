@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.FollowTrajectoryCommand;
 import frc.robot.config.Config;
@@ -65,6 +67,7 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Generic (PathPlanner)", AutonomousPath.PATH_PLANNER_GENERIC);
     this.autonomousPathChooser.addOption("Drive Backwards (PathPlanner)", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("Split (PathPlanner)", AutonomousPath.PATH_PLANNER_SPLIT);
 
     this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
 
@@ -159,19 +162,24 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       drivetrainSubsystem.logger().logString(LogLevel.GENERAL, "info", "auton started");
-      this.drivetrainSubsystem.zeroStates();
 
-      FollowTrajectoryCommand command;
-
+      Command command;
       switch (this.autonomousPathChooser.getSelected()) {
         case NOTHING:
-          command = new FollowTrajectoryCommand(config.auto.nothingPath, this.drivetrainSubsystem);
+          command = new FollowTrajectoryCommand(config.auto.nothingPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_GENERIC:
-          command = new FollowTrajectoryCommand(config.auto.genericPath, this.drivetrainSubsystem);
+          command = new FollowTrajectoryCommand(config.auto.genericPath, this.autonomousSubsystem, this.drivetrainSubsystem);
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
-          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.drivetrainSubsystem);
+          command = new FollowTrajectoryCommand(config.auto.driveBackwardsPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          break;
+        case PATH_PLANNER_SPLIT:
+          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeDrivePath("Split Part 1")
+                  .executeAction((d, i, s) -> i.toggle(), 1)
+                  .executeParallel("Split Part 2", (d, i, s) -> i.toggle(), 2)
+                  .complete();
           break;
         default:
           this.autonomousSubsystem.logger()
@@ -183,7 +191,6 @@ public class Robot extends TimedRobot {
           return;
       }
 
-      this.drivetrainSubsystem.setOdometry(command.getTrajectory().getInitialPose());
       command.schedule();
     }
   }
