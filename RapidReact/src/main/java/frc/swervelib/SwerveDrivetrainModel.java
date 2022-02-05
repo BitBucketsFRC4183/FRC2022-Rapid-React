@@ -3,6 +3,7 @@ package frc.swervelib;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,11 +36,12 @@ public class SwerveDrivetrainModel {
 
   Pose2d curEstPose;
   SwerveModuleState[] states;
+  PIDController xyController = new PIDController(1.0, 0, 0);
   ProfiledPIDController thetaController = new ProfiledPIDController(
-    0.0001,
-    0.001,
-    0.001,
-    new TrapezoidProfile.Constraints(500, 800)
+    1.0,
+    0,
+    0,
+    new TrapezoidProfile.Constraints(2, 2)
   );
 
   public SwerveDrivetrainModel(ArrayList<SwerveModule> realModules, Gyroscope gyro, SwerveDriveKinematics _kinematics, Field2d field, Pose2d startPosition) {
@@ -55,7 +57,7 @@ public class SwerveDrivetrainModel {
       simModules.add(Mk4SwerveModuleHelper.createSim(realModules.get(3)));
     }
 
-    //thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // TODO: move these to config
     double mass_kg = Units.lbsToKilograms(140);
@@ -167,6 +169,12 @@ public class SwerveDrivetrainModel {
     this.states = kinematics.toSwerveModuleStates(chassisSpeeds);
   }
 
+  public void resetPID(double startRadians)
+  {
+    this.xyController.reset();
+    this.thetaController.reset(startRadians);
+  }
+
   public SwerveModuleState[] getSwerveModuleStates() {
     return states;
   }
@@ -191,11 +199,11 @@ public class SwerveDrivetrainModel {
   public PPSwerveControllerCommand createCommandForTrajectory(PathPlannerTrajectory trajectory, DrivetrainSubsystem m_drive, SwerveDriveKinematics kinematics) {
     return new PPSwerveControllerCommand(
       trajectory,
-      () -> trajectory.getInitialPose(),
+      () -> trajectory.getInitialState().poseMeters,
       kinematics,
       // Position controllers
-      SwerveConstants.XPIDCONTROLLER,
-      SwerveConstants.YPIDCONTROLLER,
+      this.xyController,
+      this.xyController,
       thetaController,
       m_drive::setStates,
       m_drive
