@@ -19,7 +19,7 @@ public class Config {
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = false;
 
-  public boolean enablePneumatics = true;
+  public boolean enablePneumatics = false;
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
