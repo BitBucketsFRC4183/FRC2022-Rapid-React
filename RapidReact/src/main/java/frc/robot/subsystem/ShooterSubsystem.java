@@ -25,8 +25,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private TalonSRX feeder2;
 
   private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 5400.0);
-  private final Changeable<Double> bottomSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", 5200.0);
-  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", 0.5);
+  private final Changeable<Double> bottomSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", -5200.0);
+  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.5);
   private final Changeable<Double> feeder2PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederTwoPercentOutput", 0.5);
   private float hubShootSpeedDeadband = 100;
 
@@ -114,7 +114,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToSpeed() {
-    return motorIsInSpeedDeadband(roller1, topSpeed.currentValue()) && motorIsInSpeedDeadband(roller2, bottomSpeed.currentValue());
+    return true || motorIsInSpeedDeadband(roller1, topSpeed.currentValue()) && motorIsInSpeedDeadband(roller2, bottomSpeed.currentValue());
   }
 
   @Override
