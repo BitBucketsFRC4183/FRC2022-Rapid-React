@@ -284,13 +284,13 @@ public class Robot extends TimedRobot {
     }
     
     //Shooter BUttons and Climber Buttons
-    if (config.enableShooterSubsystem || config.enableClimberSubsystem)
+    if (config.enableClimberSubsystem || config.enableShooterSubsystem)
     {
       buttons.hubShootOrFixedHookToggle.whenPressed(() -> {
-        if (climberSubsystem.getEnabledClimber() && config.enableClimberSubsystem){
+        if (config.enableClimberSubsystem && climberSubsystem.getEnabledClimber()){
           climberSubsystem.fixedHookToggler();
         }
-        else if ((climberSubsystem.getEnabledClimber() == false) && (config.enableShooterSubsystem)){
+        else if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
           shooterSubsystem.shootTop();
         }
       });
@@ -302,10 +302,10 @@ public class Robot extends TimedRobot {
     
       buttons.tarmacShootOrToggleElevator.whenPressed(
           () -> {
-            if (climberSubsystem.getEnabledClimber() && config.enableClimberSubsystem){
+            if (config.enableClimberSubsystem && climberSubsystem.getEnabledClimber()){
               climberSubsystem.elevatorToggle();
             }
-            else if ((climberSubsystem.getEnabledClimber() == false) && (config.enableShooterSubsystem)){
+            else if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
               shooterSubsystem.shootTarmac();
               drivetrainSubsystem.orient();
             }
