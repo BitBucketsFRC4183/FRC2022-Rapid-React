@@ -68,6 +68,8 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("Complex – Example", AutonomousPath.PATH_PLANNER_SPLIT);
+    this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
+    this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
     this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
 
@@ -173,9 +175,30 @@ public class Robot extends TimedRobot {
           break;
         case PATH_PLANNER_SPLIT:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
-                  .executeDrivePath("Split Part 1")
+                  .executeDrivePath("Split Example P1")
                   .executeAction((d, i, s) -> i.toggle(), 1)
-                  .executeParallel("Split Part 2", (d, i, s) -> i.toggle(), 2)
+                  .executeParallel("Split Example P2", (d, i, s) -> i.toggle(), 2)
+                  .complete();
+          break;
+        case MAIN_NO_TERMINAL:
+          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeDrivePath("Main P1") //Drive to the first ball
+                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
+                  .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
+                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+                  .executeDrivePath("Main P3") //Drive to the base of the hub
+                  .executeAction((d, i, s) -> s.shootTop()) //Shoot
+                  .complete();
+          break;
+        case MAIN_WITH_TERMINAL:
+          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeDrivePath("Main P1") //Drive to the first ball
+                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction)  //Activate intake
+                  .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
+                  .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
+                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+                  .executeDrivePath("Main P3") //Drive to the base of the hub
+                  .executeAction((d, i, s) -> s.shootTop()) //Shoot
                   .complete();
           break;
         default:
