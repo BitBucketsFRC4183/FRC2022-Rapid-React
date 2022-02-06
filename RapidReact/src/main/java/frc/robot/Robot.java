@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
@@ -184,20 +182,18 @@ public class Robot extends TimedRobot {
           break;
         case MAIN_NO_TERMINAL:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeShootPreload() //Shoot Preload
                   .executeDrivePath("Main P1") //Drive to the first ball
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
                   .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
                   .executeDrivePath("Main P3") //Drive to the base of the hub
                   .executeAction((d, i, s) -> s.shootTop()) //Shoot
-                  .complete()
-                  //Shoot preload
-                  .beforeStarting(new InstantCommand(() -> this.shooterSubsystem.shootTop())
-                                  .alongWith(new WaitCommand(5)
-                                          .andThen(new InstantCommand(() -> this.shooterSubsystem.stopShoot()))));
+                  .complete();
           break;
         case MAIN_WITH_TERMINAL:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeShootPreload() //Shoot Preload
                   .executeDrivePath("Main P1") //Drive to the first ball
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction)  //Activate intake
                   .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
@@ -205,11 +201,7 @@ public class Robot extends TimedRobot {
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
                   .executeDrivePath("Main P3") //Drive to the base of the hub
                   .executeAction((d, i, s) -> s.shootTop()) //Shoot
-                  .complete()
-                  //Shoot preload
-                  .beforeStarting(new InstantCommand(() -> this.shooterSubsystem.shootTop())
-                                  .alongWith(new WaitCommand(5)
-                                          .andThen(new InstantCommand(() -> this.shooterSubsystem.stopShoot()))));
+                  .complete();
           break;
         default:
           info.log(LogLevel.CRITICAL, "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
