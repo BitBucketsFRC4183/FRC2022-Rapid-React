@@ -24,10 +24,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private TalonSRX feeder1;
   private TalonSRX feeder2;
 
-  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 5400.0);
-  private final Changeable<Double> bottomSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", -5200.0);
-  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.5);
-  private final Changeable<Double> feeder2PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederTwoPercentOutput", 0.5);
+  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 1500.0);
+  private final Changeable<Double> bottomSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", -5500.0);
+  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.2);
+  private final Changeable<Double> feeder2PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederTwoPercentOutput", 0.2);
   private float hubShootSpeedDeadband = 100;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
@@ -94,6 +94,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     roller2 = MotorUtils.makeSpark(config.shooter.roller2);
     feeder1 = new WPI_TalonSRX(config.shooterFeeder1_ID);
     feeder2 = new WPI_TalonSRX(config.shooterFeeder2_ID);
+
+    //limit the voltage of the feeder motors
+    feeder1.configVoltageCompSaturation(11);
+    feeder1.enableVoltageCompensation(true);
+    feeder2.configVoltageCompSaturation(11);
+    feeder2.enableVoltageCompensation(true);
+
 
     if (Robot.isSimulation())
     {
