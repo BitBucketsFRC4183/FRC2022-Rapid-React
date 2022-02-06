@@ -182,6 +182,7 @@ public class Robot extends TimedRobot {
           break;
         case MAIN_NO_TERMINAL:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeShootPreload() //Shoot Preload
                   .executeDrivePath("Main P1") //Drive to the first ball
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
                   .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
@@ -192,6 +193,7 @@ public class Robot extends TimedRobot {
           break;
         case MAIN_WITH_TERMINAL:
           command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
+                  .executeShootPreload() //Shoot Preload
                   .executeDrivePath("Main P1") //Drive to the first ball
                   .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction)  //Activate intake
                   .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
