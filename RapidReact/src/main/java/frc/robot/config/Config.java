@@ -29,8 +29,6 @@ public class Config {
 
   // Autonomous Subsystem
 
-  // Climber Subsystem
-
   // Drive Subsystem
   public int frontLeftModuleDriveMotor_ID = 5;
   public int frontLeftModuleSteerMotor_ID = 6;
@@ -59,20 +57,17 @@ public class Config {
   public int shooterFeeder1_ID = 17;
   public int shooterFeeder2_ID = 18;
 
-
-  public int intakeSolenoid_ID1 = 0;
-  public int intakeSolenoid_ID2 = 1;
+  public int intakeSolenoid_ID1 = 0; // TODO: change this
+  public int intakeSolenoid_ID2 = 1; // TODO: change this
 
   // Shooter
 
   //Climber Subsystem
-  public int climberMotor_ID = 16;
+  public int climberMotor_ID1 = 16;
+  public int climberMotor_ID2 = 19;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
-
-  public int fixedHookSolenoid_ID1 = 4;
-  public int fixedHookSolenoid_ID2 = 5;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
