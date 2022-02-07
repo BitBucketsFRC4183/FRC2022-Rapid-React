@@ -155,6 +155,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // stop when hit reverse limit switch
     // <end phase, human starts next phase>
 
+    // additional piece of info to be used: "You make the winch rope short enough that it’s impossible for the climber to come completely out the top, then you look for a motor current spike to tell when it’s fully retracted and the motor is stalled"
+
     if (climber1.isFwdLimitSwitchClosed() == 1) climber1.set(0);
     if (climber2.isFwdLimitSwitchClosed() == 1) climber2.set(0);
 
