@@ -13,13 +13,13 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = false;
-  public boolean enableClimberSubsystem = false;
+  public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = false;
   public boolean enableIntakeSubsystem = false;
-  public boolean enableShooterSubsystem = true;
+  public boolean enableShooterSubsystem = false;
   public boolean enableVisionSubsystem = false;
 
-  public boolean enablePneumatics = false;
+  public boolean enablePneumatics = true;
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
@@ -68,8 +68,8 @@ public class Config {
   //Climber Subsystem
   public int climberMotor_ID = 16;
 
-  public int elevatorSolenoid_ID1 = 2;
-  public int elevatorSolenoid_ID2 = 3;
+  public int elevatorSolenoid_ID1 = 0;
+  public int elevatorSolenoid_ID2 = 1;
 
   public int fixedHookSolenoid_ID1 = 4;
   public int fixedHookSolenoid_ID2 = 5;
