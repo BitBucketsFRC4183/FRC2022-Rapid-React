@@ -157,6 +157,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // additional piece of info to be used: "You make the winch rope short enough that it’s impossible for the climber to come completely out the top, then you look for a motor current spike to tell when it’s fully retracted and the motor is stalled"
 
+    // "It is possible to synchronize their motion in software, by commanding one side to track a setpoint position and having the other track the first. Review the closed loop control page of the CTRE manual."
+
+    // alsxo, tjhe climb method from gouind -> md ios diffrent trhan for mid to jhigh and high to travesal
+
     if (climber1.isFwdLimitSwitchClosed() == 1) climber1.set(0);
     if (climber2.isFwdLimitSwitchClosed() == 1) climber2.set(0);
 
