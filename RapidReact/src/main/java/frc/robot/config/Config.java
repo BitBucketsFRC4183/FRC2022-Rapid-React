@@ -49,7 +49,7 @@ public class Config {
   public int backRightModuleSteerEncoder_ID = 9;
 
   // Intake Subsystem
-  public static int ballManagementMotor_ID = 19;
+  public static int ballManagementMotor_ID = 20;
   public static int intakeMotor_ID = 13;
 
   // Shooter
