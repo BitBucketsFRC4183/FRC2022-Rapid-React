@@ -13,9 +13,9 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = false;
-  public boolean enableClimberSubsystem = true;
+  public boolean enableClimberSubsystem = false;
   public boolean enableDriveSubsystem = false;
-  public boolean enableIntakeSubsystem = false;
+  public boolean enableIntakeSubsystem = true;
   public boolean enableShooterSubsystem = false;
   public boolean enableVisionSubsystem = false;
 
@@ -49,16 +49,15 @@ public class Config {
   public int backRightModuleSteerEncoder_ID = 9;
 
   // Intake Subsystem
+  public static int ballManagementMotor_ID = 20;
   public static int intakeMotor_ID = 13;
 
   // Shooter
   public int shooterRoller1_ID = 14;
   public int shooterRoller2_ID = 15;
 
-  
   public int shooterFeeder1_ID = 17;
   public int shooterFeeder2_ID = 18;
-
 
   public int intakeSolenoid_ID1 = 0;
   public int intakeSolenoid_ID2 = 1;
