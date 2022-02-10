@@ -12,8 +12,9 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class ClimberSubsystem extends BitBucketsSubsystem {
 
+  private boolean climberEnabled;
+
   private WPI_TalonSRX climber;
-  private boolean enabledClimber;
   private boolean fixedHookToggleState;
   private boolean elevatorToggle;
   private boolean autoClimb;
@@ -26,8 +27,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private final Loggable<String> hookToggleState = BucketLog.loggable(Put.STRING, "climber/hookState");
   private final Loggable<String> elevatorToggleState = BucketLog.loggable(Put.STRING, "climber/elevatorState");
 
-  public ClimberSubsystem(Config config) {
+  public ClimberSubsystem(boolean climberEnabled, Config config) {
     super(config);
+
+    this.climberEnabled = climberEnabled;
   }
 
   @Override
@@ -49,9 +52,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void toggleClimberEnabled() { // uses 2 PS button
-    enabledClimber = !enabledClimber;
+    climberEnabled = !climberEnabled;
     
-    if (enabledClimber){
+    if (climberEnabled){
       climbState.log(LogLevel.GENERAL, "climberEnabled");
     } else{
       climbState.log(LogLevel.GENERAL, "climberDisabled");
@@ -108,7 +111,4 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
   }
 
-  public boolean getEnabledClimber(){
-    return enabledClimber;
-  }
 }
