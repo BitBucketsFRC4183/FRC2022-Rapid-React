@@ -160,13 +160,12 @@ public class Config {
     climber.climber1.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
 
-    climber.climber2.id = climberMotor_ID1;
+    climber.climber2.id = climberMotor_ID2;
     climber.climber2.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
     climber.climber2.motionMagicCruiseVelocity = 4663;
     climber.climber2.motionMagicAcceleration = 4663;
     climber.climber2.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climber2.followingID = climberMotor_ID1;
   }
 }

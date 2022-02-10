@@ -24,7 +24,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   enum ClimbState {
     Idle, // not climbing (initial value)
     Climbing,
-    Finished,
+    CompletedPhase,
     Stoppped,
   }
 
@@ -62,7 +62,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void init() {
     climber1 = MotorUtils.makeSRX(config.climber.climber1);
     climber2 = MotorUtils.makeSRX(config.climber.climber2);
-    climber2.follow(climber1);
 
     if (config.enablePneumatics) {
       elevatorSolenoid =
@@ -78,7 +77,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void periodic() {
     if (autoClimb) {
       if (currentClimbState == ClimbState.Stoppped) {}
-      if (currentClimbState == ClimbState.Finished) {
+      if (currentClimbState == ClimbState.CompletedPhase) {
         // ground -> mid
         // toggle, extend, stop at limit, toggle back, retract, stop at limit, end phase
 
@@ -113,7 +112,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
         {
           elevatorStop();
           currentClimbAction = ClimbAction.Idle;
-          currentClimbState = ClimbState.Finished;
+          currentClimbState = ClimbState.CompletedPhase;
           // autoClimb = false;
         }
       }

@@ -311,15 +311,12 @@ public class Robot extends TimedRobot {
     //Shooter BUttons and Climber Buttons
     if (config.enableClimberSubsystem || config.enableShooterSubsystem)
     {
-      buttons.hubShootOrFixedHookToggle.whenPressed(() -> {
-        if (config.enableClimberSubsystem && climberSubsystem.getEnabledClimber()){
-          climberSubsystem.fixedHookToggler();
-        }
-        else if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
+      buttons.hubShoot.whenPressed(() -> {
+        if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
           shooterSubsystem.shootTop();
         }
       });
-      buttons.hubShootOrFixedHookToggle.whenReleased(() -> {
+      buttons.hubShoot.whenReleased(() -> {
         if (config.enableShooterSubsystem){
           shooterSubsystem.stopShoot();
         }
