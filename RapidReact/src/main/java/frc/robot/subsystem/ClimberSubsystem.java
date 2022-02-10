@@ -27,10 +27,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private final Loggable<String> hookToggleState = BucketLog.loggable(Put.STRING, "climber/hookState");
   private final Loggable<String> elevatorToggleState = BucketLog.loggable(Put.STRING, "climber/elevatorState");
 
-  public ClimberSubsystem(boolean climberEnabled, Config config) {
+  public ClimberSubsystem(Config config) {
     super(config);
-
-    this.climberEnabled = climberEnabled;
   }
 
   @Override

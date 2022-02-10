@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
     }
     if (config.enableClimberSubsystem) {
-      this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(climberEnabled, this.config));
+      this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
 
     // create a new field to update
@@ -285,6 +285,8 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberEnabled = !climberEnabled;
+
               climberSubsystem.toggleClimberEnabled();
             }
           }
@@ -295,6 +297,8 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberEnabled = !climberEnabled;
+
               climberSubsystem.toggleClimberEnabled();
             }
           }
