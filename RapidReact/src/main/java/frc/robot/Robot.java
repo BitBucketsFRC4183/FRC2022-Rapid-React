@@ -52,6 +52,8 @@ public class Robot extends TimedRobot {
   private boolean driverClimbEnabledPressed;
   private boolean operatorClimbEnabledPressed;
 
+  private boolean climberEnabled = false;
+
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
@@ -283,6 +285,8 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberEnabled = !climberEnabled;
+
               climberSubsystem.toggleClimberEnabled();
             }
           }
@@ -293,6 +297,8 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+              climberEnabled = !climberEnabled;
+
               climberSubsystem.toggleClimberEnabled();
             }
           }
@@ -311,13 +317,17 @@ public class Robot extends TimedRobot {
     //Shooter BUttons and Climber Buttons
     if (config.enableClimberSubsystem || config.enableShooterSubsystem)
     {
+
       buttons.hubShootOrFixedHookToggle.whenPressed(() -> {
-        if (config.enableClimberSubsystem && climberSubsystem.getEnabledClimber()){
-          climberSubsystem.fixedHookToggler();
+
+        if (config.enableClimberSubsystem && climberEnabled) {
+         climberSubsystem.fixedHookToggler();
+        } else {
+          if (config.enableShooterSubsystem) {
+            shooterSubsystem.shootTop();
+          }
         }
-        else if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
-          shooterSubsystem.shootTop();
-        }
+
       });
       buttons.hubShootOrFixedHookToggle.whenReleased(() -> {
         if (config.enableShooterSubsystem){
@@ -327,12 +337,14 @@ public class Robot extends TimedRobot {
     
       buttons.tarmacShootOrToggleElevator.whenPressed(
           () -> {
-            if (config.enableClimberSubsystem && climberSubsystem.getEnabledClimber()){
+
+            if (config.enableClimberSubsystem && climberEnabled) {
               climberSubsystem.elevatorToggle();
-            }
-            else if (config.enableShooterSubsystem && (climberSubsystem == null || !climberSubsystem.getEnabledClimber())){
-              shooterSubsystem.shootTarmac();
-              drivetrainSubsystem.orient();
+            } else {
+              if (config.enableShooterSubsystem) {
+                shooterSubsystem.shootTarmac();
+                drivetrainSubsystem.orient();
+              }
             }
           }
         );
