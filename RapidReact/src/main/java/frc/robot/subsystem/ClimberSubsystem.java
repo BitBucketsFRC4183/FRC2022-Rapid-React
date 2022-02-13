@@ -12,46 +12,45 @@ import frc.robot.utils.MotorUtils;
 
 public class ClimberSubsystem extends BitBucketsSubsystem {
 
-  enum ClimbPhase {
-    Idle, // not climbing (initial value)
-    ClimbMid, // climbing from ground to mid
-    ClimbHigh, // climbing from mid to high
-    ClimbTraversal, // climbing for high to traversal
-  }
-
-  ClimbPhase[] climbPhaseValues = ClimbPhase.values();
-
-  enum ClimbState {
-    Idle, // not climbing (initial value)
-    Climbing,
-    CompletedPhase,
-    Stoppped,
-  }
-
-  enum ClimbAction {
+  // state machine diagram 
+  // https://i.imgur.com/zE1pEXn.png
+  enum ClimbState
+  {
     Idle,
-    Extending,
-    Retracting,
+    ExtendPartial,
+    ExtendFull,
+    Retract
   }
 
   private WPI_TalonSRX climber1;
   private WPI_TalonSRX climber2;
   private boolean enabledClimber = true;
-  private boolean elevatorToggle;
-  private boolean autoClimb;
-  private ClimbPhase currentClimbPhase;
+
+  private boolean autoClimb; // is autoclimb enabled
+  private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
+
   private ClimbState currentClimbState;
-  private ClimbAction currentClimbAction;
   DoubleSolenoid elevatorSolenoid;
   
   private int fullExtendPosition = 5000; // TODO: change this number
-  private int halfExtendPosition = fullExtendPosition / 2;
+  private int partialExtendPosition = fullExtendPosition / 2;
   private int fullRetractPosition = 0; // TODO: change this number
+
+  // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#mechanism-is-finished-command
+  private int climbErrThreshold1;
+  private int climbLoopsToSettle1;
+  private int withinThresholdLoops1;
+
+  private int climbErrThreshold2;
+  private int climbLoopsToSettle2;
+  private int withinThresholdLoops2;
+
+  private boolean climberTilted = false;
 
   private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 0.5);
 
   private final Loggable<String> climbState = BucketLog.loggable(Put.STRING, "climber/climbState");
-  private final Loggable<String> elevatorToggleState = BucketLog.loggable(Put.STRING, "climber/elevatorState");
+  private final Loggable<String> elevatorTiltedState = BucketLog.loggable(Put.STRING, "climber/elevatorTiltedState");
   private final Loggable<Double> climberMotorPosition = BucketLog.loggable(Put.DOUBLE, "climber/climberMotorPosition");
 
   public ClimberSubsystem(Config config) {
@@ -68,56 +67,125 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
         new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
     }
 
-    currentClimbPhase = ClimbPhase.Idle;
     currentClimbState = ClimbState.Idle;
-    currentClimbAction = ClimbAction.Idle;
+  }
+
+  boolean isClimberAtSetpoint()
+  {
+    climbErrThreshold1 = 10;
+    climbLoopsToSettle1 = 10;
+    withinThresholdLoops1 = 0;
+    boolean climber1AtSetpoint = false;
+    if (climber1.getClosedLoopError() < +climbErrThreshold1 && climber1.getClosedLoopError() > -climbErrThreshold1) {
+      withinThresholdLoops1++;
+
+      if (withinThresholdLoops1 > climbLoopsToSettle1)
+        climber1AtSetpoint = true;
+    } else {
+      withinThresholdLoops1 = 0;
+    }
+    
+    climbErrThreshold2 = 10;
+    climbLoopsToSettle2 = 10;
+    withinThresholdLoops2 = 0;
+    boolean climber2AtSetpoint = false;
+    if (climber2.getClosedLoopError() < +climbErrThreshold2 && climber2.getClosedLoopError() > -climbErrThreshold2) {
+      withinThresholdLoops2++;
+
+      if (withinThresholdLoops2 > climbLoopsToSettle2)
+        climber2AtSetpoint = true;
+    } else {
+      withinThresholdLoops2 = 0;
+    }
+
+    return climber1AtSetpoint && climber2AtSetpoint;
+  }
+
+  private void idleInit()
+  {
+    setElevatorTilted(false);
+    autoRetractFull();
+  }
+
+  private void extendPartialInit()
+  {
+    setElevatorTilted(false);
+    autoExtendPartial();
+  }
+
+  private void extendFullInit()
+  {
+    setElevatorTilted(true);
+    autoExtendFull();
+  }
+
+  private void retractInit()
+  {
+    setElevatorTilted(false);
+    autoRetractFull();
   }
 
   @Override
   public void periodic() {
-    if (autoClimb) {
-      if (currentClimbState == ClimbState.Stoppped) {}
-      if (currentClimbState == ClimbState.CompletedPhase) {
-        // ground -> mid
-        // toggle, extend, stop at limit, toggle back, retract, stop at limit, end phase
+    if (!autoClimb)
+      return;
+    
+    ClimbState nextState = ClimbState.Idle;
 
-        if (currentClimbAction == ClimbAction.Idle)
-          startForwardAutoClimb();
-        
-        // anything except going from ground -> mid
-        if (currentClimbPhase != ClimbPhase.ClimbMid)
+    switch (currentClimbState)
+    {
+      case Idle:
+        if (autoClimbPressed)
         {
-          // toggle arm back once we've gone halfway
-          if (climber1.getSelectedSensorPosition() >= halfExtendPosition) {
-            elevatorToggle();
-          }
+          nextState = ClimbState.ExtendPartial;
+          extendPartialInit();
         }
-
-        // "You make the winch rope short enough that it’s impossible for the climber to come completely out the top, then you look for a motor current spike to tell when it’s fully retracted and the motor is stalled"
-
-        if (climber1.getSelectedSensorPosition() >= fullExtendPosition)
+        else
         {
-          elevatorStop();
-          currentClimbAction = ClimbAction.Idle;
+          nextState = ClimbState.Idle;
         }
-
-        // don't go past this point until finished extending
-        if (currentClimbAction == ClimbAction.Extending) return;
-
-        // only call while idle; not repreatedly whilst reversing
-        if (currentClimbAction == ClimbAction.Idle) 
-          startReverseAutoClimbHighTraversal();
-
-        if (climber1.getSelectedSensorPosition() >= fullRetractPosition)
+        break;
+    
+      case ExtendPartial:
+        if (isClimberAtSetpoint())
         {
-          elevatorStop();
-          currentClimbAction = ClimbAction.Idle;
-          currentClimbState = ClimbState.CompletedPhase;
-          // autoClimb = false;
+          nextState = ClimbState.ExtendFull;
+          extendFullInit();
         }
-      }
+        else
+        {
+          nextState = ClimbState.ExtendPartial;
+        }
+        break;
+      
+      case ExtendFull:
+        if (isClimberAtSetpoint())
+        {
+          nextState = ClimbState.Retract;
+          retractInit();
+        }
+        else
+        {
+          nextState = ClimbState.ExtendFull;
+        }
+        break;
+      
+      case Retract:
+        if (isClimberAtSetpoint())
+        {
+          nextState = ClimbState.Idle;
+          idleInit();
+        }
+        else
+        {
+          nextState = ClimbState.Retract;      
+        }
+        break;
     }
+
+    currentClimbState = nextState;
   }
+
 
   @Override
   public void disable() {
@@ -135,8 +203,11 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
   }
 
-  public void elevatorExtend() { //uses up button
+  public void manualElevatorExtend() { //uses up button
     if (autoClimb) return;
+
+    // TODO PERSISTNET: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
+    // TODO PERSISTENT: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
 
     climber1.set(ControlMode.PercentOutput, climbOutput.currentValue());
     climber2.set(ControlMode.PercentOutput, climbOutput.currentValue());
@@ -145,8 +216,11 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climbState.log(LogLevel.GENERAL, "elevatorExtend");
   }
 
-  public void elevatorRetract() { //uses down button
+  public void manualElevatorRetract() { //uses down button
     if (autoClimb) return;
+
+    // TODO PERSISTNET: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
+    // TODO PERSISTENT: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
 
     climber1.set(ControlMode.PercentOutput, -climbOutput.currentValue());
     climber2.set(ControlMode.PercentOutput, -climbOutput.currentValue());
@@ -158,68 +232,77 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void elevatorStop() {
     climber1.set(0);
     climber2.set(0);
-    climbState.log(LogLevel.GENERAL, "climbStotopped");
+    climbState.log(LogLevel.GENERAL, "climbStopped");
   }
 
-  public void climbAuto() { //uses TPAD button
+  // autoClimb() both enables autoclimb and sets the flag to true
+  // autoClimbReleased() just sets the flag to false
+  public void autoClimb() { //uses TPAD button
     autoClimb = true;
-    climbState.log(LogLevel.GENERAL, "automatially climbing");
-    // TODO: figure out behavior if it's stopped
-    // my postulation is that we go to the next phase
-    // i assume that controllers might stop it, finish the climb, then hit the button for the next phase
+    autoClimbPressed = true;
+
+    climbState.log(LogLevel.GENERAL, "automatically climbing");
+  }
+  public void autoClimbReleased()
+  {
+    autoClimbPressed = false;
   }
 
-  private void startForwardAutoClimb() {
-    switch (currentClimbPhase) {
-      case Idle:
-        currentClimbPhase = ClimbPhase.ClimbMid;
-        break;
-      case ClimbMid:
-        currentClimbPhase = ClimbPhase.ClimbHigh;
-        break;
-      case ClimbHigh:
-        currentClimbPhase = ClimbPhase.ClimbTraversal;
-        break;
-    }
+  private void autoExtendPartial()
+  {
+    climber1.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
+    climber2.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
 
-    elevatorToggle();
+    climberMotorPosition.log(climber1.getSelectedSensorPosition());
+    climbState.log(LogLevel.GENERAL, "elevatorExtendPartial");
+  }
 
-    currentClimbAction = ClimbAction.Extending;
-
+  private void autoExtendFull()
+  {
     climber1.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climber2.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+
     climberMotorPosition.log(climber1.getSelectedSensorPosition());
-    climbState.log(LogLevel.GENERAL, "elevatorExtend");
+    climbState.log(LogLevel.GENERAL, "elevatorExtendFull");
   }
 
-  private void startReverseAutoClimbHighTraversal() {
-    elevatorToggle();
-
-    currentClimbAction = ClimbAction.Retracting;
-
+  private void autoRetractFull()
+  {
     climber1.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+    climber2.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+
     climberMotorPosition.log(climber1.getSelectedSensorPosition());
-    climbState.log(LogLevel.GENERAL, "elevatorExtend");
+    climbState.log(LogLevel.GENERAL, "elevatorRetract");
   }
 
   // TODO: add a button for this
   private void stopAutoClimb() {
     autoClimb = false;
-    if (currentClimbState != ClimbState.Idle) {
-      currentClimbState = ClimbState.Stoppped;
+    currentClimbState = ClimbState.Idle;
+  }
+
+  public void setElevatorTilted(boolean tilted)
+  {
+    if (!config.enablePneumatics)
+      return;
+    
+    climberTilted = tilted;
+    
+    if (tilted)
+    {
+      elevatorSolenoid.set(Value.kReverse);
+      elevatorTiltedState.log(LogLevel.GENERAL, "Tilted");
+    }
+    else
+    {
+      elevatorSolenoid.set(Value.kForward);
+      elevatorTiltedState.log(LogLevel.GENERAL, "Not Tilted");
     }
   }
 
-  public void elevatorToggle() {
-    if (config.enablePneumatics) {
-      elevatorToggle = !elevatorToggle;
-      if (!elevatorToggle) {
-        elevatorSolenoid.set(Value.kForward);
-        elevatorToggleState.log(LogLevel.GENERAL, "ClimbTime");
-      } else {
-        elevatorSolenoid.set(Value.kReverse);
-        elevatorToggleState.log(LogLevel.GENERAL, "NotClimbTime");
-      }
-    }
+  public void elevatorToggle()
+  {
+    setElevatorTilted(!climberTilted);
   }
 
   public boolean getEnabledClimber() {

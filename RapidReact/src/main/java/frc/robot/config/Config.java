@@ -152,6 +152,7 @@ public class Config {
 
     // climber motors
     climber.climber1.id = climberMotor_ID1;
+    // TODO: zero the climber
     climber.climber1.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
@@ -161,6 +162,7 @@ public class Config {
 
 
     climber.climber2.id = climberMotor_ID2;
+    // TODO: zero the climber
     climber.climber2.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
