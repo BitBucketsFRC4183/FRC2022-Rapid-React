@@ -14,12 +14,12 @@ public class Config {
 
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
-  public boolean enableAutonomousSubsystem = false;
-  public boolean enableClimberSubsystem = false;
-  public boolean enableDriveSubsystem = false;
+  public boolean enableAutonomousSubsystem = true;
+  public boolean enableClimberSubsystem = true;
+  public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
-  public boolean enableShooterSubsystem = false;
-  public boolean enableVisionSubsystem = false;
+  public boolean enableShooterSubsystem = true;
+  public boolean enableVisionSubsystem = true;
 
   public boolean enablePneumatics = true;
 
@@ -32,21 +32,21 @@ public class Config {
   // Autonomous Subsystem
 
   // Drive Subsystem
-  public int frontLeftModuleDriveMotor_ID = 5;
-  public int frontLeftModuleSteerMotor_ID = 6;
-  public int frontLeftModuleSteerEncoder_ID = 11;
+  public int frontLeftModuleDriveMotor_ID = 1;
+  public int frontLeftModuleSteerMotor_ID = 2;
+  public int frontLeftModuleSteerEncoder_ID = 9;
 
   public int frontRightModuleDriveMotor_ID = 7;
   public int frontRightModuleSteerMotor_ID = 8;
   public int frontRightModuleSteerEncoder_ID = 12;
 
-  public int backLeftModuleDriveMotor_ID = 3;
-  public int backLeftModuleSteerMotor_ID = 4;
-  public int backLeftModuleSteerEncoder_ID = 10;
+  public int backLeftModuleDriveMotor_ID = 5;
+  public int backLeftModuleSteerMotor_ID = 6;
+  public int backLeftModuleSteerEncoder_ID = 11;
 
-  public int backRightModuleDriveMotor_ID = 1;
-  public int backRightModuleSteerMotor_ID = 2;
-  public int backRightModuleSteerEncoder_ID = 9;
+  public int backRightModuleDriveMotor_ID = 3;
+  public int backRightModuleSteerMotor_ID = 4;
+  public int backRightModuleSteerEncoder_ID = 10;
 
   // Intake Subsystem
   public static int ballManagementMotor_ID = 20;
@@ -101,17 +101,17 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
-    public double drivetrainTrackWidth_meters = 0.3937; // set trackwidth
+    public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
 
-    public double drivetrainWheelBase_meters = 0.3937; // set wheelbase
+    public double drivetrainWheelBase_meters = 0.7112; // set wheelbase
 
-    public double frontLeftModuleSteerOffset = -Math.toRadians(345); // set front left steer offset
+    public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(149); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(156); // set front right steer offset
 
-    public double backLeftModuleSteerOffset = -Math.toRadians(321); // set back left steer offset
+    public double backLeftModuleSteerOffset = -Math.toRadians(250); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(60.9); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(250); // set back right steer offset
 
     public DriveConfig() {}
   }
