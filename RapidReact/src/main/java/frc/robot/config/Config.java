@@ -1,5 +1,7 @@
 package frc.robot.config;
 
+import org.w3c.dom.css.RGBColor;
+
 public class Config {
 
   // List of subsystem names:
@@ -12,12 +14,13 @@ public class Config {
 
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
-  public boolean enableAutonomousSubsystem = true;
+  public boolean enableAutonomousSubsystem = false;
   public boolean enableClimberSubsystem = true;
-  public boolean enableDriveSubsystem = true;
-  public boolean enableIntakeSubsystem = true;
-  public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableDriveSubsystem = false;
+  public boolean enableIntakeSubsystem = false;
+  public boolean enableShooterSubsystem = false;
+  public boolean enableRGBSubsystem = true;
+  public boolean enableVisionSubsystem = false;
 
   public boolean enablePneumatics = true;
 
@@ -73,11 +76,15 @@ public class Config {
   public int fixedHookSolenoid_ID1 = 4;
   public int fixedHookSolenoid_ID2 = 5;
 
+  //RGB
+  public static int RGB_ID = 9;
+
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
   public ShooterConfig shooter = new ShooterConfig();
+  public RGBConfig rgbConfig = new RGBConfig();
   public VisionConfig vision = new VisionConfig();
 
   // Autonomous Config
@@ -94,6 +101,12 @@ public class Config {
   public class ClimberConfig {
 
     public ClimberConfig() {}
+  }
+
+  // rgb Config
+  public class RGBConfig {
+
+    public RGBConfig() {}
   }
 
   // Drive Config
