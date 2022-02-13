@@ -5,8 +5,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
+import frc.robot.simulator.CTREPhysicsSim;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
@@ -33,7 +35,11 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
       intakeSolenoid =
         new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
     }
-    //shows the speed of intake on the smart dashboard
+    if (Robot.isSimulation()) {
+      // simulate the motors
+      CTREPhysicsSim.getInstance().addTalonSRX(intake, .75,5100, false);
+      CTREPhysicsSim.getInstance().addTalonSRX(ballManagement, .75,5100, false);
+    }
   }
 
   @Override

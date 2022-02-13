@@ -6,8 +6,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
+import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.utils.MotorUtils;
 
 public class ClimberSubsystem extends BitBucketsSubsystem {
@@ -22,14 +24,14 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     Retract
   }
 
-  private WPI_TalonSRX climber1;
-  private WPI_TalonSRX climber2;
+  WPI_TalonSRX climber1;
+  WPI_TalonSRX climber2;
   private boolean enabledClimber = true;
 
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
 
-  private ClimbState currentClimbState;
+  ClimbState currentClimbState;
   DoubleSolenoid elevatorSolenoid;
   
   private int fullExtendPosition = 5000; // TODO: change this number
@@ -65,6 +67,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     if (config.enablePneumatics) {
       elevatorSolenoid =
         new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+    }
+
+    if (Robot.isSimulation()) {
+      // simulate the motors
+      CTREPhysicsSim.getInstance().addTalonSRX(climber1, .75,5100, false);
+      CTREPhysicsSim.getInstance().addTalonSRX(climber2, .75,5100, false);
     }
 
     currentClimbState = ClimbState.Idle;
@@ -185,7 +193,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     currentClimbState = nextState;
   }
-
 
   @Override
   public void disable() {

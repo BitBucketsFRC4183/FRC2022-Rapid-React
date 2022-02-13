@@ -15,6 +15,7 @@ import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.log.*;
+import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
@@ -247,6 +248,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void simulationPeriodic() {
+    CTREPhysicsSim.getInstance().run();
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
