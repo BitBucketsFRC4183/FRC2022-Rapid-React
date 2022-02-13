@@ -10,8 +10,8 @@ import frc.robot.log.*;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
-  private WPI_TalonSRX ballManagement;
-  private WPI_TalonSRX intake;
+  WPI_TalonSRX ballManagement;
+  WPI_TalonSRX intake;
   //a boolean that checks whether the intake is running (true for on, false for off)
   public boolean toggleState;
   //double solenoid is used for the intake PCM
