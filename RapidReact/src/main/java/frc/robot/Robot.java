@@ -305,31 +305,25 @@ public class Robot extends TimedRobot {
           )
           .whenReleased(() -> driverClimbEnabledPressed = false);
 
-      buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+      buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
       buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
 
-      buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+      buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
       buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
       
-      buttons.climbAuto.whenPressed(climberSubsystem::climbAuto);
+      buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
     }
     
     //Shooter BUttons and Climber Buttons
     if (config.enableClimberSubsystem || config.enableShooterSubsystem)
     {
 
-      buttons.hubShootOrFixedHookToggle.whenPressed(() -> {
-
-        if (config.enableClimberSubsystem && climberEnabled) {
-         climberSubsystem.fixedHookToggler();
-        } else {
-          if (config.enableShooterSubsystem) {
-            shooterSubsystem.shootTop();
-          }
+      buttons.hubShoot.whenPressed(() -> {
+        if (config.enableShooterSubsystem) {
+          shooterSubsystem.shootTop();
         }
-
       });
-      buttons.hubShootOrFixedHookToggle.whenReleased(() -> {
+      buttons.hubShoot.whenReleased(() -> {
         if (config.enableShooterSubsystem){
           shooterSubsystem.stopShoot();
         }

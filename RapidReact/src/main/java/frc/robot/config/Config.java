@@ -1,5 +1,7 @@
 package frc.robot.config;
 
+import frc.robot.config.MotorConfig.EncoderType;
+
 public class Config {
 
   // List of subsystem names:
@@ -28,8 +30,6 @@ public class Config {
   // Motor & Pneumatic IDs
 
   // Autonomous Subsystem
-
-  // Climber Subsystem
 
   // Drive Subsystem
   public int frontLeftModuleDriveMotor_ID = 1;
@@ -65,13 +65,11 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-  public int climberMotor_ID = 16;
+  public int climberMotor_ID1 = 16;
+  public int climberMotor_ID2 = 19;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
-
-  public int fixedHookSolenoid_ID1 = 4;
-  public int fixedHookSolenoid_ID2 = 5;
 
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
@@ -79,6 +77,7 @@ public class Config {
   public DriveConfig drive = new DriveConfig();
   public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
+  public ClimberConfig climber = new ClimberConfig();
 
   // Autonomous Config
   public class AutonomousConfig {
@@ -92,6 +91,9 @@ public class Config {
 
   // Climber Config
   public class ClimberConfig {
+
+    public MotorConfig climber1 = new MotorConfig();
+    public MotorConfig climber2 = new MotorConfig();
 
     public ClimberConfig() {}
   }
@@ -147,5 +149,25 @@ public class Config {
 
     shooter.roller2.id = shooterRoller2_ID;
     shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+
+    // climber motors
+    climber.climber1.id = climberMotor_ID1;
+    // TODO: zero the climber
+    climber.climber1.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these 
+    // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
+    climber.climber1.motionMagicCruiseVelocity = 4663;
+    climber.climber1.motionMagicAcceleration = 4663;
+    climber.climber1.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+
+
+    climber.climber2.id = climberMotor_ID2;
+    // TODO: zero the climber
+    climber.climber2.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these 
+    // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
+    climber.climber2.motionMagicCruiseVelocity = 4663;
+    climber.climber2.motionMagicAcceleration = 4663;
+    climber.climber2.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
   }
 }
