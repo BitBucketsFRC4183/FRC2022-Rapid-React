@@ -59,8 +59,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
   }
 
-
-
   public void fixedHookToggler() { //uses R1 button
     if (config.enablePneumatics) {
       fixedHookToggleState = !fixedHookToggleState;
