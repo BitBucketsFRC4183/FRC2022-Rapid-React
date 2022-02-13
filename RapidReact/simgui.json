@@ -139,6 +139,16 @@
       "Talon SRX[18]": {
         "name": "Feeder2 [ID:18]"
       }
+    },
+    "Solenoids": {
+      "0": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {
@@ -154,8 +164,19 @@
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [3]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [4]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [5]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [6]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [7]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [8]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [13]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [16]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [17]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [18]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [20]": "Motor Controller",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
       "/SmartDashboard/Autonomous Path Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
@@ -187,7 +208,6 @@
           "image": "images/robot.png"
         },
         "Swerve Modules": {
-          "image": "/Users/saptarshimallick/Documents/Coding/FRC2022-Rapid-React/RapidReact/images/swerve_module.png",
           "length": 0.30480000376701355,
           "weight": 2.0,
           "width": 0.30480000376701355
