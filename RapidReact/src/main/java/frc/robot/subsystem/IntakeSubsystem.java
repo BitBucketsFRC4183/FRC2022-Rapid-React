@@ -10,12 +10,12 @@ import frc.robot.log.*;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
-  private WPI_TalonSRX intake;
+  WPI_TalonSRX ballManagement;
+  WPI_TalonSRX intake;
   //a boolean that checks whether the intake is running (true for on, false for off)
   public boolean toggleState;
   //double solenoid is used for the intake PCM
   DoubleSolenoid intakeSolenoid;
-
 
   //dashboard stuff
   private final Changeable<Double> percentOutput = BucketLog.changeable(Put.DOUBLE, "intake/percentOutput", 0.75);
@@ -27,11 +27,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+    ballManagement = new WPI_TalonSRX(Config.ballManagementMotor_ID);
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
     if (config.enablePneumatics) {
-      intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
+      intakeSolenoid =
+        new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
     }
-
     //shows the speed of intake on the smart dashboard
   }
 
@@ -46,16 +47,19 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   //intaking, outtaking, and stop the intake
   public void spinForward() {
     intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
     intakeState.log("intaking");
   }
 
   public void spinBackward() {
-    intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, -percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
     intakeState.log("outtaking");
   }
 
   public void stopSpin() {
     intake.set(ControlMode.PercentOutput, 0);
+    ballManagement.set(ControlMode.PercentOutput, 0);
     intakeState.log("stopped");
   }
 

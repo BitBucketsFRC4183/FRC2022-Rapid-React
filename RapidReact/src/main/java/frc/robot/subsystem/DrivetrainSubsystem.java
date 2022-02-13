@@ -246,10 +246,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     if (states != null) {
       SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
 
-      modules.get(0).set(states[0].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[0].angle.getRadians());
-      modules.get(1).set(states[1].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[1].angle.getRadians());
-      modules.get(2).set(states[2].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[2].angle.getRadians());
-      modules.get(3).set(states[3].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[3].angle.getRadians());
+      for(int i = 0; i < 4; i++)
+      {
+        //System.out.println("Module " + i + ": " + states[i].angle.getDegrees());
+        modules.get(i).set(states[i].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[i].angle.getRadians());
+      }
 
       pose = odometry.update(Robot.isSimulation() ? gyro.getGyroHeading() : this.drivetrainModel.gyro.getGyroHeading(), states[0], states[1], states[2], states[3]);
     }
@@ -287,12 +288,18 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   }
 
-  public void zeroStates()
+  public void zeroStates(Pose2d start)
   {
-    this.stop();
-    this.setStates(new SwerveModuleState[]{new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation()), new SwerveModuleState(0, pose.getRotation())});
+    SwerveModuleState zeroState = new SwerveModuleState(0, start.getRotation());
+    SwerveModuleState[] states = {zeroState, zeroState, zeroState, zeroState};
+    this.setStates(states);
+
+    this.odometry.resetPosition(start, start.getRotation());
+    this.drivetrainModel.setKnownPose(start);
+
+    //System.out.println("Zero States: Input Rotation{" + start.getRotation() + "}, Odometry Rotation{" + this.odometry.getPoseMeters() + "}");
   }
-  
+
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
   }

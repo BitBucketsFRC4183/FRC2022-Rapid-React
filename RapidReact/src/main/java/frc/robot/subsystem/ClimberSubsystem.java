@@ -12,8 +12,9 @@ import javax.swing.plaf.basic.BasicButtonUI;
 
 public class ClimberSubsystem extends BitBucketsSubsystem {
 
+  private boolean climberEnabled;
+
   private WPI_TalonSRX climber;
-  private boolean enabledClimber;
   private boolean fixedHookToggleState;
   private boolean elevatorToggle;
   private boolean autoClimb;
@@ -34,7 +35,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void init() {
     climber = new WPI_TalonSRX(config.climberMotor_ID);
     if (config.enablePneumatics) {
-      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.
+      elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
       fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.fixedHookSolenoid_ID1, config.fixedHookSolenoid_ID2);
     }
   }
@@ -47,15 +49,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climber.set(0);
   }
 
-  public void enableClimber() { // uses 2 PS button
-    enabledClimber = true;
-    climbState.log(LogLevel.GENERAL, "climberEnabled");
+  public void toggleClimberEnabled() { // uses 2 PS button
+    climberEnabled = !climberEnabled;
+    
+    if (climberEnabled){
+      climbState.log(LogLevel.GENERAL, "climberEnabled");
+    } else{
+      climbState.log(LogLevel.GENERAL, "climberDisabled");
+    }
   }
 
-  public void disableClimber() {
-    enabledClimber = false;
-    climbState.log(LogLevel.GENERAL, "climberDisabled");
-  }
+
 
   public void fixedHookToggler() { //uses R1 button
     if (config.enablePneumatics) {
@@ -105,7 +109,4 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
   }
 
-  public boolean getEnabledClimber(){
-    return enabledClimber;
-  }
 }

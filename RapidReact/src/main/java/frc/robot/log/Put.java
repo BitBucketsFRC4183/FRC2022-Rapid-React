@@ -29,7 +29,7 @@ public interface Put<T> {
 
         @Override
         public String convert(Object object) {
-            if (!(object instanceof Double)) throw new IllegalArgumentException("Not a string!");
+            if (!(object instanceof String)) throw new IllegalArgumentException("Not a string!");
 
             return (String) object;
         }
