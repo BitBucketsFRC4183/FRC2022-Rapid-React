@@ -18,6 +18,7 @@ public class Config {
   public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
+  public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
 

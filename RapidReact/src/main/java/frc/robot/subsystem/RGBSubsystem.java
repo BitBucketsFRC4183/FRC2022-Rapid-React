@@ -6,6 +6,7 @@ import frc.robot.config.Config;
 import frc.robot.log.BucketLog;
 import frc.robot.log.Changeable;
 import frc.robot.log.Put;
+import frc.robot.utils.BlinkenColors;
 
 public class RGBSubsystem extends BitBucketsSubsystem {
 
@@ -13,7 +14,11 @@ public class RGBSubsystem extends BitBucketsSubsystem {
   private double autoClimb = 0.57;
   private PWMSparkMax motor;
 
-  private final Changeable<Double> color = BucketLog.changeable(Put.DOUBLE, "rgb/color", 0.91);
+  private final Changeable<Double> color = BucketLog.changeable(
+    Put.DOUBLE,
+    "rgb/color",
+    BlinkenColors.Colors_Violet.getValue()
+  );
 
   public RGBSubsystem(Config config) {
     super(config);
@@ -28,11 +33,11 @@ public class RGBSubsystem extends BitBucketsSubsystem {
   }
 
   public void climberEnabled() {
-    motor.set(climbEnabled); // turn off the motor
+    motor.set(BlinkenColors.Colors_Dark_red.getValue());
   }
 
   public void autoClimb() {
-    motor.set(autoClimb); // turn off the motor
+    motor.set(BlinkenColors.Colors_Hot_Pink.getValue());
   }
 
   public void colorChange() {}
