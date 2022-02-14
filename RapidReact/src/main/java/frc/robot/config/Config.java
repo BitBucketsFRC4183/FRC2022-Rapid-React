@@ -14,14 +14,14 @@ public class Config {
 
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
-  public boolean enableAutonomousSubsystem = true;
+  public boolean enableAutonomousSubsystem = false;
   public boolean enableClimberSubsystem = true;
-  public boolean enableDriveSubsystem = true;
-  public boolean enableIntakeSubsystem = true;
-  public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableDriveSubsystem = false;
+  public boolean enableIntakeSubsystem = false;
+  public boolean enableShooterSubsystem = false;
+  public boolean enableVisionSubsystem = false;
 
-  public boolean enablePneumatics = true;
+  public boolean enablePneumatics = false;
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
@@ -65,8 +65,8 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-  public int climberMotor_ID1 = 16;
-  public int climberMotor_ID2 = 19;
+  public int climberMotor_ID1 = 2;
+  public int climberMotor_ID2 = 1;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
@@ -92,8 +92,8 @@ public class Config {
   // Climber Config
   public class ClimberConfig {
 
-    public MotorConfig climber1 = new MotorConfig();
-    public MotorConfig climber2 = new MotorConfig();
+    public MotorConfig climberLeader = new MotorConfig();
+    public MotorConfig climberFollower = new MotorConfig();
 
     public ClimberConfig() {}
   }
@@ -151,23 +151,29 @@ public class Config {
     shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
     // climber motors
-    climber.climber1.id = climberMotor_ID1;
+    climber.climberLeader.id = climberMotor_ID1;
     // TODO: zero the climber
-    climber.climber1.encoderType = EncoderType.Quadrature;
+    climber.climberLeader.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climber1.motionMagicCruiseVelocity = 4663;
-    climber.climber1.motionMagicAcceleration = 4663;
-    climber.climber1.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberLeader.motionMagicCruiseVelocity = 4663;
+    climber.climberLeader.motionMagicAcceleration = 4663;
+    climber.climberLeader.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    // Configure output and sensor direction 
+    climber.climberLeader.inverted = false;
+    climber.climberLeader.sensorPhase = true;
 
-
-    climber.climber2.id = climberMotor_ID2;
+    climber.climberFollower.id = climberMotor_ID2;
     // TODO: zero the climber
-    climber.climber2.encoderType = EncoderType.Quadrature;
+    climber.climberFollower.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climber2.motionMagicCruiseVelocity = 4663;
-    climber.climber2.motionMagicAcceleration = 4663;
-    climber.climber2.positionPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberFollower.motionMagicCruiseVelocity = 4663;
+    climber.climberFollower.motionMagicAcceleration = 4663;
+    climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    // Configure output and sensor direction 
+    climber.climberFollower.inverted = true;
+    climber.climberFollower.sensorPhase = true;
+    
   }
 }

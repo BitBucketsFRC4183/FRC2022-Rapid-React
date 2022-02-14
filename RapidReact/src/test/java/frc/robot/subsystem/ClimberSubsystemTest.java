@@ -21,8 +21,8 @@ public class ClimberSubsystemTest extends SubsystemTest {
         Config config = new Config();
 
         // make the PID more aggressive for our tests since the simulated motor is a bit more idealized
-        config.climber.climber1.positionPIDF = new PIDF(1, 0, 0, 0);
-        config.climber.climber2.positionPIDF = new PIDF(1, 0, 0, 0);
+        config.climber.climberLeader.positionPIDF = new PIDF(1, 0, 0, 0);
+        config.climber.climberFollower.positionPIDF = new PIDF(1, 0, 0, 0);
 
         // create the subsystem without pneumatics
         config.enablePneumatics = false;
@@ -45,8 +45,8 @@ public class ClimberSubsystemTest extends SubsystemTest {
         waitForCTREUpdate();
 
         // verify we applied no voltage to climb motors
-        assertEquals(0, subsystem.climber1.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
-        assertEquals(0, subsystem.climber2.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
+        assertEquals(0, subsystem.climberLeader.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
+        assertEquals(0, subsystem.climberFollower.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ClimberSubsystemTest extends SubsystemTest {
         CTREPhysicsSim.getInstance().run();
 
         // we should be moving towards our goal
-        assertNotEquals(0, subsystem.climber1.getSimCollection().getMotorOutputLeadVoltage());
-        assertNotEquals(0, subsystem.climber2.getSimCollection().getMotorOutputLeadVoltage());
+        assertNotEquals(0, subsystem.climberLeader.getSimCollection().getMotorOutputLeadVoltage());
+        assertNotEquals(0, subsystem.climberFollower.getSimCollection().getMotorOutputLeadVoltage());
     }
 }
