@@ -161,7 +161,7 @@ public class Config {
     climber.climberLeader.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     // Configure output and sensor direction 
     climber.climberLeader.inverted = false;
-    climber.climberLeader.sensorPhase = true;
+    climber.climberLeader.sensorPhase = false;
 
     climber.climberFollower.id = climberMotor_ID2;
     // TODO: zero the climber
@@ -173,7 +173,7 @@ public class Config {
     climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     // Configure output and sensor direction 
     climber.climberFollower.inverted = true;
-    climber.climberFollower.sensorPhase = true;
+    climber.climberFollower.sensorPhase = false;
     
   }
 }

@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
@@ -11,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Robot;
 import frc.robot.config.Config;
@@ -351,18 +351,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // This can be accomplished by using the sum of each side as the elevator height, and the difference as the level deviation between the left and right, which must be kept near zero.
 
     // Aux PID[1] can then be used to apply a corrective difference component (adding to one side and subtracting from the other) to maintain a synchronous left and right position, while employing Position/Velocity/Motion-Magic to the primary axis of control (the elevator height).
-    climberLeader.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
+
+    // TODO: dif value for target turn that isn't 0? (for all of these 3 functions)
+    climberLeader.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoExtendFull() {
-    climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoRetractFull() {
-    climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
   }
 
   // TODO: add a button for this
