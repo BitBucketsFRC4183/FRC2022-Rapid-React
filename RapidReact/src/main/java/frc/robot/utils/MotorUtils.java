@@ -18,14 +18,7 @@ public class MotorUtils {
   public static final int velocitySlot = 1; // ALWAYS! Don't EVER set it to anything else.
 
   public static final int PRIMARY_PID_LOOP = 0; // Constants to support new Talon interface types
-  public static final int TURN_PID_LOOP = 0;
   // / / / (Note from Elias after porting this: I have no idea what ^this^ means)
-
-  /* We allow either a 0 or 1 when selecting an ordinal for remote devices [You can have up to 2 devices assigned remotely to a talon/victor] */
-  public static final int REMOTE_0 = 0;
-  public static final int REMOTE_1 = 1;
-
-  public static final double kNeutralDeadband = 0.001;
 
   public static final int CONTROLLER_TIMEOUT_MS = 100; // Default timeout to wait for configuration response
 

@@ -92,8 +92,8 @@ public class Config {
   // Climber Config
   public class ClimberConfig {
 
-    public MotorConfig climberLeader = new MotorConfig();
-    public MotorConfig climberFollower = new MotorConfig();
+    public MotorConfig climber1 = new MotorConfig();
+    public MotorConfig climber2 = new MotorConfig();
 
     public ClimberConfig() {}
   }
@@ -151,29 +151,29 @@ public class Config {
     shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
     // climber motors
-    climber.climberLeader.id = climberMotor_ID1;
+    climber.climber1.id = climberMotor_ID1;
     // TODO: zero the climber
-    climber.climberLeader.encoderType = EncoderType.Quadrature;
-    // TODO: actually tune these 
+    climber.climber1.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberLeader.motionMagicCruiseVelocity = 4663;
-    climber.climberLeader.motionMagicAcceleration = 4663;
-    climber.climberLeader.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    // Configure output and sensor direction 
-    climber.climberLeader.inverted = false;
-    climber.climberLeader.sensorPhase = true;
+    climber.climber1.motionMagicCruiseVelocity = 4663;
+    climber.climber1.motionMagicAcceleration = 4663;
+    climber.climber1.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    // Configure output and sensor direction
+    // climber.climber1.inverted = false;
+    // climber.climber1.sensorPhase = true;
 
-    climber.climberFollower.id = climberMotor_ID2;
+    climber.climber2.id = climberMotor_ID2;
     // TODO: zero the climber
-    climber.climberFollower.encoderType = EncoderType.Quadrature;
-    // TODO: actually tune these 
+    climber.climber2.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberFollower.motionMagicCruiseVelocity = 4663;
-    climber.climberFollower.motionMagicAcceleration = 4663;
-    climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    // Configure output and sensor direction 
-    climber.climberFollower.inverted = true;
-    climber.climberFollower.sensorPhase = true;
-    
+    climber.climber2.motionMagicCruiseVelocity = 4663;
+    climber.climber2.motionMagicAcceleration = 4663;
+    climber.climber2.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    // Configure output and sensor direction
+    // climber.climber2.inverted = true;
+    // climber.climber2.sensorPhase = true;
+
   }
 }
