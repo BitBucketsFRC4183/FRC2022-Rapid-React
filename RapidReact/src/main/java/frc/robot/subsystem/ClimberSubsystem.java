@@ -1,10 +1,17 @@
 package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.SensorTerm;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Robot;
 import frc.robot.config.Config;
@@ -25,8 +32,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   ClimbState currentClimbState;
 
-  WPI_TalonSRX climber1; // leader
-  WPI_TalonSRX climber2; // follower
+  WPI_TalonSRX climberLeader; // leader
+  WPI_TalonSRX climberFollower; // follower
   private boolean climberEnabled = true;
 
   private boolean autoClimb; // is autoclimb enabled
@@ -51,13 +58,13 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private final Loggable<String> climbState = BucketLog.loggable(Put.STRING, "climber/climbState");
   private final Loggable<Boolean> elevatorTiltedState = BucketLog.loggable(Put.BOOL, "climber/elevatorTiltedState");
 
-  private final Loggable<Double> climber1Error = BucketLog.loggable(Put.DOUBLE, "climber/climber1Error");
-  private final Loggable<Double> climber1Position = BucketLog.loggable(Put.DOUBLE, "climber/climber1Position");
-  private final Loggable<Double> climber1Voltage = BucketLog.loggable(Put.DOUBLE, "climber/climber1Voltage");
+  private final Loggable<Double> climberLeaderError = BucketLog.loggable(Put.DOUBLE, "climber/climberLeaderError");
+  private final Loggable<Double> climberLeaderPosition = BucketLog.loggable(Put.DOUBLE, "climber/climberLeaderPosition");
+  private final Loggable<Double> climberLeaderVoltage = BucketLog.loggable(Put.DOUBLE, "climber/climberLeaderPosition");
 
-  private final Loggable<Double> climber2Error = BucketLog.loggable(Put.DOUBLE, "climber/climber2Error");
-  private final Loggable<Double> climber2Position = BucketLog.loggable(Put.DOUBLE, "climber/climber2Position");
-  private final Loggable<Double> climber2Voltage = BucketLog.loggable(Put.DOUBLE, "climber/climber2Position");
+  private final Loggable<Double> climberFollowerError = BucketLog.loggable(Put.DOUBLE, "climber/climberFollowerError");
+  private final Loggable<Double> climberFollowerPosition = BucketLog.loggable(Put.DOUBLE, "climber/climberFollowerPosition");
+  private final Loggable<Double> climberFollowerVoltage = BucketLog.loggable(Put.DOUBLE, "climber/climberFollowerPosition");
 
   public ClimberSubsystem(Config config) {
     super(config);
@@ -65,8 +72,85 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    climber1 = MotorUtils.makeSRX(config.climber.climber1);
-    climber2 = MotorUtils.makeSRX(config.climber.climber2);
+    climberLeader = MotorUtils.makeSRX(config.climber.climberLeader);
+    climberFollower = MotorUtils.makeSRX(config.climber.climberFollower);
+    climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
+
+    // Configure the left Talon's selected sensor as local QuadEncoder 
+    climberLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, MotorUtils.PRIMARY_PID_LOOP, MotorUtils.CONTROLLER_TIMEOUT_MS);
+    // Configure the Remote Talon's selected sensor as a remote sensor for the right Talon 
+    climberFollower.configRemoteFeedbackFilter(climberLeader.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, MotorUtils.REMOTE_0);
+
+    // Setup Sum signal to be used for Distance 
+    climberFollower.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0);
+    climberFollower.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.CTRE_MagEncoder_Relative);
+
+    // Setup Difference signal to be used for Turn 
+    climberFollower.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0);
+    climberFollower.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.CTRE_MagEncoder_Relative);
+
+    // Configure Sum [Sum of both QuadEncoders] to be used for Primary PID Index
+    climberFollower.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, MotorUtils.PRIMARY_PID_LOOP, 0);
+    // Scale Feedback by 0.5 to half the sum of Distance 
+    climberFollower.configSelectedFeedbackCoefficient(0.5, MotorUtils.PRIMARY_PID_LOOP, MotorUtils.CONTROLLER_TIMEOUT_MS);
+
+    // Configure Difference [Difference between both QuadEncoders] to be used for Auxiliary PID Index 
+    climberFollower.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, MotorUtils.PRIMARY_PID_LOOP, MotorUtils.CONTROLLER_TIMEOUT_MS);
+    // Scale the Feedback Sensor using a coefficient 
+    climberFollower.configSelectedFeedbackCoefficient(1, MotorUtils.TURN_PID_LOOP, MotorUtils.CONTROLLER_TIMEOUT_MS);
+    
+    // Set status frame periods to ensure we don't have stale data 
+    climberFollower.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
+    climberFollower.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
+    climberFollower.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20);
+    climberFollower.setStatusFramePeriod(StatusFrame.Status_10_Targets, 20);
+    climberLeader.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 5);
+
+    // Configure neutral deadband 
+    climberLeader.configNeutralDeadband(MotorUtils.kNeutralDeadband);
+    climberFollower.configNeutralDeadband(MotorUtils.kNeutralDeadband);
+
+    /**
+		 * Max out the peak output (for all modes).  
+		 * However you can limit the output of a given PID object with configClosedLoopPeakOutput().
+		 */
+		climberLeader.configPeakOutputForward(+1.0);
+		climberLeader.configPeakOutputReverse(-1.0);
+		climberFollower.configPeakOutputForward(+1.0);
+		climberFollower.configPeakOutputReverse(-1.0);
+
+		/* FPID Gains for distance servo */
+		climberFollower.configClosedLoopPeakOutput(MotorUtils.positionSlot, 0.5);
+		climberFollower.configAllowableClosedloopError(MotorUtils.positionSlot, 0);
+
+		/* FPID Gains for turn servo */
+		climberFollower.configClosedLoopPeakOutput(MotorUtils.velocitySlot, 1);
+		climberFollower.configAllowableClosedloopError(MotorUtils.velocitySlot, 0);
+
+		/**
+		 * 1ms per loop.  PID loop can be slowed down if need be.
+		 * For example,
+		 * - if sensor updates are too slow
+		 * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
+		 * - sensor movement is very slow causing the derivative error to be near zero.
+		 */
+		int closedLoopTimeMs = 1;
+		climberFollower.configClosedLoopPeriod(0, closedLoopTimeMs);
+		climberFollower.configClosedLoopPeriod(1, closedLoopTimeMs);
+
+		/**
+		 * configAuxPIDPolarity(boolean invert, int timeoutMs)
+		 * false means talon's local output is PID0 + PID1, and other side Talon is PID0 - PID1
+		 * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
+		 */
+		climberFollower.configAuxPIDPolarity(false);
+
+		/* Initialize */
+    climberFollower.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
+
+    climberLeader.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
+    climberFollower.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
+
 
     if (config.enablePneumatics) {
       elevatorSolenoid =
@@ -75,52 +159,51 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     if (Robot.isSimulation()) {
       // simulate the motors
-      CTREPhysicsSim.getInstance().addTalonSRX(climber1, .75, 5100, false);
-      CTREPhysicsSim.getInstance().addTalonSRX(climber2, .75, 5100, false);
+      CTREPhysicsSim.getInstance().addTalonSRX(climberLeader, .75, 5100, false);
+      CTREPhysicsSim.getInstance().addTalonSRX(climberFollower, .75, 5100, false);
     }
 
     currentClimbState = ClimbState.Idle;
   }
 
-  // TODO: properly test this
   boolean isClimberAtSetpoint(double setpoint) 
   {
-    boolean climber1AtSetpoint = false;
+    boolean climberLeaderAtSetpoint = false;
 
     // if it's within the error threshold for a set amount of loops
-    if (climber1.getClosedLoopError() < +climbErrThreshold && climber1.getClosedLoopError() > -climbErrThreshold) {
+    if (climberLeader.getClosedLoopError() < +climbErrThreshold && climberLeader.getClosedLoopError() > -climbErrThreshold) {
       withinThresholdLoops1++;
       if (withinThresholdLoops1 > climbLoopsToSettle) {
         // and ifs within the error threshold of the position
         if (
-          climber1.getSelectedSensorPosition() > setpoint - climbErrThreshold &&
-          climber1.getSelectedSensorPosition() < setpoint + climbErrThreshold
+          climberLeader.getSelectedSensorPosition() > setpoint - climbErrThreshold &&
+          climberLeader.getSelectedSensorPosition() < setpoint + climbErrThreshold
         ) {
           // then it's reached
-          climber1AtSetpoint = true;
+          climberLeaderAtSetpoint = true;
         }
       }
     } else {
       withinThresholdLoops1 = 0;
     }
 
-    boolean climber2AtSetpoint = false;
+    boolean climberFollowerAtSetpoint = false;
 
-    if (climber2.getClosedLoopError() < +climbErrThreshold && climber2.getClosedLoopError() > -climbErrThreshold) {
+    if (climberFollower.getClosedLoopError() < +climbErrThreshold && climberFollower.getClosedLoopError() > -climbErrThreshold) {
       withinThresholdLoops2++;
       if (withinThresholdLoops2 > climbLoopsToSettle) {
         if (
-          climber2.getActiveTrajectoryPosition() > setpoint - climbErrThreshold &&
-          climber2.getActiveTrajectoryPosition() < setpoint + climbErrThreshold
+          climberFollower.getActiveTrajectoryPosition() > setpoint - climbErrThreshold &&
+          climberFollower.getActiveTrajectoryPosition() < setpoint + climbErrThreshold
         ) {
-          climber2AtSetpoint = true;
+          climberFollowerAtSetpoint = true;
         }
       }
     } else {
       withinThresholdLoops2 = 0;
     }
 
-    return climber1AtSetpoint && climber2AtSetpoint;
+    return climberLeaderAtSetpoint && climberFollowerAtSetpoint;
   }
 
   private void idleInit() {
@@ -146,11 +229,11 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    climber1Error.log(LogLevel.GENERAL, climber1.getClosedLoopError());
-    climber1Position.log(LogLevel.GENERAL, climber1.getSelectedSensorPosition());
+    climberLeaderError.log(LogLevel.GENERAL, climberLeader.getClosedLoopError());
+    climberLeaderPosition.log(LogLevel.GENERAL, climberLeader.getSelectedSensorPosition());
 
-    climber2Error.log(LogLevel.GENERAL, climber2.getClosedLoopError());
-    climber2Position.log(LogLevel.GENERAL, climber2.getSelectedSensorPosition());
+    climberFollowerError.log(LogLevel.GENERAL, climberFollower.getClosedLoopError());
+    climberFollowerPosition.log(LogLevel.GENERAL, climberFollower.getSelectedSensorPosition());
 
     if (!autoClimb) return;
 
@@ -193,21 +276,21 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     climbState.log(LogLevel.GENERAL, currentClimbState.toString());
 
-    climber1Error.log(LogLevel.GENERAL, climber1.getClosedLoopError());
-    climber1Position.log(LogLevel.GENERAL, climber1.getSelectedSensorPosition());
-    // Shuffleboard.getTab("SmartDashboard").addNumber("climber leader voltage", climber1.getSimCollection().getMotorOutputLeadVoltage());
+    climberLeaderError.log(LogLevel.GENERAL, climberLeader.getClosedLoopError());
+    climberLeaderPosition.log(LogLevel.GENERAL, climberLeader.getSelectedSensorPosition());
+    // Shuffleboard.getTab("SmartDashboard").addNumber("climber leader voltage", climberLeader.getSimCollection().getMotorOutputLeadVoltage());
 
-    climber2Error.log(LogLevel.GENERAL, climber2.getClosedLoopError());
-    climber2Position.log(LogLevel.GENERAL, climber2.getSelectedSensorPosition());
-    climber2Voltage.log(LogLevel.GENERAL, climber2.getSimCollection().getMotorOutputLeadVoltage());
+    climberFollowerError.log(LogLevel.GENERAL, climberFollower.getClosedLoopError());
+    climberFollowerPosition.log(LogLevel.GENERAL, climberFollower.getSelectedSensorPosition());
+    climberFollowerVoltage.log(LogLevel.GENERAL, climberFollower.getSimCollection().getMotorOutputLeadVoltage());
 
     currentClimbState = nextState;
   }
 
   @Override
   public void disable() {
-    climber1.set(0);
-    climber2.set(0);
+    climberLeader.set(0);
+    climberFollower.set(0);
   }
 
   public void toggleClimberEnabled() { // uses 2 PS button
@@ -225,8 +308,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
-    climber1.set(ControlMode.PercentOutput, climbOutput.currentValue());
-    climber2.set(ControlMode.PercentOutput, climbOutput.currentValue());
+    climberLeader.set(ControlMode.PercentOutput, climbOutput.currentValue());
+    climberFollower.set(ControlMode.PercentOutput, climbOutput.currentValue());
+
+    climbState.log(LogLevel.GENERAL, "elevatorExtend");
   }
 
   public void manualElevatorRetract() { //uses down button
@@ -234,13 +319,16 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
-    climber1.set(ControlMode.PercentOutput, -climbOutput.currentValue());
-    climber2.set(ControlMode.PercentOutput, -climbOutput.currentValue());
+    climberLeader.set(ControlMode.PercentOutput, -climbOutput.currentValue());
+    climberFollower.set(ControlMode.PercentOutput, -climbOutput.currentValue());
+
+    climbState.log(LogLevel.GENERAL, "elevatorRetract");
   }
 
   public void elevatorStop() {
-    climber1.set(0);
-    climber2.set(0);
+    climberLeader.set(0);
+    climberFollower.set(0);
+    climbState.log(LogLevel.GENERAL, "climbStopped");
   }
 
   // autoClimb() both enables autoclimb and sets the flag to true
@@ -250,6 +338,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     autoClimb = true;
     autoClimbPressed = true;
+
+    climbState.log(LogLevel.GENERAL, currentClimbState.toString());
   }
 
   public void autoClimbReleased() {
@@ -261,18 +351,18 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // This can be accomplished by using the sum of each side as the elevator height, and the difference as the level deviation between the left and right, which must be kept near zero.
 
     // Aux PID[1] can then be used to apply a corrective difference component (adding to one side and subtracting from the other) to maintain a synchronous left and right position, while employing Position/Velocity/Motion-Magic to the primary axis of control (the elevator height).
-    climber1.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
-    climber2.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
+    climberFollower.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
   }
 
   private void autoExtendFull() {
-    climber1.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
-    climber2.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
   }
 
   private void autoRetractFull() {
-    climber1.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
-    climber2.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+    climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
   }
 
   // TODO: add a button for this
@@ -285,7 +375,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     if (!config.enablePneumatics) return;
 
     climberTilted = tilted;
-    elevatorTiltedState.log(LogLevel.GENERAL, climberTilted);
+    elevatorTiltedState.log(LogLevel.GENERAL, false);
 
     if (tilted) {
       elevatorSolenoid.set(Value.kReverse);
