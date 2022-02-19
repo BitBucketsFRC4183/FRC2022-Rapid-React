@@ -27,6 +27,8 @@ public class CursedRobot extends TimedRobot {
   Faults _faults_L = new Faults();
   Faults _faults_R = new Faults();
 
+  float robotSpeedMultiplier = 0.25f;
+
   @Override
   public void teleopPeriodic() {
     String work = "";
@@ -51,7 +53,10 @@ public class CursedRobot extends TimedRobot {
     double rightSpeed = (forw - turn * -1);
 
     /* drive robot */
-    _diffDrive.tankDrive(leftSpeed, rightSpeed);
+    _diffDrive.tankDrive(
+      leftSpeed * robotSpeedMultiplier,
+      rightSpeed * robotSpeedMultiplier
+    );
 
     /*
      * [2] Make sure Gamepad Forward is positive for FORWARD, and GZ is positive for
@@ -79,7 +84,6 @@ public class CursedRobot extends TimedRobot {
     if (_faults_R.SensorOutOfPhase) {
       work += " R sensor is out of phase";
     }
-
     // System.out.println(work);
   }
 
