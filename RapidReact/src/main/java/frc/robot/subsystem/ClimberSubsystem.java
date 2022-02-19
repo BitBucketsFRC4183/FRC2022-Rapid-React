@@ -209,8 +209,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climberLeader.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
     climberFollower.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
 
-    climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
-
     if (config.enablePneumatics) {
       elevatorSolenoid =
         new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
@@ -340,7 +338,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climberFollowerPosition.log(LogLevel.GENERAL, climberFollower.getSelectedSensorPosition());
     climberFollowerError.log(LogLevel.GENERAL, climberFollower.getClosedLoopError());
 
-    // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
+    climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
 
     currentClimbState = nextState;
   }
@@ -415,19 +413,19 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // TODO: dif value for target turn that isn't 0? (for all of these 3 functions)
     climberLeader.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
     // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
+    // climberFollower.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoExtendFull() {
     climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
     // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
+    // climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoRetractFull() {
     climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
     // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
-    climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
+    // climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
   }
 
   // TODO: add a button for this
