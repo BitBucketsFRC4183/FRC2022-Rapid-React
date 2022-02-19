@@ -131,9 +131,6 @@
         "name": "Intake Motor/Rev Limit [ID:13]"
       },
       "Talon SRX[17]": {
-        "header": {
-          "open": true
-        },
         "name": "Feeder1 [ID:17]"
       },
       "Talon SRX[18]": {
@@ -237,10 +234,7 @@
           "style": "Line"
         },
         "units": "feet",
-        "width": 16.459199905395508,
-        "window": {
-          "visible": true
-        }
+        "width": 16.459199905395508
       },
       "/SmartDashboard/Orientation Chooser": {
         "window": {
