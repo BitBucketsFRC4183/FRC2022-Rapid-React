@@ -65,8 +65,8 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-  public int climberMotor_ID1 = 2;
-  public int climberMotor_ID2 = 1;
+public int climberMotor_ID1 = 3;
+  public int climberMotor_ID2 = 4;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;

@@ -41,7 +41,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   DoubleSolenoid elevatorSolenoid;
 
-  private int fullExtendPosition = 5000; // TODO: change this number
+  private int fullExtendPosition = 50000; // TODO: change this number
   private int partialExtendPosition = fullExtendPosition / 2;
   private int fullRetractPosition = 0; // TODO: change this number
 
@@ -193,8 +193,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       withinThresholdLoops2++;
       if (withinThresholdLoops2 > climbLoopsToSettle) {
         if (
-          climberFollower.getActiveTrajectoryPosition() > setpoint - climbErrThreshold &&
-          climberFollower.getActiveTrajectoryPosition() < setpoint + climbErrThreshold
+          climberFollower.getSelectedSensorPosition() > setpoint - climbErrThreshold &&
+          climberFollower.getSelectedSensorPosition() < setpoint + climbErrThreshold
         ) {
           climberFollowerAtSetpoint = true;
         }
