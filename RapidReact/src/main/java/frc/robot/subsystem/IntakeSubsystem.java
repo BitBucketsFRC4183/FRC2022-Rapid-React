@@ -5,13 +5,14 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
-  private WPI_TalonSRX ballManagement;
-  private WPI_TalonSRX intake;
+  WPI_TalonSRX ballManagement;
+  WPI_TalonSRX intake;
   //a boolean that checks whether the intake is running (true for on, false for off)
   public boolean toggleState;
   //double solenoid is used for the intake PCM
@@ -19,6 +20,11 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //dashboard stuff
   private final Changeable<Double> percentOutput = BucketLog.changeable(Put.DOUBLE, "intake/percentOutput", 0.75);
+  private final Changeable<Boolean> autoExtend = BucketLog.changeable(
+    Put.BOOL,
+    "intake/autoExtend",
+    config.intake.defaultIntakeAutoExtend
+  );
   private final Loggable<String> intakeState = BucketLog.loggable(Put.STRING, "intake/intakeState");
 
   public IntakeSubsystem(Config config) {
@@ -30,8 +36,13 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     ballManagement = new WPI_TalonSRX(Config.ballManagementMotor_ID);
     intake = new WPI_TalonSRX(Config.intakeMotor_ID);
     if (config.enablePneumatics) {
-      intakeSolenoid =
-        new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
+      if (Robot.isSimulation()) {
+        intakeSolenoid =
+          new DoubleSolenoid(PneumaticsModuleType.CTREPCM, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
+      } else {
+        intakeSolenoid =
+          new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
+      }
     }
     //shows the speed of intake on the smart dashboard
   }
@@ -46,18 +57,27 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //intaking, outtaking, and stop the intake
   public void spinForward() {
+    if (autoExtend.currentValue() && config.enablePneumatics) {
+      intakeSolenoid.set(Value.kForward);
+    }
     intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
     ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
     intakeState.log("intaking");
   }
 
   public void spinBackward() {
+    if (autoExtend.currentValue() && config.enablePneumatics) {
+      intakeSolenoid.set(Value.kForward);
+    }
     intake.set(ControlMode.PercentOutput, -percentOutput.currentValue());
     ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
     intakeState.log("outtaking");
   }
 
   public void stopSpin() {
+    if (autoExtend.currentValue() && config.enablePneumatics) {
+      intakeSolenoid.set(Value.kReverse);
+    }
     intake.set(ControlMode.PercentOutput, 0);
     ballManagement.set(ControlMode.PercentOutput, 0);
     intakeState.log("stopped");
@@ -65,7 +85,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //toggles turning the intake on or off
   public void toggle() {
-    if (config.enablePneumatics) {
+    if (config.enablePneumatics && autoExtend.currentValue() == false) {
       if (!toggleState) {
         intakeSolenoid.set(Value.kForward);
         intakeState.log("intaking");

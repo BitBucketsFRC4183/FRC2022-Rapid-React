@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
 
@@ -35,9 +36,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void init() {
     climber = new WPI_TalonSRX(config.climberMotor_ID);
     if (config.enablePneumatics) {
-      elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.
-      elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
-      fixedHookSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.fixedHookSolenoid_ID1, config.fixedHookSolenoid_ID2);
+      if (Robot.isSimulation()) {
+        elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+      }
+      else {
+        elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
+      }
     }
   }
 
@@ -58,8 +62,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       climbState.log(LogLevel.GENERAL, "climberDisabled");
     }
   }
-
-
 
   public void fixedHookToggler() { //uses R1 button
     if (config.enablePneumatics) {

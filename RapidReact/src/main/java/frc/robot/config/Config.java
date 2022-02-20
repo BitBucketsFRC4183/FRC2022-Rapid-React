@@ -1,5 +1,7 @@
 package frc.robot.config;
 
+import org.w3c.dom.css.RGBColor;
+
 public class Config {
 
   // List of subsystem names:
@@ -16,6 +18,7 @@ public class Config {
   public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
+  public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
 
@@ -59,8 +62,8 @@ public class Config {
   public int shooterFeeder1_ID = 17;
   public int shooterFeeder2_ID = 18;
 
-  public int intakeSolenoid_ID1 = 0;
-  public int intakeSolenoid_ID2 = 1;
+  public int intakeSolenoid_ID1 = 2;
+  public int intakeSolenoid_ID2 = 3;
 
   // Shooter
 
@@ -73,10 +76,15 @@ public class Config {
   public int fixedHookSolenoid_ID1 = 4;
   public int fixedHookSolenoid_ID2 = 5;
 
+  //RGB
+  public static int RGB_ID = 9;
+
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
+  public IntakeConfig intake = new IntakeConfig();
+  public RGBConfig rgbConfig = new RGBConfig();
   public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
 
@@ -94,6 +102,12 @@ public class Config {
   public class ClimberConfig {
 
     public ClimberConfig() {}
+  }
+
+  // rgb Config
+  public class RGBConfig {
+
+    public RGBConfig() {}
   }
 
   // Drive Config
@@ -116,6 +130,8 @@ public class Config {
 
   // Intake Config
   public class IntakeConfig {
+
+    public boolean defaultIntakeAutoExtend = true;
 
     public IntakeConfig() {}
   }
