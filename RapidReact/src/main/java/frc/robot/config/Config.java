@@ -174,8 +174,8 @@ public int climberMotor_IDLeader = 3;
     climber.climberFollower.motionMagicAcceleration = 10000;
     climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberFollower.inverted = true;
-    climber.climberFollower.sensorPhase = true;
-    climber.climberLeader.distancePeakOutput = 0.5;
-    climber.climberLeader.turningPeakOutput = 1;
+    climber.climberFollower.sensorPhase = false;
+    climber.climberFollower.distancePeakOutput = 0.5;
+    climber.climberFollower.turningPeakOutput = 1;
   }
 }
