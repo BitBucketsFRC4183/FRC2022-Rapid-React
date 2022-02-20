@@ -457,6 +457,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   // TODO: add a button for this
+  // TODO: figure out behavior when stopped; back to manual, and then what if they press autoclimb again?
   private void stopAutoClimb() {
     autoClimb = false;
     currentClimbState = ClimbState.Idle;

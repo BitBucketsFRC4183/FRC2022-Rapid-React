@@ -171,7 +171,6 @@ public int climberMotor_ID1 = 3;
     ///////////////////
     // climber motors
     climber.climberLeft.id = climberMotor_ID1;
-    // TODO: zero the climber
     climber.climberLeft.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
@@ -184,7 +183,6 @@ public int climberMotor_ID1 = 3;
     climber.climberLeft.turningPeakOutput = 1;
 
     climber.climberRight.id = climberMotor_ID2;
-    // TODO: zero the climber
     climber.climberRight.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
