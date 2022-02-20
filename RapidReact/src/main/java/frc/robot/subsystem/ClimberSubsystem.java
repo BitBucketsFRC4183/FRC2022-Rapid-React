@@ -51,7 +51,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private int fullRetractPosition = 0; // TODO: change this number
 
   // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#mechanism-is-finished-command
-  private int climbErrThreshold = 100;
+  private int climbErrThreshold = 1000;
   private int climbLoopsToSettle = 10;
   private int withinThresholdLoops1 = 0;
   private int withinThresholdLoops2 = 0;
@@ -379,7 +379,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void manualElevatorExtend() { //uses up button
-    // if (autoClimb) return;
+    if (autoClimb) return;
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
@@ -438,13 +438,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   private void autoExtendFull() {
-    climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
+    // climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
     // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
     // climberFollower.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoRetractFull() {
-    climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
+    // climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
+    climberLeader.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
+    climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
     // climberFollower.follow(climberLeader, FollowerType.AuxOutput1);
     // climberFollower.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
   }
