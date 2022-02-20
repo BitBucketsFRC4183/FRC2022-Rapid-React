@@ -83,8 +83,9 @@ public class Config {
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
-  public ShooterConfig shooter = new ShooterConfig();
+  public IntakeConfig intake = new IntakeConfig();
   public RGBConfig rgbConfig = new RGBConfig();
+  public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
 
   // Autonomous Config
@@ -129,6 +130,8 @@ public class Config {
 
   // Intake Config
   public class IntakeConfig {
+
+    public boolean defaultIntakeAutoExtend = true;
 
     public IntakeConfig() {}
   }
