@@ -127,6 +127,16 @@
       "Talon SRX[18]": {
         "name": "Feeder2 [ID:18]"
       }
+    },
+    "Solenoids": {
+      "0": {
+        "header": {
+          "open": true
+        }
+      },
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {
@@ -136,11 +146,13 @@
       "/LiveWindow/ClimberSubsystem": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/IntakeSubsystem": "Subsystem",
+      "/LiveWindow/RGBSubsystem": "Subsystem",
       "/LiveWindow/SetModeTestSubsystem": "Subsystem",
       "/LiveWindow/ShooterSubsystem": "Subsystem",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PWMSparkMax[9]": "Motor Controller",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [2]": "Motor Controller",
@@ -214,10 +226,7 @@
           "style": "Line"
         },
         "units": "feet",
-        "width": 16.459199905395508,
-        "window": {
-          "visible": true
-        }
+        "width": 16.459199905395508
       },
       "/SmartDashboard/Orientation Chooser": {
         "window": {

@@ -21,7 +21,6 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +46,7 @@ public class Robot extends TimedRobot {
   private AutonomousSubsystem autonomousSubsystem;
   private DrivetrainSubsystem drivetrainSubsystem;
   private ShooterSubsystem shooterSubsystem;
+  private RGBSubsystem rgbSubsystem;
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
@@ -81,6 +81,9 @@ public class Robot extends TimedRobot {
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
       this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
+    }
+    if (config.enableRGBSubsystem) {
+      this.robotSubsystems.add(rgbSubsystem = new RGBSubsystem(this.config));
     }
     if (config.enableDriveSubsystem) {
       this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
@@ -171,43 +174,74 @@ public class Robot extends TimedRobot {
       Command command;
       switch (this.autonomousPathChooser.getSelected()) {
         case NOTHING:
-          command = new AutonomousFollowPathCommand(config.auto.nothingPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          command =
+            new AutonomousFollowPathCommand(
+              config.auto.nothingPath,
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem
+            );
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
-          command = new AutonomousFollowPathCommand(config.auto.driveBackwardsPath, this.autonomousSubsystem, this.drivetrainSubsystem);
+          command =
+            new AutonomousFollowPathCommand(
+              config.auto.driveBackwardsPath,
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem
+            );
           break;
         case PATH_PLANNER_SPLIT:
-          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
-                  .executeDrivePath("Split Example P1")
-                  .executeAction((d, i, s) -> i.toggle(), 1)
-                  .executeParallel("Split Example P2", (d, i, s) -> i.toggle(), 2)
-                  .complete();
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeDrivePath("Split Example P1")
+              .executeAction((d, i, s) -> i.toggle(), 1)
+              .executeParallel("Split Example P2", (d, i, s) -> i.toggle(), 2)
+              .complete();
           break;
         case MAIN_NO_TERMINAL:
-          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
-                  .executeShootPreload() //Shoot Preload
-                  .executeDrivePath("Main P1") //Drive to the first ball
-                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
-                  .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
-                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
-                  .executeDrivePath("Main P3") //Drive to the base of the hub
-                  .executeAction((d, i, s) -> s.shootTop()) //Shoot
-                  .complete();
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeDrivePath("Main P1") //Drive to the first ball
+              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
+              .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
+              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+              .executeDrivePath("Main P3") //Drive to the base of the hub
+              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .complete();
           break;
         case MAIN_WITH_TERMINAL:
-          command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem)
-                  .executeShootPreload() //Shoot Preload
-                  .executeDrivePath("Main P1") //Drive to the first ball
-                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction)  //Activate intake
-                  .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
-                  .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
-                  .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
-                  .executeDrivePath("Main P3") //Drive to the base of the hub
-                  .executeAction((d, i, s) -> s.shootTop()) //Shoot
-                  .complete();
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeDrivePath("Main P1") //Drive to the first ball
+              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
+              .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
+              .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
+              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+              .executeDrivePath("Main P3") //Drive to the base of the hub
+              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .complete();
           break;
         default:
-          info.log(LogLevel.CRITICAL, "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")");
+          info.log(
+            LogLevel.CRITICAL,
+            "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
+          );
 
           return;
       }
@@ -219,7 +253,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-
     info.log(LogLevel.GENERAL, "Still in autonomous");
   }
 
@@ -268,7 +301,6 @@ public class Robot extends TimedRobot {
       buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
     }
 
-    
     //Intake buttons
     if (config.enableIntakeSubsystem) {
       buttons.intake.whenPressed(intakeSubsystem::spinForward);
@@ -298,7 +330,7 @@ public class Robot extends TimedRobot {
           }
         )
         .whenReleased(() -> operatorClimbEnabledPressed = false);
-        buttons.driverEnableClimber
+      buttons.driverEnableClimber
         .whenPressed(
           () -> {
             driverClimbEnabledPressed = true;
@@ -306,10 +338,11 @@ public class Robot extends TimedRobot {
               climberEnabled = !climberEnabled;
 
               climberSubsystem.toggleClimberEnabled();
+              rgbSubsystem.climberEnabled();
             }
           }
-          )
-          .whenReleased(() -> driverClimbEnabledPressed = false);
+        )
+        .whenReleased(() -> driverClimbEnabledPressed = false);
 
       buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
       buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
@@ -338,23 +371,29 @@ public class Robot extends TimedRobot {
       });
     
       buttons.tarmacShootOrToggleElevator.whenPressed(
-          () -> {
+        () -> {
+          if (config.enableClimberSubsystem && climberEnabled) {
+            climberSubsystem.elevatorToggle();
+          } else {
+            if (config.enableShooterSubsystem) {
+              shooterSubsystem.shootTarmac();
 
-            if (config.enableClimberSubsystem && climberEnabled) {
-              climberSubsystem.elevatorToggle();
-            } else {
-              if (config.enableShooterSubsystem) {
-                shooterSubsystem.shootTarmac();
+              if (drivetrainSubsystem != null) {
+                //lmao
                 drivetrainSubsystem.orient();
               }
+
             }
           }
-        );
-      buttons.tarmacShootOrToggleElevator.whenReleased(() -> {
-        if (config.enableShooterSubsystem){
-          shooterSubsystem.stopShoot();
         }
-      });
+      );
+      buttons.tarmacShootOrToggleElevator.whenReleased(
+        () -> {
+          if (config.enableShooterSubsystem) {
+            shooterSubsystem.stopShoot();
+          }
+        }
+      );
     }
   }
 }

@@ -1,6 +1,7 @@
 package frc.robot.config;
 
 import frc.robot.config.MotorConfig.EncoderType;
+import org.w3c.dom.css.RGBColor;
 
 public class Config {
 
@@ -16,10 +17,11 @@ public class Config {
   // Enablers
   public boolean enableAutonomousSubsystem = false;
   public boolean enableClimberSubsystem = true;
-  public boolean enableDriveSubsystem = false;
-  public boolean enableIntakeSubsystem = false;
-  public boolean enableShooterSubsystem = false;
-  public boolean enableVisionSubsystem = false;
+  public boolean enableDriveSubsystem = true;
+  public boolean enableIntakeSubsystem = true;
+  public boolean enableRGBSubsystem = true;
+  public boolean enableShooterSubsystem = true;
+  public boolean enableVisionSubsystem = true;
 
   public boolean enablePneumatics = false;
 
@@ -71,10 +73,18 @@ public int climberMotor_ID1 = 3;
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
 
+  public int fixedHookSolenoid_ID1 = 4;
+  public int fixedHookSolenoid_ID2 = 5;
+
+  //RGB
+  public static int RGB_ID = 9;
+
   //////////////////////////////////////////////////////////////////////////////
   // Subsystem Configs
   public AutonomousConfig auto = new AutonomousConfig();
   public DriveConfig drive = new DriveConfig();
+  public IntakeConfig intake = new IntakeConfig();
+  public RGBConfig rgbConfig = new RGBConfig();
   public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
   public ClimberConfig climber = new ClimberConfig();
@@ -98,6 +108,12 @@ public int climberMotor_ID1 = 3;
     public ClimberConfig() {}
   }
 
+  // rgb Config
+  public class RGBConfig {
+
+    public RGBConfig() {}
+  }
+
   // Drive Config
   public class DriveConfig {
 
@@ -118,6 +134,8 @@ public int climberMotor_ID1 = 3;
 
   // Intake Config
   public class IntakeConfig {
+
+    public boolean defaultIntakeAutoExtend = true;
 
     public IntakeConfig() {}
   }
