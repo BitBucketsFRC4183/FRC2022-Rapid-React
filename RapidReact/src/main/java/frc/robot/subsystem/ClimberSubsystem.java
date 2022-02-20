@@ -429,7 +429,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // Aux PID[1] can then be used to apply a corrective difference component (adding to one side and subtracting from the other) to maintain a synchronous left and right position, while employing Position/Velocity/Motion-Magic to the primary axis of control (the elevator height).
 
-    // TODO: dif value for target turn that isn't 0? (for all of these 3 functions)
     // climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
     climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
