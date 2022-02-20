@@ -65,7 +65,7 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-public int climberMotor_IDLeader = 3; // l
+public int climberMotor_IDLeader = 3;
   public int climberMotor_IDFollower = 4;
 
   public int elevatorSolenoid_ID1 = 0;
@@ -157,8 +157,8 @@ public int climberMotor_IDLeader = 3; // l
     climber.climberLeader.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberLeader.motionMagicCruiseVelocity = 4663;
-    climber.climberLeader.motionMagicAcceleration = 4663;
+    climber.climberLeader.motionMagicCruiseVelocity = 19000;
+    climber.climberLeader.motionMagicAcceleration = 10000;
     climber.climberLeader.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberLeader.inverted = false;
     climber.climberLeader.sensorPhase = false;
@@ -170,10 +170,12 @@ public int climberMotor_IDLeader = 3; // l
     climber.climberFollower.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberFollower.motionMagicCruiseVelocity = 4663;
-    climber.climberFollower.motionMagicAcceleration = 4663;
+    climber.climberFollower.motionMagicCruiseVelocity = 19000;
+    climber.climberFollower.motionMagicAcceleration = 10000;
     climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberFollower.inverted = true;
     climber.climberFollower.sensorPhase = true;
+    climber.climberLeader.distancePeakOutput = 0.5;
+    climber.climberLeader.turningPeakOutput = 1;
   }
 }
