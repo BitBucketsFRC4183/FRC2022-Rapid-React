@@ -380,7 +380,12 @@ public class Robot extends TimedRobot {
           } else {
             if (config.enableShooterSubsystem) {
               shooterSubsystem.shootTarmac();
-              drivetrainSubsystem.orient();
+
+              if (drivetrainSubsystem != null) {
+                //lmao
+                drivetrainSubsystem.orient();
+              }
+
             }
           }
         }
