@@ -36,20 +36,6 @@ public class ClimberSubsystemTest extends SubsystemTest {
     }
 
     @Test
-    public void testIdle() {
-
-        // we should do nothing in periodic by default
-        subsystem.periodic();
-
-        // wait for the CTRE sim to update (weird)
-        waitForCTREUpdate();
-
-        // verify we applied no voltage to climb motors
-        assertEquals(0, subsystem.climberLeft.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
-        assertEquals(0, subsystem.climberRight.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
-    }
-
-    @Test
     public void testAutoClimb() {
         // enable autoClimb
         subsystem.autoClimb();
