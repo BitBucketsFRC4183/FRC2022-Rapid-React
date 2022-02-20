@@ -1,7 +1,6 @@
 package frc.robot.config;
 
 import frc.robot.config.MotorConfig.EncoderType;
-import org.w3c.dom.css.RGBColor;
 
 public class Config {
 
@@ -17,11 +16,11 @@ public class Config {
   // Enablers
   public boolean enableAutonomousSubsystem = false;
   public boolean enableClimberSubsystem = true;
-  public boolean enableDriveSubsystem = true;
-  public boolean enableIntakeSubsystem = true;
-  public boolean enableRGBSubsystem = true;
-  public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableDriveSubsystem = false;
+  public boolean enableIntakeSubsystem = false;
+  public boolean enableRGBSubsystem = false;
+  public boolean enableShooterSubsystem = false;
+  public boolean enableVisionSubsystem = false;
 
   public boolean enablePneumatics = false;
 

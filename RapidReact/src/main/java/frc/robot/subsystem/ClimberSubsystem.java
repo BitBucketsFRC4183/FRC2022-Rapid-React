@@ -232,7 +232,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       CTREPhysicsSim.getInstance().addTalonSRX(climberLeft, .75, 5100, false);
       CTREPhysicsSim.getInstance().addTalonSRX(climberRight, .75, 5100, false);
     }
-    if (config.enablePneumatics()) {
+    if (config.enablePneumatics) {
       if (Robot.isSimulation())
       {
         elevatorSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
