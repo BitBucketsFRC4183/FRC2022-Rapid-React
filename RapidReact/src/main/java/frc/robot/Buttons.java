@@ -27,6 +27,7 @@ public class Buttons {
   JoystickButton outtake = new JoystickButton(operatorControl, PS4Constants.CROSS.getId());
   JoystickButton operatorEnableClimber = new JoystickButton(operatorControl, PS4Constants.PS4.getId());
   JoystickButton climbAuto = new JoystickButton(operatorControl, PS4Constants.TRACKPAD.getId());
+  JoystickButton resetClimbStuff = new JoystickButton(operatorControl, PS4Constants.OPTIONS.getId());
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up
 }

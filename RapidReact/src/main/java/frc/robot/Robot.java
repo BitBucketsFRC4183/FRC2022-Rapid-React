@@ -318,6 +318,8 @@ public class Robot extends TimedRobot {
       buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
       
       buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
+      buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
+      buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
     }
     
     //Shooter BUttons and Climber Buttons

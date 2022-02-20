@@ -480,4 +480,20 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public boolean isClimberEnabled() {
     return climberEnabled;
   }
+
+  public void resetClimbStuff()
+  {
+    autoClimbPressed = false;
+    climberTilted = false;
+    withinThresholdLoops1 = 0;
+    withinThresholdLoops2 = 0;
+
+    climberLeader.set(ControlMode.MotionMagic, 0);
+    climberFollower.set(ControlMode.MotionMagic, 0);
+
+    climberLeader.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
+    climberFollower.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
+
+    currentClimbState = ClimbState.Idle;
+  }
 }
