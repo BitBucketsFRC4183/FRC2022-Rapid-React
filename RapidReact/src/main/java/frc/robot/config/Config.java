@@ -65,8 +65,8 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-public int climberMotor_IDLeader = 3;
-  public int climberMotor_IDFollower = 4;
+public int climberMotor_ID1 = 3;
+  public int climberMotor_ID2 = 4;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
@@ -92,8 +92,8 @@ public int climberMotor_IDLeader = 3;
   // Climber Config
   public class ClimberConfig {
 
-    public MotorConfig climberLeader = new MotorConfig();
-    public MotorConfig climberFollower = new MotorConfig();
+    public MotorConfig climberLeft = new MotorConfig();
+    public MotorConfig climberRight = new MotorConfig();
 
     public ClimberConfig() {}
   }
@@ -152,30 +152,30 @@ public int climberMotor_IDLeader = 3;
 
     ///////////////////
     // climber motors
-    climber.climberLeader.id = climberMotor_IDLeader;
+    climber.climberLeft.id = climberMotor_ID1;
     // TODO: zero the climber
-    climber.climberLeader.encoderType = EncoderType.Quadrature;
+    climber.climberLeft.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberLeader.motionMagicCruiseVelocity = 19000;
-    climber.climberLeader.motionMagicAcceleration = 10000;
-    climber.climberLeader.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climberLeader.inverted = false;
-    climber.climberLeader.sensorPhase = false;
-    climber.climberLeader.distancePeakOutput = 0.5;
-    climber.climberLeader.turningPeakOutput = 1;
+    climber.climberLeft.motionMagicCruiseVelocity = 19000;
+    climber.climberLeft.motionMagicAcceleration = 10000;
+    climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberLeft.inverted = false;
+    climber.climberLeft.sensorPhase = false;
+    climber.climberLeft.distancePeakOutput = 0.5;
+    climber.climberLeft.turningPeakOutput = 1;
 
-    climber.climberFollower.id = climberMotor_IDFollower;
+    climber.climberRight.id = climberMotor_ID2;
     // TODO: zero the climber
-    climber.climberFollower.encoderType = EncoderType.Quadrature;
+    climber.climberRight.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
-    climber.climberFollower.motionMagicCruiseVelocity = 19000;
-    climber.climberFollower.motionMagicAcceleration = 10000;
-    climber.climberFollower.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climberFollower.inverted = true;
-    climber.climberFollower.sensorPhase = false;
-    climber.climberFollower.distancePeakOutput = 0.5;
-    climber.climberFollower.turningPeakOutput = 1;
+    climber.climberRight.motionMagicCruiseVelocity = 19000;
+    climber.climberRight.motionMagicAcceleration = 10000;
+    climber.climberRight.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberRight.inverted = true;
+    climber.climberRight.sensorPhase = false;
+    climber.climberRight.distancePeakOutput = 0.5;
+    climber.climberRight.turningPeakOutput = 1;
   }
 }
