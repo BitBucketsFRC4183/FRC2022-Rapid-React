@@ -61,7 +61,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
       intakeSolenoid.set(Value.kForward);
     }
     intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
-    ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
     intakeState.log("intaking");
   }
 
@@ -96,6 +96,14 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
         toggleState = false;
       }
     }
+  }
+
+  public void ballManagementForward() {
+    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
+  }
+
+  public void stopBallManagement() {
+    ballManagement.set(ControlMode.PercentOutput, 0);
   }
 
 }

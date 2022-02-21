@@ -2,9 +2,6 @@
   "HALProvider": {
     "Other Devices": {
       "SPARK MAX [14]": {
-        "header": {
-          "open": true
-        },
         "name": "Roller1 [ID:14]"
       },
       "SPARK MAX [15]": {
@@ -65,9 +62,6 @@
         "name": "FLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
-        "header": {
-          "open": true
-        },
         "name": "FLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
@@ -130,7 +124,15 @@
       "Talon SRX[13]/Rev Limit": {
         "name": "Intake Motor/Rev Limit [ID:13]"
       },
+      "Talon SRX[14]": {
+        "header": {
+          "open": true
+        }
+      },
       "Talon SRX[17]": {
+        "header": {
+          "open": true
+        },
         "name": "Feeder1 [ID:17]"
       },
       "Talon SRX[18]": {
@@ -182,6 +184,8 @@
       "/LiveWindow/Ungrouped/Talon FX [7]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [8]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [13]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [14]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [15]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [16]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [17]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [18]": "Motor Controller",
