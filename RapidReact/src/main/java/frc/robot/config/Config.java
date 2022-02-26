@@ -54,10 +54,10 @@ public class Config {
   public static int intakeMotor_ID = 13;
 
   // Shooter
-  public int shooterRoller1_ID = 14;
-  public int shooterRoller2_ID = 15;
+  public int shooterTop_ID = 14;
+  public int shooterBottom_ID = 15;
 
-  public int shooterFeeder1_ID = 14;
+  public int shooterFeeder_ID = 14;
 
   public int intakeSolenoid_ID1 = 2;
   public int intakeSolenoid_ID2 = 3;
@@ -70,9 +70,6 @@ public class Config {
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
-
-  public int fixedHookSolenoid_ID1 = 4;
-  public int fixedHookSolenoid_ID2 = 5;
 
   //RGB
   public static int RGB_ID = 9;
@@ -143,8 +140,8 @@ public class Config {
   // Shooter Config
   public class ShooterConfig {
 
-    public MotorConfig roller1 = new MotorConfig();
-    public MotorConfig roller2 = new MotorConfig();
+    public MotorConfig shooterTop = new MotorConfig();
+    public MotorConfig shooterBottom = new MotorConfig();
 
     public ShooterConfig() {}
   }
@@ -167,11 +164,11 @@ public class Config {
     intake.intakeMotor.inverted = true;
 
     // Shooter
-    shooter.roller1.id = shooterRoller1_ID;
-    shooter.roller1.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterTop.id = shooterTop_ID;
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
-    shooter.roller2.id = shooterRoller2_ID;
-    shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterBottom.id = shooterBottom_ID;
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
     ///////////////////
     // climber motors
