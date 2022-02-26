@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.config.MotorConfig;
@@ -440,13 +441,13 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   private void autoExtendPartial() {
-    // TODO: (maybe do this in the tuning place?) add a secondary control loop synchronizing the positions: docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#example-2-lift-mechanism
+    // TODO: add a secondary control loop synchronizing the positions: docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#example-2-lift-mechanism
     // This can be accomplished by using the sum of each side as the elevator height, and the difference as the level deviation between the left and right, which must be kept near zero.
     // Aux PID[1] can then be used to apply a corrective difference component (adding to one side and subtracting from the other) to maintain a synchronous left and right position, while employing Position/Velocity/Motion-Magic to the primary axis of control (the elevator height).
 
-    // disabled the main PID loop?
-    // And checked what the value of the error signal is?
-    // TODO: That suggests that you're applying feedback the wrong way
+    // try disabling the main PID loop
+    // And check what the value of the error signal is
+    // TODO: currently possibly you're applying feedback the wrong way
 
     // climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
     climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
@@ -480,19 +481,16 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void setElevatorTilted(boolean tilted) {
-    return;
+    if (!config.enablePneumatics) return;
 
-    // TODO: uncomment these when done with testing
-    // if (!config.enablePneumatics) return;
+    climberTilted = tilted;
+    elevatorTiltedState.log(LogLevel.GENERAL, false);
 
-    // climberTilted = tilted;
-    // elevatorTiltedState.log(LogLevel.GENERAL, false);
-
-    // if (tilted) {
-    //   elevatorSolenoid.set(Value.kReverse);
-    // } else {
-    //   elevatorSolenoid.set(Value.kForward);
-    // }
+    if (tilted) {
+      elevatorSolenoid.set(Value.kReverse);
+    } else {
+      elevatorSolenoid.set(Value.kForward);
+    }
   }
 
   // TODO: (ideally) get rid of this
