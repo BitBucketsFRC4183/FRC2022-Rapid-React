@@ -65,8 +65,8 @@ public class Config {
   // Shooter
 
   //Climber Subsystem
-public int climberMotor_ID1 = 3;
-  public int climberMotor_ID2 = 4;
+  public int climberMotor_IDLeft = 16;
+  public int climberMotor_IDRight = 17;
 
   public int elevatorSolenoid_ID1 = 0;
   public int elevatorSolenoid_ID2 = 1;
@@ -168,19 +168,23 @@ public int climberMotor_ID1 = 3;
 
     ///////////////////
     // climber motors
-    climber.climberLeft.id = climberMotor_ID1;
+    climber.climberLeft.id = climberMotor_IDLeft;
     climber.climberLeft.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
     climber.climberLeft.motionMagicCruiseVelocity = 19000;
     climber.climberLeft.motionMagicAcceleration = 10000;
+
+    // TODO: 
+    // What's the difference between the two sorts of peak outputs? What does sensorPhase = false mean? Maybe add a comment. Also, it might be nice to write down the encoder step to inch (and time unit to second) conversion in a comment.
+    // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
     climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberLeft.inverted = false;
     climber.climberLeft.sensorPhase = false;
     climber.climberLeft.distancePeakOutput = 0.5;
     climber.climberLeft.turningPeakOutput = 1;
 
-    climber.climberRight.id = climberMotor_ID2;
+    climber.climberRight.id = climberMotor_IDRight;
     climber.climberRight.encoderType = EncoderType.Quadrature;
     // TODO: actually tune these 
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop

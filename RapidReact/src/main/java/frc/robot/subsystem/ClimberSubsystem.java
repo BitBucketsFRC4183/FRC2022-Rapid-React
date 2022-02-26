@@ -210,6 +210,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
      * - sensor deltas are very small per update, so derivative error never gets large enough to be useful.
      * - sensor movement is very slow causing the derivative error to be near zero.
      */
+    // TODO: Is there a reason this block is disabled?
     // int closedLoopTimeMs = 1;
     // climberRight.configClosedLoopPeriod(0, closedLoopTimeMs);
     // climberRight.configClosedLoopPeriod(1, closedLoopTimeMs);
@@ -255,7 +256,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     ) {
       withinThresholdLoops1++;
       if (withinThresholdLoops1 > climbLoopsToSettle) {
-        // and ifs within the error threshold of the position
+        // and if its within the error threshold of the position
         if (
           climberLeft.getSelectedSensorPosition() > setpoint - climbErrThreshold &&
           climberLeft.getSelectedSensorPosition() < setpoint + climbErrThreshold
@@ -291,17 +292,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   private void idleInit() {
-    // setElevatorTilted(false);
+    setElevatorTilted(false);
     autoRetractFull();
   }
 
   private void extendPartialInit() {
-    // setElevatorTilted(false);
+    setElevatorTilted(false);
     autoExtendPartial();
   }
 
   private void extendFullInit() {
-    // setElevatorTilted(true);
+    setElevatorTilted(true);
     autoExtendFull();
   }
 
@@ -406,12 +407,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climbState.log(LogLevel.GENERAL, "elevatorRetract");
   }
 
-  public void elevatorStop() {
-    climberLeft.set(0);
-    climberRight.set(0);
-    climbState.log(LogLevel.GENERAL, "climbStopped");
-  }
-
   // autoClimb() both enables autoclimb and sets the flag to true
   // autoClimbReleased() just sets the flag to false
   public void autoClimb() { //uses TPAD button
@@ -461,19 +456,23 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private void stopAutoClimb() {
     autoClimb = false;
     currentClimbState = ClimbState.Idle;
+    disable();
   }
 
   public void setElevatorTilted(boolean tilted) {
-    if (!config.enablePneumatics) return;
+    return;
 
-    climberTilted = tilted;
-    elevatorTiltedState.log(LogLevel.GENERAL, false);
+    // TODO: uncomment these when done with testing
+    // if (!config.enablePneumatics) return;
 
-    if (tilted) {
-      elevatorSolenoid.set(Value.kReverse);
-    } else {
-      elevatorSolenoid.set(Value.kForward);
-    }
+    // climberTilted = tilted;
+    // elevatorTiltedState.log(LogLevel.GENERAL, false);
+
+    // if (tilted) {
+    //   elevatorSolenoid.set(Value.kReverse);
+    // } else {
+    //   elevatorSolenoid.set(Value.kForward);
+    // }
   }
 
   // TODO: (ideally) get rid of this
