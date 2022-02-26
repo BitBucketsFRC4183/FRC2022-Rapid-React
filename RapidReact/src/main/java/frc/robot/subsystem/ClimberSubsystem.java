@@ -34,8 +34,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   ClimbState currentClimbState;
 
-  WPI_TalonSRX climberLeft = new WPI_TalonSRX(config.climberMotor_ID1); // leader
-  WPI_TalonSRX climberRight = new WPI_TalonSRX(config.climberMotor_ID2); // follower
+  WPI_TalonSRX climberLeft = new WPI_TalonSRX(config.climberMotor_IDLeft); 
+  WPI_TalonSRX climberRight = new WPI_TalonSRX(config.climberMotor_IDRight);
   MotorConfig leaderConfig = config.climber.climberLeft;
   MotorConfig followerConfig = config.climber.climberRight;
 
@@ -376,7 +376,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climberRight.set(0);
   }
 
-  public void toggleClimberEnabled() { // uses 2 PS button
+  public void toggleClimberEnabled() 
+  {
     climberEnabled = !climberEnabled;
 
     if (climberEnabled) {
@@ -386,7 +387,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
   }
 
-  public void manualElevatorExtend() { //uses up button
+  public void manualElevatorExtend() 
+  {
     if (!climberEnabled) return;
     if (autoClimb) return;
 
@@ -399,7 +401,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climbState.log(LogLevel.GENERAL, "elevatorExtend");
   }
 
-  public void manualElevatorRetract() { //uses down button
+  public void manualElevatorRetract() {
     if (!climberEnabled) return;
     if (autoClimb) return;
 
@@ -422,7 +424,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   // autoClimb() both enables autoclimb and sets the flag to true
   // autoClimbReleased() just sets the flag to false
-  public void autoClimb() { //uses TPAD button
+  public void autoClimb() {
     if (!config.enableClimberSubsystem) return;
     if (!climberEnabled) return;
 
@@ -441,8 +443,11 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private void autoExtendPartial() {
     // TODO: (maybe do this in the tuning place?) add a secondary control loop synchronizing the positions: docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#example-2-lift-mechanism
     // This can be accomplished by using the sum of each side as the elevator height, and the difference as the level deviation between the left and right, which must be kept near zero.
-
     // Aux PID[1] can then be used to apply a corrective difference component (adding to one side and subtracting from the other) to maintain a synchronous left and right position, while employing Position/Velocity/Motion-Magic to the primary axis of control (the elevator height).
+
+    // disabled the main PID loop?
+    // And checked what the value of the error signal is?
+    // TODO: That suggests that you're applying feedback the wrong way
 
     // climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
     climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
