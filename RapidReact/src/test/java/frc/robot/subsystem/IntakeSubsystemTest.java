@@ -36,7 +36,7 @@ public class IntakeSubsystemTest extends SubsystemTest {
         waitForCTREUpdate();
 
         // verify we applied 75% of the bus voltage to the motor (this is the default speed)
-        assertEquals(0.75 * BUS_VOLTAGE, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
+        assertEquals(-0.75 * BUS_VOLTAGE, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
     }
 
 }
