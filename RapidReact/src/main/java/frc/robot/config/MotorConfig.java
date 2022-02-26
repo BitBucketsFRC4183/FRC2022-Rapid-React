@@ -37,6 +37,9 @@ public class MotorConfig {
 
   public int motionMagicCruiseVelocity;
 
+  public double distancePeakOutput;
+  public double turningPeakOutput;
+
   //////////////////////////////////////////////////////////////////////////////
   // PIDFs
 

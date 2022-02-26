@@ -15,6 +15,7 @@ import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.log.*;
+import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
@@ -52,7 +53,8 @@ public class Robot extends TimedRobot {
   private boolean driverClimbEnabledPressed;
   private boolean operatorClimbEnabledPressed;
 
-  private boolean climberEnabled = false;
+  private boolean autoClimbStopLeftPressed;
+  private boolean autoClimbStopRightPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
@@ -281,6 +283,11 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {}
 
+  @Override
+  public void simulationPeriodic() {
+    CTREPhysicsSim.getInstance().run();
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by
@@ -331,9 +338,8 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberEnabled = !climberEnabled;
-
               climberSubsystem.toggleClimberEnabled();
+              rgbSubsystem.climberEnabled();
             }
           }
         )
@@ -343,8 +349,6 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberEnabled = !climberEnabled;
-
               climberSubsystem.toggleClimberEnabled();
               rgbSubsystem.climberEnabled();
             }
@@ -352,56 +356,67 @@ public class Robot extends TimedRobot {
         )
         .whenReleased(() -> driverClimbEnabledPressed = false);
 
-      buttons.elevatorExtend.whenPressed(climberSubsystem::elevatorExtend);
+      buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
       buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
 
-      buttons.elevatorRetract.whenPressed(climberSubsystem::elevatorRetract);
+      buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
       buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+      
+      buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
+      buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
+      buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
 
-      buttons.climbAuto.whenPressed(
+      buttons.autoClimbStopLeft.whenPressed(
         () -> {
-          climberSubsystem.climbAuto();
-          rgbSubsystem.autoClimb();
+          autoClimbStopLeftPressed = true;
+          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+          {
+            climberSubsystem.stopAutoClimb();
+          }
         }
-      );
+      )
+      .whenReleased(() -> autoClimbStopLeftPressed = false);
+      buttons.autoClimbStopRight.whenPressed(
+        () -> {
+          autoClimbStopRightPressed = true;
+          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+          {
+            climberSubsystem.stopAutoClimb();
+          }
+        }
+      )
+      .whenReleased(() -> autoClimbStopRightPressed = false);
+
+
     }
+    
+    //Shooter BUttons and Climber Buttons
+    if (config.enableShooterSubsystem)
+    {
 
-    //Shooter Buttons and Climber Buttons
-    if (config.enableClimberSubsystem || config.enableShooterSubsystem) {
-      buttons.hubShootOrFixedHookToggle.whenPressed(
-        () -> {
-          if (config.enableClimberSubsystem && climberEnabled) {
-            climberSubsystem.fixedHookToggler();
-          } else {
-            if (config.enableShooterSubsystem) {
-              shooterSubsystem.shootTop();
-              intakeSubsystem.ballManagementForward();
-            }
-          }
+      buttons.hubShoot.whenPressed(() -> {
+        shooterSubsystem.shootTop();
+        if (config.enableIntakeSubsystem) {
+          intakeSubsystem.ballManagementForward();
         }
-      );
-      buttons.hubShootOrFixedHookToggle.whenReleased(
-        () -> {
-          if (config.enableShooterSubsystem) {
-            shooterSubsystem.stopShoot();
-            intakeSubsystem.stopBallManagement();
-          }
+      });
+      buttons.hubShoot.whenReleased(() -> {
+        shooterSubsystem.stopShoot();
+        if (config.enableIntakeSubsystem) {
+          intakeSubsystem.stopBallManagement();
         }
-      );
-
+      });
+    
       buttons.tarmacShootOrToggleElevator.whenPressed(
         () -> {
-          if (config.enableClimberSubsystem && climberEnabled) {
+          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
             climberSubsystem.elevatorToggle();
           } else {
-            if (config.enableShooterSubsystem) {
-              shooterSubsystem.shootTarmac();
+            shooterSubsystem.shootTarmac();
 
-              if (drivetrainSubsystem != null) {
-                //lmao
-                drivetrainSubsystem.orient();
-              }
-
+            if (drivetrainSubsystem != null) {
+              //lmao
+              drivetrainSubsystem.orient();
             }
           }
         }

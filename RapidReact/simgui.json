@@ -104,9 +104,6 @@
         "name": "FRSteerMotor/Rev Limit [ID:8]"
       },
       "Talon SRX[13]": {
-        "header": {
-          "open": true
-        },
         "name": "Intake Motor [ID:13]"
       },
       "Talon SRX[13]/Analog In": {
@@ -189,6 +186,7 @@
       "/LiveWindow/Ungrouped/Talon SRX [16]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [17]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [18]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [19]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [20]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [3]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [4]": "Motor Controller",
@@ -279,6 +277,9 @@
         "open": true
       },
       "Trajectory Chooser": {
+        "open": true
+      },
+      "climber": {
         "open": true
       },
       "intake": {
