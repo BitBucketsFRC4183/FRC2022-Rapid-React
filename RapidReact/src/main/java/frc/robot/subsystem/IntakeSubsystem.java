@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
+import frc.robot.utils.MotorUtils;
 
 public class IntakeSubsystem extends BitBucketsSubsystem {
 
@@ -34,7 +35,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   @Override
   public void init() {
     ballManagement = new WPI_TalonSRX(Config.ballManagementMotor_ID);
-    intake = new WPI_TalonSRX(Config.intakeMotor_ID);
+    intake = MotorUtils.makeSRX(config.intake.intakeMotor);
     if (config.enablePneumatics) {
       if (Robot.isSimulation()) {
         intakeSolenoid =
@@ -105,5 +106,4 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void stopBallManagement() {
     ballManagement.set(ControlMode.PercentOutput, 0);
   }
-
 }
