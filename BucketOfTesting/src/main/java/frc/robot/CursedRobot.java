@@ -27,7 +27,7 @@ public class CursedRobot extends TimedRobot {
   Faults _faults_L = new Faults();
   Faults _faults_R = new Faults();
 
-  float robotSpeedMultiplier = 0.25f;
+  float robotSpeedMultiplier = 1f;
 
   @Override
   public void teleopPeriodic() {

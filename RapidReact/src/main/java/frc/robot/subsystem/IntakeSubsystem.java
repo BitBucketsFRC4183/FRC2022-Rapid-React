@@ -102,4 +102,13 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
       }
     }
   }
+
+  public void ballManagementForward() {
+    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
+  }
+
+  public void stopBallManagement() {
+    ballManagement.set(ControlMode.PercentOutput, 0);
+  }
+
 }

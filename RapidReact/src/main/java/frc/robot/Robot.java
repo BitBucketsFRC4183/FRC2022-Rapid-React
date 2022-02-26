@@ -310,7 +310,21 @@ public class Robot extends TimedRobot {
       buttons.toggleIntake.whenPressed(intakeSubsystem::toggle);
     }
 
-    //Shooter BUttons
+    if (config.enableIntakeSubsystem && config.enableShooterSubsystem) {
+      buttons.intake.whenPressed(
+        () -> {
+          shooterSubsystem.antiFeed();
+          intakeSubsystem.spinForward();
+        }
+      );
+      buttons.intake.whenReleased(
+        () -> {
+          shooterSubsystem.turnOffFeeders();
+        }
+      );
+    }
+
+    //Shooter Buttons
     if (config.enableShooterSubsystem) {
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
@@ -356,17 +370,19 @@ public class Robot extends TimedRobot {
     }
     
     //Shooter BUttons and Climber Buttons
-    if (config.enableClimberSubsystem || config.enableShooterSubsystem)
+    if (config.enableShooterSubsystem)
     {
 
       buttons.hubShoot.whenPressed(() -> {
         if (config.enableShooterSubsystem) {
           shooterSubsystem.shootTop();
+          intakeSubsystem.ballManagementForward();
         }
       });
       buttons.hubShoot.whenReleased(() -> {
         if (config.enableShooterSubsystem){
           shooterSubsystem.stopShoot();
+          intakeSubsystem.stopBallManagement();
         }
       });
     

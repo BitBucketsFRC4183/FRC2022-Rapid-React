@@ -22,9 +22,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private CANSparkMax roller1;
   private CANSparkMax roller2;
   private TalonSRX feeder1;
-  private TalonSRX feeder2;
 
-  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 1500.0);
+  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 5000.0);
   private final Changeable<Double> bottomSpeed = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
@@ -37,7 +36,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     -3000.0
   );
   private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.2);
-  private final Changeable<Double> feeder2PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederTwoPercentOutput", 0.2);
   private float hubShootSpeedDeadband = 100;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
@@ -67,7 +65,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     roller1.set(0);
     roller2.set(0);
     feeder1.set(ControlMode.PercentOutput, 0);
-    feeder2.set(ControlMode.PercentOutput, 0);
   }
 
   public void shootTop() {
@@ -94,26 +91,24 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   void turnOnFeeders() {
     feeder1.set(ControlMode.PercentOutput, feeder1PO.currentValue());
-    feeder2.set(ControlMode.PercentOutput, feeder2PO.currentValue());
   }
 
-  void turnOffFeeders() {
+  public void turnOffFeeders() {
     feeder1.set(ControlMode.PercentOutput, 0);
-    feeder2.set(ControlMode.PercentOutput, 0);
   }
 
+  public void antiFeed() {
+    feeder1.set(ControlMode.PercentOutput, -feeder1PO.currentValue());
+  }
   @Override
   public void init() {
     roller1 = MotorUtils.makeSpark(config.shooter.roller1);
     roller2 = MotorUtils.makeSpark(config.shooter.roller2);
     feeder1 = new WPI_TalonSRX(config.shooterFeeder1_ID);
-    feeder2 = new WPI_TalonSRX(config.shooterFeeder2_ID);
 
     //limit the voltage of the feeder motors
     feeder1.configVoltageCompSaturation(11);
     feeder1.enableVoltageCompensation(true);
-    feeder2.configVoltageCompSaturation(11);
-    feeder2.enableVoltageCompensation(true);
 
     if (Robot.isSimulation()) {
       // REVPhysicsSim.getInstance().addSparkMax(roller1, DCMotor.getNEO(1));
@@ -144,9 +139,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void periodic() {
     if (shooterState != ShooterState.STOPPED && isUpToSpeed()) {
       turnOnFeeders();
-    } else {
-      turnOffFeeders();
-    }
+    } 
   }
 
   @Override
@@ -174,6 +167,5 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     roller1.set(0);
     roller2.set(0);
     feeder1.set(ControlMode.PercentOutput, 0);
-    feeder2.set(ControlMode.PercentOutput, 0);
   }
 }
