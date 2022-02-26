@@ -39,7 +39,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   MotorConfig leaderConfig = config.climber.climberLeft;
   MotorConfig followerConfig = config.climber.climberRight;
 
-  private boolean climberEnabled = true;
+  private boolean climberEnabled = false;
 
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
@@ -226,6 +226,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // climberRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
     // zero sensors
+    //  TODO: actually use the limit switches to zero these at the start of the match! [[what does this mean]]
     climberLeft.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
     climberRight.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
 
@@ -314,6 +315,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
+    if (!climberEnabled) return;
+
     climbState.log(LogLevel.GENERAL, currentClimbState.toString());
 
     climberLeftPosition.log(LogLevel.GENERAL, climberLeft.getSelectedSensorPosition());
@@ -384,6 +387,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void manualElevatorExtend() { //uses up button
+    if (!climberEnabled) return;
     if (autoClimb) return;
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
@@ -396,6 +400,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void manualElevatorRetract() { //uses down button
+    if (!climberEnabled) return;
     if (autoClimb) return;
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
@@ -408,6 +413,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void elevatorStop() {
+    if (!climberEnabled) return;
+
     climberLeft.set(0);
     climberRight.set(0);
     climbState.log(LogLevel.GENERAL, "climbStopped");
@@ -417,6 +424,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   // autoClimbReleased() just sets the flag to false
   public void autoClimb() { //uses TPAD button
     if (!config.enableClimberSubsystem) return;
+    if (!climberEnabled) return;
 
     autoClimb = true;
     autoClimbPressed = true;
@@ -425,6 +433,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void autoClimbReleased() {
+    if (!climberEnabled) return;
+
     autoClimbPressed = false;
   }
 
@@ -492,6 +502,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   public void resetClimbStuff()
   {
+    if (!climberEnabled) return;
+
     autoClimbPressed = false;
     climberTilted = false;
     withinThresholdLoops1 = 0;

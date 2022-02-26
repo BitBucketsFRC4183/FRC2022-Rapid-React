@@ -53,8 +53,6 @@ public class Robot extends TimedRobot {
   private boolean driverClimbEnabledPressed;
   private boolean operatorClimbEnabledPressed;
 
-  private boolean climberEnabled = false;
-
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
@@ -337,9 +335,8 @@ public class Robot extends TimedRobot {
           () -> {
             operatorClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberEnabled = !climberEnabled;
-
               climberSubsystem.toggleClimberEnabled();
+              rgbSubsystem.climberEnabled();
             }
           }
         )
@@ -349,8 +346,6 @@ public class Robot extends TimedRobot {
           () -> {
             driverClimbEnabledPressed = true;
             if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberEnabled = !climberEnabled;
-
               climberSubsystem.toggleClimberEnabled();
               rgbSubsystem.climberEnabled();
             }
@@ -388,7 +383,7 @@ public class Robot extends TimedRobot {
     
       buttons.tarmacShootOrToggleElevator.whenPressed(
         () -> {
-          if (config.enableClimberSubsystem && climberEnabled) {
+          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
             climberSubsystem.elevatorToggle();
           } else {
             if (config.enableShooterSubsystem) {
