@@ -407,6 +407,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climbState.log(LogLevel.GENERAL, "elevatorRetract");
   }
 
+  public void elevatorStop() {
+    climberLeft.set(0);
+    climberRight.set(0);
+    climbState.log(LogLevel.GENERAL, "climbStopped");
+  }
+
   // autoClimb() both enables autoclimb and sets the flag to true
   // autoClimbReleased() just sets the flag to false
   public void autoClimb() { //uses TPAD button
