@@ -19,9 +19,9 @@ import frc.swervelib.SimConstants;
 
 public class ShooterSubsystem extends BitBucketsSubsystem {
 
-  private CANSparkMax roller1;
-  private CANSparkMax roller2;
-  private TalonSRX feeder1;
+  private CANSparkMax shooterTop;
+  private CANSparkMax shooterBottom;
+  private TalonSRX feeder;
 
   private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 5000.0);
   private final Changeable<Double> bottomSpeed = BucketLog.changeable(
@@ -62,23 +62,23 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     shootState.log("Idling");
     shooterState = ShooterState.STOPPED;
 
-    roller1.set(0);
-    roller2.set(0);
-    feeder1.set(ControlMode.PercentOutput, 0);
+    shooterTop.set(0);
+    shooterBottom.set(0);
+    feeder.set(ControlMode.PercentOutput, 0);
   }
 
   public void shootTop() {
     shootState.log("TopShooting");
 
-    roller1.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
-    roller2.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterTop.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     shooterState = ShooterState.TOP;
   }
 
   public void shootLow() {
     shootState.log("LowShooting");
-    roller1.getPIDController().setReference(topSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
-    roller2
+    shooterTop.getPIDController().setReference(topSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom
       .getPIDController()
       .setReference(bottomSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     shooterState = ShooterState.LOW;
@@ -90,25 +90,25 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   void turnOnFeeders() {
-    feeder1.set(ControlMode.PercentOutput, feeder1PO.currentValue());
+    feeder.set(ControlMode.PercentOutput, feeder1PO.currentValue());
   }
 
   public void turnOffFeeders() {
-    feeder1.set(ControlMode.PercentOutput, 0);
+    feeder.set(ControlMode.PercentOutput, 0);
   }
 
   public void antiFeed() {
-    feeder1.set(ControlMode.PercentOutput, -feeder1PO.currentValue());
+    feeder.set(ControlMode.PercentOutput, -feeder1PO.currentValue());
   }
   @Override
   public void init() {
-    roller1 = MotorUtils.makeSpark(config.shooter.roller1);
-    roller2 = MotorUtils.makeSpark(config.shooter.roller2);
-    feeder1 = new WPI_TalonSRX(config.shooterFeeder1_ID);
+    shooterTop = MotorUtils.makeSpark(config.shooter.shooterTop);
+    shooterBottom = MotorUtils.makeSpark(config.shooter.shooterBottom);
+    feeder = new WPI_TalonSRX(config.shooterFeeder_ID);
 
     //limit the voltage of the feeder motors
-    feeder1.configVoltageCompSaturation(11);
-    feeder1.enableVoltageCompensation(true);
+    feeder.configVoltageCompSaturation(11);
+    feeder.enableVoltageCompensation(true);
 
     if (Robot.isSimulation()) {
       // REVPhysicsSim.getInstance().addSparkMax(roller1, DCMotor.getNEO(1));
@@ -130,8 +130,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public boolean isUpToSpeed() {
     return (
       true ||
-      motorIsInSpeedDeadband(roller1, topSpeed.currentValue()) &&
-      motorIsInSpeedDeadband(roller2, bottomSpeed.currentValue())
+      motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
+      motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
     );
   }
 
@@ -146,7 +146,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void simulationPeriodic() {
     REVPhysicsSim.getInstance().run();
 
-    flywheelSim.setInput(roller1.get() * this.config.maxVoltage);
+    flywheelSim.setInput(shooterTop.get() * this.config.maxVoltage);
     flywheelSim.update(SimConstants.SIM_SAMPLE_RATE_SEC);
     encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
@@ -158,14 +158,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     // flywheelSim.update(Constants.kRobotMainLoopPeriod);
     // encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
-    roller1OutputVelLoggable.log(roller1.getEncoder().getVelocity());
-    roller2OutputVelLoggable.log(roller2.getEncoder().getVelocity());
+    roller1OutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
+    roller2OutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
   }
 
   @Override
   public void disable() {
-    roller1.set(0);
-    roller2.set(0);
-    feeder1.set(ControlMode.PercentOutput, 0);
+    shooterTop.set(0);
+    shooterBottom.set(0);
+    feeder.set(ControlMode.PercentOutput, 0);
   }
 }
