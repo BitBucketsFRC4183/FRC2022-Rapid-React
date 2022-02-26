@@ -133,6 +133,8 @@ public class Config {
   // Intake Config
   public class IntakeConfig {
 
+    public MotorConfig intakeMotor = new MotorConfig();
+
     public boolean defaultIntakeAutoExtend = true;
 
     public IntakeConfig() {}
@@ -160,6 +162,10 @@ public class Config {
     //////////////////////////////////////////////////////////////////////////////
     // Motor Configuration
 
+    // Intake
+    intake.intakeMotor.inverted = true;
+
+    // Shooter
     shooter.roller1.id = shooterRoller1_ID;
     shooter.roller1.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
 
