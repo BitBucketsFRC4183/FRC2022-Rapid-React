@@ -59,8 +59,8 @@ public class Config {
 
   public int shooterFeeder_ID = 14;
 
-  public int intakeSolenoid_ID1 = 2;
-  public int intakeSolenoid_ID2 = 3;
+  public int intakeSolenoid_ID1 = 0;
+  public int intakeSolenoid_ID2 = 1;
 
   // Shooter
 
@@ -68,8 +68,8 @@ public class Config {
   public int climberMotor_IDLeft = 16;
   public int climberMotor_IDRight = 17;
 
-  public int elevatorSolenoid_ID1 = 0;
-  public int elevatorSolenoid_ID2 = 1;
+  public int elevatorSolenoid_ID1 = 2;
+  public int elevatorSolenoid_ID2 = 3;
 
   //RGB
   public static int RGB_ID = 9;
