@@ -22,7 +22,7 @@ public class Config {
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
 
-  public boolean enablePneumatics = true;
+  public boolean enablePneumatics = false;
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
@@ -162,7 +162,7 @@ public class Config {
 
     // Intake
     intake.intakeMotor.id = intakeMotor_ID;
-    intake.intakeMotor.inverted = true;
+    intake.intakeMotor.inverted = false;
 
     intake.ballManagementMotor.id = ballManagementMotor_ID;
     intake.ballManagementMotor.inverted = true;
