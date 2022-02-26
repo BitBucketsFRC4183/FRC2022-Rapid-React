@@ -131,6 +131,7 @@ public class Config {
   public class IntakeConfig {
 
     public MotorConfig intakeMotor = new MotorConfig();
+    public MotorConfig ballManagementMotor = new MotorConfig();
 
     public boolean defaultIntakeAutoExtend = true;
 
@@ -162,6 +163,9 @@ public class Config {
     // Intake
     intake.intakeMotor.id = intakeMotor_ID;
     intake.intakeMotor.inverted = true;
+
+    intake.ballManagementMotor.id = ballManagementMotor_ID;
+    intake.ballManagementMotor.inverted = true;
 
     // Shooter
     shooter.shooterTop.id = shooterTop_ID;
