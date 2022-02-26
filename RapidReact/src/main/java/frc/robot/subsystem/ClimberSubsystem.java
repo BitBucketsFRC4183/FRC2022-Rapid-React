@@ -229,6 +229,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // zero sensors
     //  TODO: actually use the limit switches to zero these at the start of the match! [[what does this mean]]
+    // You need to know the absolute encoder positions, relative to the limit switches. You can measure that by e.g. extend until you don’t see the lower limit, then retract until you see the lower limit, then set the encoder to zero
     climberLeft.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
     climberRight.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
 
