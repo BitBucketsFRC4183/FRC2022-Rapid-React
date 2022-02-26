@@ -182,11 +182,11 @@ public class Config {
     climber.climberLeft.motionMagicAcceleration = 10000;
 
     // TODO: 
-    // What's the difference between the two sorts of peak outputs? What does sensorPhase = false mean? Maybe add a comment. Also, it might be nice to write down the encoder step to inch (and time unit to second) conversion in a comment.
+    // What's the difference between the two sorts of peak outputs? Add a comment. Also, it might be nice to write down the encoder step to inch (and time unit to second) conversion in a comment.
     // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
     climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climberLeft.inverted = false;
-    climber.climberLeft.sensorPhase = false;
+    climber.climberLeft.inverted = false; // whether it should go forward or backward given some voltage
+    climber.climberLeft.sensorPhase = false; // whether going forward counts as positive or negative ticks to the encoder
     climber.climberLeft.distancePeakOutput = 0.5;
     climber.climberLeft.turningPeakOutput = 1;
 
