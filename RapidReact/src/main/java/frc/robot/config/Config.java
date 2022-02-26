@@ -163,6 +163,7 @@ public class Config {
     // Motor Configuration
 
     // Intake
+    intake.intakeMotor.id = intakeMotor_ID;
     intake.intakeMotor.inverted = true;
 
     // Shooter
