@@ -35,7 +35,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
-    ballManagement = new WPI_TalonSRX(Config.ballManagementMotor_ID);
+    ballManagement = MotorUtils.makeSRX(config.intake.ballManagementMotor);
     intake = MotorUtils.makeSRX(config.intake.intakeMotor);
     if (config.enablePneumatics) {
       if (Robot.isSimulation()) {
