@@ -196,16 +196,16 @@
     },
     "Solenoids": {
       "0": {
-        "name": "Elevator [ID:0]"
+        "name": "Intake [ID:0]"
       },
       "1": {
-        "name": "Elevator [ID:1]"
+        "name": "Intake [ID:1]"
       },
       "2": {
-        "name": "Intake [ID:2]"
+        "name": "Elevator [ID:2]"
       },
       "3": {
-        "name": "Intake [ID:3]"
+        "name": "Elevator [ID:3]"
       },
       "window": {
         "visible": true
@@ -354,5 +354,9 @@
         "visible": false
       }
     }
+  },
+  "sourceNames": {
+    "Solenoid[0,0]": "Intake",
+    "Solenoid[0,1]": "Intake"
   }
 }
