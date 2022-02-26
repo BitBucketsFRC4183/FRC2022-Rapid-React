@@ -53,6 +53,9 @@ public class Robot extends TimedRobot {
   private boolean driverClimbEnabledPressed;
   private boolean operatorClimbEnabledPressed;
 
+  private boolean autoClimbStopLeftPressed;
+  private boolean autoClimbStopRightPressed;
+
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
 
   /**
@@ -362,6 +365,29 @@ public class Robot extends TimedRobot {
       buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
       buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
       buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
+
+      buttons.autoClimbStopLeft.whenPressed(
+        () -> {
+          autoClimbStopLeftPressed = true;
+          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+          {
+            climberSubsystem.stopAutoClimb();
+          }
+        }
+      )
+      .whenReleased(() -> autoClimbStopLeftPressed = false);
+      buttons.autoClimbStopRight.whenPressed(
+        () -> {
+          autoClimbStopRightPressed = true;
+          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+          {
+            climberSubsystem.stopAutoClimb();
+          }
+        }
+      )
+      .whenReleased(() -> autoClimbStopRightPressed = false);
+
+
     }
     
     //Shooter BUttons and Climber Buttons
@@ -369,14 +395,14 @@ public class Robot extends TimedRobot {
     {
 
       buttons.hubShoot.whenPressed(() -> {
-        if (config.enableShooterSubsystem) {
-          shooterSubsystem.shootTop();
+        shooterSubsystem.shootTop();
+        if (config.enableIntakeSubsystem) {
           intakeSubsystem.ballManagementForward();
         }
       });
       buttons.hubShoot.whenReleased(() -> {
-        if (config.enableShooterSubsystem){
-          shooterSubsystem.stopShoot();
+        shooterSubsystem.stopShoot();
+        if (config.enableIntakeSubsystem) {
           intakeSubsystem.stopBallManagement();
         }
       });
@@ -386,14 +412,11 @@ public class Robot extends TimedRobot {
           if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
             climberSubsystem.elevatorToggle();
           } else {
-            if (config.enableShooterSubsystem) {
-              shooterSubsystem.shootTarmac();
+            shooterSubsystem.shootTarmac();
 
-              if (drivetrainSubsystem != null) {
-                //lmao
-                drivetrainSubsystem.orient();
-              }
-
+            if (drivetrainSubsystem != null) {
+              //lmao
+              drivetrainSubsystem.orient();
             }
           }
         }

@@ -44,6 +44,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
 
+  private boolean autoClimbStopped = false; // if this is stopped, auto climb can't be turned on again
+
   DoubleSolenoid elevatorSolenoid;
 
   private int fullExtendPosition = 500000; // TODO: change this number
@@ -427,6 +429,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void autoClimb() {
     if (!config.enableClimberSubsystem) return;
     if (!climberEnabled) return;
+    if (autoClimbStopped) return;
 
     autoClimb = true;
     autoClimbPressed = true;
@@ -472,10 +475,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // climberRight.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
   }
 
-  // TODO: add a button for this
-  // TODO: figure out behavior when stopped; back to manual, and then what if they press autoclimb again?
-  private void stopAutoClimb() {
+  public void stopAutoClimb() {
     autoClimb = false;
+    autoClimbStopped = true;
     currentClimbState = ClimbState.Idle;
     disable();
   }
