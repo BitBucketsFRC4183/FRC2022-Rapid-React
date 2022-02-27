@@ -213,8 +213,8 @@ public class Robot extends TimedRobot {
               this.shooterSubsystem
             )
               .executeDrivePath("Split Example P1")
-              .executeAction((d, i, s) -> i.toggle(), 1)
-              .executeParallel("Split Example P2", (d, i, s) -> i.toggle(), 2)
+              .executeAction((d, i, s) -> i.spinForward(), 1)
+              .executeParallel("Split Example P2", (d, i, s) -> i.spinBackward(), 2)
               .complete();
           break;
         case MAIN_NO_TERMINAL:
