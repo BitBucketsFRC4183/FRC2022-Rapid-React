@@ -50,8 +50,8 @@ public class Config {
   public int backRightModuleSteerEncoder_ID = 10;
 
   // Intake Subsystem
-  public static int ballManagementMotor_ID = 16;
-  public static int intakeMotor_ID = 13;
+  public static int ballManagementMotor_ID = 13;
+  public static int intakeMotor_ID = 16;
 
   // Shooter
   public int shooterTop_ID = 14;
