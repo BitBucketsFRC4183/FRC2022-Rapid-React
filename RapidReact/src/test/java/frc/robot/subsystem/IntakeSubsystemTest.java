@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class IntakeSubsystemTest extends SubsystemTest {
 
-    public static final double DELTA = 1e-2; // acceptable deviation range
+    public static final double DELTA = 0.1; // acceptable deviation range
     IntakeSubsystem subsystem;
 
     @Before
@@ -36,7 +36,7 @@ public class IntakeSubsystemTest extends SubsystemTest {
         waitForCTREUpdate();
 
         // verify we applied 75% of the bus voltage to the motor (this is the default speed)
-        assertEquals(-0.75 * 11.5, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
+        assertEquals(0.75 * 11.5, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
     }
 
 }
