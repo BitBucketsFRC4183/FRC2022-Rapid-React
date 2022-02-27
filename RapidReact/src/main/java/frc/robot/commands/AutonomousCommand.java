@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
@@ -32,14 +31,10 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public AutonomousCommand executeShootPreload()
     {
-        return (AutonomousCommand) this.beforeStarting(
-                new InstantCommand(() -> this.shooter.shootTop())
-                        .alongWith(
-                                new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
-                                        .andThen(new WaitCommand(5)
-                                                .andThen(
-                                                        new InstantCommand(() -> this.shooter.stopShoot()))))
-        );
+        this.addCommands(new InstantCommand(() -> this.shooter.shootTop())
+                .andThen(new WaitCommand(5)
+                        .andThen(() -> this.shooter.stopShoot())));
+        return this;
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
