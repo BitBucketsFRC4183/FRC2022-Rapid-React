@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
               .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
               .complete();
           break;
         case MAIN_WITH_TERMINAL:
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
               .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
               .complete();
           break;
         default:
@@ -338,6 +338,46 @@ public class Robot extends TimedRobot {
     if (config.enableShooterSubsystem) {
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
+
+      buttons.hubSpinUp.whenPressed(() -> {
+        shooterSubsystem.spinUpTop();
+      });
+      buttons.hubSpinUp.whenReleased(() -> {
+        shooterSubsystem.stopShoot();
+        if (config.enableIntakeSubsystem) {
+          intakeSubsystem.stopBallManagement();
+        }
+      });
+
+      buttons.feedInFire.whenPressed(() -> {
+        shooterSubsystem.turnOnFeeders();
+        intakeSubsystem.ballManagementForward();
+      });
+      buttons.feedInFire.whenReleased(() -> {
+        shooterSubsystem.turnOffFeeders();
+        intakeSubsystem.stopBallManagement();
+      });
+    
+      buttons.tarmacShootOrToggleElevator.whenPressed(
+        () -> {
+          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
+            climberSubsystem.elevatorToggle();
+          } else {
+            shooterSubsystem.shootTarmac();
+            //lmao
+            if (drivetrainSubsystem != null) {
+              drivetrainSubsystem.orient();
+            }
+          }
+        }
+      );
+      buttons.tarmacShootOrToggleElevator.whenReleased(
+        () -> {
+          if (config.enableShooterSubsystem) {
+            shooterSubsystem.stopShoot();
+          }
+        }
+      );
     }
 
     //Climber buttons
@@ -364,17 +404,17 @@ public class Robot extends TimedRobot {
           }
         )
         .whenReleased(() -> driverClimbEnabledPressed = false);
-
+    
       buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
       buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
-
+    
       buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
       buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
       
       buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
       buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
       buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
-
+    
       buttons.autoClimbStopLeft.whenPressed(
         () -> {
           autoClimbStopLeftPressed = true;
@@ -395,48 +435,6 @@ public class Robot extends TimedRobot {
         }
       )
       .whenReleased(() -> autoClimbStopRightPressed = false);
-
-
-    }
-    
-    //Shooter BUttons and Climber Buttons
-    if (config.enableShooterSubsystem)
-    {
-
-      buttons.hubShoot.whenPressed(() -> {
-        shooterSubsystem.shootTop();
-        if (config.enableIntakeSubsystem) {
-          intakeSubsystem.ballManagementForward();
-        }
-      });
-      buttons.hubShoot.whenReleased(() -> {
-        shooterSubsystem.stopShoot();
-        if (config.enableIntakeSubsystem) {
-          intakeSubsystem.stopBallManagement();
-        }
-      });
-    
-      buttons.tarmacShootOrToggleElevator.whenPressed(
-        () -> {
-          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
-            climberSubsystem.elevatorToggle();
-          } else {
-            shooterSubsystem.shootTarmac();
-
-            if (drivetrainSubsystem != null) {
-              //lmao
-              drivetrainSubsystem.orient();
-            }
-          }
-        }
-      );
-      buttons.tarmacShootOrToggleElevator.whenReleased(
-        () -> {
-          if (config.enableShooterSubsystem) {
-            shooterSubsystem.stopShoot();
-          }
-        }
-      );
     }
   }
 }
