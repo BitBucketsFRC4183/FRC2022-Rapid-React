@@ -22,6 +22,7 @@ public class Buttons {
   JoystickButton hubShoot = new JoystickButton(operatorControl, PS4Constants.R1.getId());
   JoystickButton lowShoot = new JoystickButton(operatorControl, PS4Constants.R2.getId());
   JoystickButton tarmacShootOrToggleElevator = new JoystickButton(operatorControl, PS4Constants.L1.getId());
+
   JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4Constants.CIRCLE.getId());
   JoystickButton intake = new JoystickButton(operatorControl, PS4Constants.TRIANGLE.getId());
   JoystickButton outtake = new JoystickButton(operatorControl, PS4Constants.CROSS.getId());

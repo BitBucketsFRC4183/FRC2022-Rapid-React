@@ -59,8 +59,8 @@ public class Config {
 
   public int shooterFeeder_ID = 17;
 
-  public int intakeSolenoid_ID1 = 0;
-  public int intakeSolenoid_ID2 = 1;
+  public int intakeSolenoid_ID1 = 1;
+  public int intakeSolenoid_ID2 = 0;
 
   // Shooter
 
