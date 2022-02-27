@@ -72,9 +72,6 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   }
 
   public void spinBackward() {
-    if (autoExtend.currentValue() && config.enablePneumatics) {
-      intakeSolenoid.set(Value.kForward);
-    }
     intake.set(ControlMode.PercentOutput, -percentOutput.currentValue());
     ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
     intakeState.log("outtaking");
