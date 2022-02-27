@@ -34,7 +34,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     {
         this.addCommands(new InstantCommand(() -> this.shooter.shootTop())
                 .andThen(new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
-                        .andThen(new WaitCommand(5)
+                        .andThen(new WaitCommand(3)
                                 .andThen(() -> this.shooter.stopShoot()))));
         return this;
     }

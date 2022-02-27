@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -269,6 +271,13 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     info.log(LogLevel.GENERAL, "Still in autonomous");
+  }
+
+  @Override
+  public void autonomousExit()
+  {
+    //Reset the odometry rotation as the robot leaves autonomous before teleop
+    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(-21.41)));
   }
 
   /** This function is called once when teleop is enabled. */

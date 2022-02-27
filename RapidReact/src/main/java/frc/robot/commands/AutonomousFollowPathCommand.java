@@ -23,7 +23,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
 
     public AutonomousFollowPathCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
     {
-        this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 5, 8);
+        this.trajectory = trajectoryPath.equals(new Config().auto.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, 0.5, 0.5);
         this.auto = auto;
         this.drive = drive;
 
