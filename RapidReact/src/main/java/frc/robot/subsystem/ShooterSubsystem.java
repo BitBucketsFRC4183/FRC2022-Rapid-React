@@ -45,6 +45,12 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
   private final Loggable<Double> roller2OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller2OutputVel");
 
+  private final Loggable<Double> topShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterActualSpeed");
+  private final Loggable<Double> bottomShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterActualSpeed");
+
+  private final Loggable<Double> topShooterError = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterError");
+  private final Loggable<Double> bottomShooterError = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterError");
+
   FlywheelSim flywheelSim;
   EncoderSim encoderSim;
 
@@ -144,8 +150,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("top shooter speed", shooterTop.getEncoder().getVelocity());
-    SmartDashboard.putNumber("bottom shooter speed", shooterBottom.getEncoder().getVelocity());
+    topShooterSpeed.log(LogLevel.GENERAL, shooterTop.getEncoder().getVelocity());
+    bottomShooterSpeed.log(LogLevel.GENERAL, shooterBottom.getEncoder().getVelocity());
 
     double topError;
     double bottomError;
@@ -159,9 +165,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
       topError = shooterTop.getEncoder().getVelocity();
       bottomError = shooterTop.getEncoder().getVelocity();
     }
-    SmartDashboard.putNumber("top shooter error", topError);
-    SmartDashboard.putNumber("bottom shooter error", bottomError);
-  } 
+
+    topShooterError.log(LogLevel.GENERAL, topError);
+    bottomShooterError.log(LogLevel.GENERAL, bottomError);
+  }
 
   @Override
   public void simulationPeriodic() {
