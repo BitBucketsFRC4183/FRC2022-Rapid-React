@@ -171,10 +171,10 @@ public class Config {
 
     // Shooter
     shooter.shooterTop.id = shooterTop_ID;
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00002, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/400);
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
 
     ///////////////////
     // climber motors
