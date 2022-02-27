@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Complex – Example", AutonomousPath.PATH_PLANNER_SPLIT);
+    this.autonomousPathChooser.addOption("Example", AutonomousPath.PATH_PLANNER_SPLIT);
     this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
     this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
