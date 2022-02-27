@@ -33,7 +33,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     public AutonomousCommand executeShootPreload()
     {
         return (AutonomousCommand) this.beforeStarting(
-                new InstantCommand(() -> this.shooter.shootTop())
+                new InstantCommand(() -> this.shooter.spinUpTop())
                         .alongWith(
                                 new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
                                         .andThen(new WaitCommand(5)

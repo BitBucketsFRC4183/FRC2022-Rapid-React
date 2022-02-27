@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
               .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
               .complete();
           break;
         case MAIN_WITH_TERMINAL:
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
               .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.shootTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
               .complete();
           break;
         default:
@@ -263,17 +263,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    if(shooterSubsystem.isShooting()){
-      if (shooterSubsystem.isUpToSpeed()) {
-        intakeSubsystem.ballManagementForward();
-      }
-      else
-      {
-        intakeSubsystem.stopBallManagement();
-      }
-    }
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -340,14 +330,23 @@ public class Robot extends TimedRobot {
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
 
-      buttons.hubShoot.whenPressed(() -> {
-        shooterSubsystem.shootTop();
+      buttons.hubSpinUp.whenPressed(() -> {
+        shooterSubsystem.spinUpTop();
       });
-      buttons.hubShoot.whenReleased(() -> {
+      buttons.hubSpinUp.whenReleased(() -> {
         shooterSubsystem.stopShoot();
         if (config.enableIntakeSubsystem) {
           intakeSubsystem.stopBallManagement();
         }
+      });
+
+      buttons.feedInFire.whenPressed(() -> {
+        shooterSubsystem.turnOnFeeders();
+        intakeSubsystem.ballManagementForward();
+      });
+      buttons.feedInFire.whenReleased(() -> {
+        shooterSubsystem.turnOffFeeders();
+        intakeSubsystem.stopBallManagement();
       });
     
       buttons.tarmacShootOrToggleElevator.whenPressed(
