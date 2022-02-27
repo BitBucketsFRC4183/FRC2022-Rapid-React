@@ -112,9 +112,11 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
-    public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
+    public double robotWeight_pounds = 70.0;
 
-    public double drivetrainWheelBase_meters = 0.7112; // set wheelbase
+    public double drivetrainTrackWidth_meters = 0.44; // set trackwidth
+
+    public double drivetrainWheelBase_meters = 0.55; // set wheelbase
 
     public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
 
