@@ -9,8 +9,10 @@ import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -69,7 +71,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
     shooterTop.set(0);
     shooterBottom.set(0);
-    feeder.set(ControlMode.PercentOutput, 0);
+    turnOffFeeders();
   }
 
   public void shootTop() {
@@ -134,7 +136,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public boolean isUpToSpeed() {
     return (
-      true ||
+      // true ||
       motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
       motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
     );
@@ -142,10 +144,18 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    if (shooterState != ShooterState.STOPPED && isUpToSpeed()) {
-      turnOnFeeders();
-    } 
-  }
+    if (isShooting())
+    {
+      if (isUpToSpeed())
+      {
+        turnOnFeeders();
+      }
+      else
+      {
+        turnOffFeeders();
+      }
+    }
+  } 
 
   @Override
   public void simulationPeriodic() {
