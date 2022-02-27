@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystem.DrivetrainSubsystem;
-
 import java.util.function.DoubleSupplier;
 
 public class DefaultDriveCommand extends CommandBase {
@@ -42,18 +41,18 @@ public class DefaultDriveCommand extends CommandBase {
       case "Field Oriented":
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
-            translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
-            rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond / 2,
+            translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
+            translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
+            rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond,
             driveSubsystem.getGyroscopeRotation()
           )
         );
         break;
       case "Robot Oriented":
         ChassisSpeeds robotOrient = new ChassisSpeeds(
-          translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
-          translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond / 2,
-          rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond / 2
+          translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
+          translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
+          rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond
         );
         driveSubsystem.drive(robotOrient);
         break;

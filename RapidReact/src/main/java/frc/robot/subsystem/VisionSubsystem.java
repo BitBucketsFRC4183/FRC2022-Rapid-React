@@ -20,7 +20,7 @@ public class VisionSubsystem extends BitBucketsSubsystem {
 
   private double targetDistance = 0;
 
-  protected VisionSubsystem(Config config) {
+  public VisionSubsystem(Config config) {
     super(config);
   }
 
