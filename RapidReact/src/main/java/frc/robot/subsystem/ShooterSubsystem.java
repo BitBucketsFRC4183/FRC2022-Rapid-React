@@ -27,7 +27,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Changeable<Double> bottomSpeed = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
-    -2050.0
+    -3000.0
   );
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 2300.0);
   private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
@@ -35,8 +35,9 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     -3000.0
   );
-  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.2);
-  private float hubShootSpeedDeadband = 100;
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.2);
+  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", -0.7);
+  private float hubShootSpeedDeadband = 200;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
   private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
@@ -56,6 +57,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public ShooterSubsystem(Config config) {
     super(config);
+  }
+
+  public boolean isShooting(){
+    return shooterState != ShooterState.STOPPED;
   }
 
   public void stopShoot() {
@@ -90,7 +95,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   void turnOnFeeders() {
-    feeder.set(ControlMode.PercentOutput, feeder1PO.currentValue());
+    feeder.set(ControlMode.PercentOutput, feederPO.currentValue());
   }
 
   public void turnOffFeeders() {
@@ -98,7 +103,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public void antiFeed() {
-    feeder.set(ControlMode.PercentOutput, -feeder1PO.currentValue());
+    feeder.set(ControlMode.PercentOutput, -feederHoldPO.currentValue());
   }
   @Override
   public void init() {
