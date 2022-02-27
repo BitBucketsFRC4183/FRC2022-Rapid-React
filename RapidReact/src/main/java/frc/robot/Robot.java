@@ -233,7 +233,11 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
               .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
+              .executeAction((d, i, s) -> {
+                s.turnOnFeeders(); //Activate feeders
+                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
+              }, 2) //Wait 2 seconds for the shooter to spin up
               .complete();
           break;
         case MAIN_WITH_TERMINAL:
@@ -251,7 +255,11 @@ public class Robot extends TimedRobot {
               .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
               .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot
+              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
+              .executeAction((d, i, s) -> {
+                s.turnOnFeeders(); //Activate feeders
+                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
+              }, 2) //Wait 2 seconds for the shooter to spin up
               .complete();
           break;
         default:
