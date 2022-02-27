@@ -21,6 +21,7 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -213,9 +214,9 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
+              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
               .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
-              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
               .executeAction((d, i, s) -> s.shootTop()) //Shoot
               .complete();
@@ -230,10 +231,10 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction) //Activate intake
+              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
               .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
               .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
-              .executeAction(AutonomousCommand.SubsystemAction.IntakeToggleAction, 2.0) //Turn off the intake after getting the ball
+              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
               .executeDrivePath("Main P3") //Drive to the base of the hub
               .executeAction((d, i, s) -> s.shootTop()) //Shoot
               .complete();

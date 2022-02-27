@@ -110,8 +110,6 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public interface SubsystemAction
     {
-        public static final SubsystemAction IntakeToggleAction = (d, i, s) -> i.toggle();
-
         void doAction(DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter);
     }
 }
