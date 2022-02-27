@@ -2,82 +2,82 @@
   "HALProvider": {
     "Other Devices": {
       "SPARK MAX [14]": {
-        "name": "Roller1 [ID:14]"
+        "name": "ShooterTop [ID:14]"
       },
       "SPARK MAX [15]": {
-        "name": "Roller2 [ID:15]"
+        "name": "ShooterBottom [ID:15]"
       },
       "Talon FX[1]": {
-        "name": "BRDriveMotor [ID:1]"
+        "name": "FLDriveMotor [ID:1]"
       },
       "Talon FX[1]/Fwd Limit": {
-        "name": "BRDriveMotor/Fwd Limit [ID:1]"
+        "name": "FLDriveMotor/Fwd Limit [ID:1]"
       },
       "Talon FX[1]/Integrated Sensor": {
-        "name": "BRDriveMotor/Integrated Sensor [ID:1]"
+        "name": "FLDriveMotor/Integrated Sensor [ID:1]"
       },
       "Talon FX[1]/Rev Limit": {
-        "name": "BRDriveMotor/Rev Limit [ID:1]"
+        "name": "FLDriveMotor/Rev Limit [ID:1]"
       },
       "Talon FX[2]": {
-        "name": "BRSteerMotor [ID:2]"
+        "name": "FLSteerMotor [ID:2]"
       },
       "Talon FX[2]/Fwd Limit": {
-        "name": "BRSteerMotor/Fwd Limit [ID:2]"
+        "name": "FLSteerMotor/Fwd Limit [ID:2]"
       },
       "Talon FX[2]/Integrated Sensor": {
-        "name": "BRSteerMotor/Integrated Sensor [ID:2]"
+        "name": "FLSteerMotor/Integrated Sensor [ID:2]"
       },
       "Talon FX[2]/Rev Limit": {
-        "name": "BRSteerMotor/Rev Limit [ID:2]"
+        "name": "FLSteerMotor/Rev Limit [ID:2]"
       },
       "Talon FX[3]": {
-        "name": "BLDriveMotor [ID:3]"
+        "name": "BRDriveMotor [ID:3]"
       },
       "Talon FX[3]/Fwd Limit": {
-        "name": "BLDriveMotor/Fwd Limit [ID:3]"
+        "name": "BRDriveMotor/Fwd Limit [ID:3]"
       },
       "Talon FX[3]/Integrated Sensor": {
-        "name": "BLDriveMotor/Integrated Sensor [ID:3]"
+        "name": "BRDriveMotor/Integrated Sensor [ID:3]"
       },
       "Talon FX[3]/Rev Limit": {
-        "name": "BLDriveMotor/Rev Limit [ID:3]"
+        "name": "BRDriveMotor/Rev Limit [ID:3]"
       },
       "Talon FX[4]": {
-        "name": "BLSteerMotor [ID:4]"
+        "name": "BRSteerMotor [ID:4]"
       },
       "Talon FX[4]/Fwd Limit": {
-        "name": "BLSteerMotor/Fwd Limit [ID:4]"
+        "name": "BRSteerMotor/Fwd Limit [ID:4]"
       },
       "Talon FX[4]/Integrated Sensor": {
-        "name": "BLSteerMotor/Integrated Sensor [ID:4]"
+        "name": "BRSteerMotor/Integrated Sensor [ID:4]"
       },
       "Talon FX[4]/Rev Limit": {
-        "name": "BLSteerMotor/Rev Limit [ID:4]"
+        "name": "BRSteerMotor/Rev Limit [ID:4]"
       },
       "Talon FX[5]": {
-        "name": "FLDriveMotor [ID:5]"
+        "name": "BLDriveMotor [ID:5]"
       },
       "Talon FX[5]/Fwd Limit": {
-        "name": "FLDriveMotor/Fwd Limit [ID:5]"
+        "name": "BLDriveMotor/Fwd Limit [ID:5]"
       },
       "Talon FX[5]/Integrated Sensor": {
-        "name": "FLDriveMotor/Integrated Sensor [ID:5]"
+        "name": "BLDriveMotor/Integrated Sensor [ID:5]"
       },
       "Talon FX[5]/Rev Limit": {
-        "name": "FLDriveMotor/Rev Limit [ID:5]"
+        "name": "BLDriveMotor/Rev Limit [ID:5]"
       },
       "Talon FX[6]": {
-        "name": "FLSteerMotor [ID:6]"
+        "name": "BLSteerMotor [ID:6]"
       },
       "Talon FX[6]/Fwd Limit": {
-        "name": "FLSteerMotor/Fwd Limit [ID:6]"
+        "name": "BLSteerMotor/Fwd Limit [ID:6]"
       },
       "Talon FX[6]/Integrated Sensor": {
-        "name": "FLSteerMotor/Integrated Sensor [ID:6]"
+        "name": "BLSteerMotor/Integrated Sensor [ID:6]"
       },
       "Talon FX[6]/Rev Limit": {
-        "name": "FLSteerMotor/Rev Limit [ID:6]"
+        "name": "BLSteerMotor/Rev Limit [ID:6]"
       },
       "Talon FX[7]": {
         "name": "FRDriveMotor [ID:7]"
@@ -122,35 +122,90 @@
         "name": "Intake Motor/Rev Limit [ID:13]"
       },
       "Talon SRX[14]": {
-        "header": {
-          "open": true
-        }
+        "name": "Feeder [ID:14]"
+      },
+      "Talon SRX[14]/Analog In": {
+        "name": "Feeder/Analog In [ID:14]"
+      },
+      "Talon SRX[14]/Fwd Limit": {
+        "name": "Feeder/Fwd Limit [ID:14]"
+      },
+      "Talon SRX[14]/Pulse Width Input": {
+        "name": "Feeder/Width Input [ID:14]"
+      },
+      "Talon SRX[14]/Quad Encoder": {
+        "name": "Feeder/Quad Encoder [ID:14]"
+      },
+      "Talon SRX[14]/Rev Limit": {
+        "name": "Feeder/Rev Limit [ID:14]"
+      },
+      "Talon SRX[15]": {
+        "name": "BMS [ID:15]"
+      },
+      "Talon SRX[15]/Analog In": {
+        "name": "BMS/Analog In [ID:15]"
+      },
+      "Talon SRX[15]/Fwd Limit": {
+        "name": "BMS/Fwd Limit [ID:15]"
+      },
+      "Talon SRX[15]/Pulse Width Input": {
+        "name": "BMS/Width Input [ID:15]"
+      },
+      "Talon SRX[15]/Quad Encoder": {
+        "name": "BMS/Quad Encoder [ID:15]"
+      },
+      "Talon SRX[15]/Rev Limit": {
+        "name": "BMS/Rev Limit [ID:15]"
+      },
+      "Talon SRX[16]": {
+        "name": "ClimbLeft [ID:16]"
+      },
+      "Talon SRX[16]/Analog In": {
+        "name": "ClimberLeft/Analog In [ID:16]"
+      },
+      "Talon SRX[16]/Fwd Limit": {
+        "name": "ClimberLeft/Fwd Limit [ID:16]"
+      },
+      "Talon SRX[16]/Pulse Width Input": {
+        "name": "ClimberLeft/Width Input [ID:16]"
+      },
+      "Talon SRX[16]/Quad Encoder": {
+        "name": "ClimberLeft/Quad Encoder [ID:16]"
+      },
+      "Talon SRX[16]/Rev Limit": {
+        "name": "ClimberLeft/Rev Limit [ID:16]"
       },
       "Talon SRX[17]": {
-        "header": {
-          "open": true
-        },
-        "name": "Feeder1 [ID:17]"
+        "name": "ClimbRight [ID:17]"
       },
-      "Talon SRX[18]": {
-        "name": "Feeder2 [ID:18]"
+      "Talon SRX[17]/Analog In": {
+        "name": "ClimberRight/Analog In [ID:17]"
       },
-      "Talon SRX[3]": {
-        "header": {
-          "open": true
-        }
+      "Talon SRX[17]/Fwd Limit": {
+        "name": "ClimberRight/Fwd Limit [ID:17]"
       },
-      "Talon SRX[4]": {
-        "header": {
-          "open": true
-        }
+      "Talon SRX[17]/Pulse Width Input": {
+        "name": "ClimberRight/Width Input [ID:17]"
+      },
+      "Talon SRX[17]/Quad Encoder": {
+        "name": "ClimberRight/Quad Encoder [ID:17]"
+      },
+      "Talon SRX[17]/Rev Limit": {
+        "name": "ClimberRight/Rev Limit [ID:17]"
       }
     },
     "Solenoids": {
       "0": {
-        "header": {
-          "open": true
-        }
+        "name": "Intake [ID:0]"
+      },
+      "1": {
+        "name": "Intake [ID:1]"
+      },
+      "2": {
+        "name": "Elevator [ID:2]"
+      },
+      "3": {
+        "name": "Elevator [ID:3]"
       },
       "window": {
         "visible": true
@@ -198,6 +253,7 @@
       "/LiveWindow/Ungrouped/Talon SRX [16]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [17]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [18]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon SRX [19]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [20]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [3]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon SRX [4]": "Motor Controller",
@@ -290,6 +346,9 @@
       "Trajectory Chooser": {
         "open": true
       },
+      "climber": {
+        "open": true
+      },
       "intake": {
         "open": true
       },
@@ -307,5 +366,9 @@
         "visible": false
       }
     }
+  },
+  "sourceNames": {
+    "Solenoid[0,0]": "Intake",
+    "Solenoid[0,1]": "Intake"
   }
 }

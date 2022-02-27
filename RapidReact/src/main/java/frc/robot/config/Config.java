@@ -1,6 +1,6 @@
 package frc.robot.config;
 
-import org.w3c.dom.css.RGBColor;
+import frc.robot.config.MotorConfig.EncoderType;
 
 public class Config {
 
@@ -15,7 +15,7 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = true;
-  public boolean enableClimberSubsystem = true;
+  public boolean enableClimberSubsystem = false;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
@@ -31,8 +31,6 @@ public class Config {
   // Motor & Pneumatic IDs
 
   // Autonomous Subsystem
-
-  // Climber Subsystem
 
   // Drive Subsystem
   public int frontLeftModuleDriveMotor_ID = 1;
@@ -52,28 +50,26 @@ public class Config {
   public int backRightModuleSteerEncoder_ID = 10;
 
   // Intake Subsystem
-  public static int ballManagementMotor_ID = 15;
+  public static int ballManagementMotor_ID = 16;
   public static int intakeMotor_ID = 13;
 
   // Shooter
-  public int shooterRoller1_ID = 14;
-  public int shooterRoller2_ID = 15;
+  public int shooterTop_ID = 14;
+  public int shooterBottom_ID = 15;
 
-  public int shooterFeeder1_ID = 14;
+  public int shooterFeeder_ID = 17;
 
-  public int intakeSolenoid_ID1 = 2;
-  public int intakeSolenoid_ID2 = 3;
+  public int intakeSolenoid_ID1 = 0;
+  public int intakeSolenoid_ID2 = 1;
 
   // Shooter
 
   //Climber Subsystem
-  public int climberMotor_ID = 16;
+  public int climberMotor_IDLeft = 16;
+  public int climberMotor_IDRight = 17;
 
-  public int elevatorSolenoid_ID1 = 0;
-  public int elevatorSolenoid_ID2 = 1;
-
-  public int fixedHookSolenoid_ID1 = 4;
-  public int fixedHookSolenoid_ID2 = 5;
+  public int elevatorSolenoid_ID1 = 2;
+  public int elevatorSolenoid_ID2 = 3;
 
   //RGB
   public static int RGB_ID = 9;
@@ -86,6 +82,7 @@ public class Config {
   public RGBConfig rgbConfig = new RGBConfig();
   public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
+  public ClimberConfig climber = new ClimberConfig();
 
   // Autonomous Config
   public class AutonomousConfig {
@@ -99,6 +96,9 @@ public class Config {
 
   // Climber Config
   public class ClimberConfig {
+
+    public MotorConfig climberLeft = new MotorConfig();
+    public MotorConfig climberRight = new MotorConfig();
 
     public ClimberConfig() {}
   }
@@ -130,6 +130,9 @@ public class Config {
   // Intake Config
   public class IntakeConfig {
 
+    public MotorConfig intakeMotor = new MotorConfig();
+    public MotorConfig ballManagementMotor = new MotorConfig();
+
     public boolean defaultIntakeAutoExtend = true;
 
     public IntakeConfig() {}
@@ -138,8 +141,8 @@ public class Config {
   // Shooter Config
   public class ShooterConfig {
 
-    public MotorConfig roller1 = new MotorConfig();
-    public MotorConfig roller2 = new MotorConfig();
+    public MotorConfig shooterTop = new MotorConfig();
+    public MotorConfig shooterBottom = new MotorConfig();
 
     public ShooterConfig() {}
   }
@@ -157,10 +160,48 @@ public class Config {
     //////////////////////////////////////////////////////////////////////////////
     // Motor Configuration
 
-    shooter.roller1.id = shooterRoller1_ID;
-    shooter.roller1.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    // Intake
+    intake.intakeMotor.id = intakeMotor_ID;
+    intake.intakeMotor.inverted = true;
 
-    shooter.roller2.id = shooterRoller2_ID;
-    shooter.roller2.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    intake.ballManagementMotor.id = ballManagementMotor_ID;
+    intake.ballManagementMotor.inverted = true;
+
+    // Shooter
+    shooter.shooterTop.id = shooterTop_ID;
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+
+    shooter.shooterBottom.id = shooterBottom_ID;
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+
+    ///////////////////
+    // climber motors
+    climber.climberLeft.id = climberMotor_IDLeft;
+    climber.climberLeft.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these 
+    // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
+    climber.climberLeft.motionMagicCruiseVelocity = 19000;
+    climber.climberLeft.motionMagicAcceleration = 10000;
+
+    // TODO: 
+    // What's the difference between the two sorts of peak outputs? Add a comment. Also, it might be nice to write down the encoder step to inch (and time unit to second) conversion in a comment.
+    // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
+    climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberLeft.inverted = false; // whether it should go forward or backward given some voltage
+    climber.climberLeft.sensorPhase = false; // whether going forward counts as positive or negative ticks to the encoder
+    climber.climberLeft.distancePeakOutput = 0.5;
+    climber.climberLeft.turningPeakOutput = 1;
+
+    climber.climberRight.id = climberMotor_IDRight;
+    climber.climberRight.encoderType = EncoderType.Quadrature;
+    // TODO: actually tune these 
+    // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
+    climber.climberRight.motionMagicCruiseVelocity = 19000;
+    climber.climberRight.motionMagicAcceleration = 10000;
+    climber.climberRight.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
+    climber.climberRight.inverted = true;
+    climber.climberRight.sensorPhase = false;
+    climber.climberRight.distancePeakOutput = 0.5;
+    climber.climberRight.turningPeakOutput = 1;
   }
 }
