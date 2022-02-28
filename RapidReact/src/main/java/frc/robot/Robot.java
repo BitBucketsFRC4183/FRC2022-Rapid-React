@@ -330,7 +330,7 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     if (config.enableDriveSubsystem) {
-      buttons.zeroGyroscope.whenPressed(drivetrainSubsystem::zeroGyroscope);
+      buttons.resetOdometry.whenPressed(() -> this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0))));
     }
 
     //Intake buttons
