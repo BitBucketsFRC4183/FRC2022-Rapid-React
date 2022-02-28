@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.config.Config;
 import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.wpiClasses.QuadSwerveSim;
 import frc.wpiClasses.SwerveModuleSim;
@@ -59,11 +60,12 @@ public class SwerveDrivetrainModel {
 
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    // TODO: move these to config
-    double mass_kg = Units.lbsToKilograms(140);
-    double trackWidth_m = .75;
-    double trackLength_m = .75;
+    Config.DriveConfig config = new Config().drive;
+    double mass_kg = Units.lbsToKilograms(config.robotWeight_pounds);
+    double trackWidth_m = config.drivetrainTrackWidth_meters;
+    double trackLength_m = config.drivetrainWheelBase_meters;
     double moi = 1.0/12.0 * mass_kg * Math.pow((trackWidth_m*1.1),2) * 2;
+
     swerveDt =
       new QuadSwerveSim(
         trackWidth_m, // SwerveConstants.TRACKWIDTH_METERS,

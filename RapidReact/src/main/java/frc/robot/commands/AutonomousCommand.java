@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
@@ -32,14 +31,19 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public AutonomousCommand executeShootPreload()
     {
-        return (AutonomousCommand) this.beforeStarting(
-                new InstantCommand(() -> this.shooter.spinUpTop())
-                        .alongWith(
-                                new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
-                                        .andThen(new WaitCommand(5)
-                                                .andThen(
-                                                        new InstantCommand(() -> this.shooter.stopShoot()))))
-        );
+        this.addCommands(new InstantCommand(() -> this.shooter.spinUpTop())
+                .andThen(new WaitCommand(2)
+                        .andThen(() -> {
+                            this.shooter.turnOnFeeders();
+                            this.intake.ballManagementForward();
+                        }).andThen(new WaitCommand(2)
+                                .andThen(() -> {
+                                    this.shooter.stopShoot();
+
+                                    this.shooter.turnOffFeeders();
+                                    this.intake.ballManagementBackward();
+                                }))));
+        return this;
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
@@ -110,8 +114,6 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public interface SubsystemAction
     {
-        public static final SubsystemAction IntakeToggleAction = (d, i, s) -> i.toggle();
-
         void doAction(DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter);
     }
 }
