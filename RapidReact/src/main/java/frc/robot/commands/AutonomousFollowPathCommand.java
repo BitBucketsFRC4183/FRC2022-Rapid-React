@@ -47,6 +47,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     {
         PIDController xyController = new PIDController(1, 0, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         return new PPSwerveControllerCommand(
                 this.trajectory, //Trajectory
@@ -64,13 +65,13 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     {
         return new InstantCommand(() ->{
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
-            this.drive.drivetrainModel.resetPID(this.trajectory.getInitialPose().getRotation().getRadians());
-            this.drive.setOdometry(this.trajectory.getInitialPose());
-            this.drive.field.setRobotPose(this.trajectory.getInitialPose());
+            //this.drive.drivetrainModel.resetPID(this.trajectory.getInitialPose().getRotation().getRadians());
+            //this.drive.setOdometry(this.trajectory.getInitialPose());
+            //this.drive.field.setRobotPose(this.trajectory.getInitialPose());
             //this.drive.gyro.setAngle(this.trajectory.getInitialPose().getRotation());
             //this.drive.drivetrainModel.setKnownPose(this.trajectory.getInitialPose());
 
-            this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
+            //this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
 
             this.drive.zeroStates(this.trajectory.getInitialPose());
         });
