@@ -34,6 +34,12 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         this.auto = auto;
         this.drive = drive;
 
+        if(!this.auto.isGyroReset())
+        {
+            this.drive.resetGyroWithOffset(this.trajectory.getInitialPose().getRotation());
+            this.auto.setGyroReset();
+        }
+
         this.addCommands(
                 this.setup(),
 
