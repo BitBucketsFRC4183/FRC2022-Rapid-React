@@ -75,7 +75,6 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Example", AutonomousPath.PATH_PLANNER_SPLIT);
     this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
     this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
@@ -207,19 +206,6 @@ public class Robot extends TimedRobot {
              .executeShootPreload()
              .executeDrivePath("Drive Backwards and Reorient", 1)
              .complete();
-          break;
-        case PATH_PLANNER_SPLIT:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem
-            )
-              .executeDrivePath("Split Example P1")
-              .executeAction((d, i, s) -> i.spinForward(), 1)
-              .executeParallel("Split Example P2", (d, i, s) -> i.spinBackward(), 2)
-              .complete();
           break;
         case MAIN_NO_TERMINAL:
           command =
