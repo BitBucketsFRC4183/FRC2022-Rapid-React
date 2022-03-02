@@ -188,6 +188,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     // We will also create a list of all the modules so we can easily access them later
     modules = new ArrayList<>(List.of(moduleFrontLeft, moduleFrontRight, moduleBackLeft, moduleBackRight));
+
+    //Calibrate the gyro only once when the drive subsystem is first initialized
+    this.gyro.calibrate();
   }
 
   public void orient() {
