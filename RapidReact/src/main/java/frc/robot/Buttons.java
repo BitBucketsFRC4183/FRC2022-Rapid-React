@@ -13,15 +13,17 @@ public class Buttons {
   int swerveForward = PS4Constants.LEFT_STICK_Y.getId();
   int swerveStrafe = PS4Constants.LEFT_STICK_X.getId();
   int swerveRotation = PS4Constants.RIGHT_STICK_X.getId();
-  JoystickButton zeroGyroscope = new JoystickButton(driverControl, PS4Constants.SHARE.getId());
   JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4Constants.PS4.getId());
+  JoystickButton resetOdometry = new JoystickButton(driverControl, PS4Constants.TRACKPAD.getId());
 
   //////////////////////////////////////////////////////////////////////////////
   //Operator
   Joystick operatorControl = new Joystick(1);
-  JoystickButton hubShoot = new JoystickButton(operatorControl, PS4Constants.R1.getId());
+  JoystickButton hubSpinUp = new JoystickButton(operatorControl, PS4Constants.R1.getId());
   JoystickButton lowShoot = new JoystickButton(operatorControl, PS4Constants.R2.getId());
   JoystickButton tarmacShootOrToggleElevator = new JoystickButton(operatorControl, PS4Constants.L1.getId());
+  JoystickButton feedInFire = new JoystickButton(operatorControl, PS4Constants.L2.getId());
+
   JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4Constants.CIRCLE.getId());
   JoystickButton intake = new JoystickButton(operatorControl, PS4Constants.TRIANGLE.getId());
   JoystickButton outtake = new JoystickButton(operatorControl, PS4Constants.CROSS.getId());

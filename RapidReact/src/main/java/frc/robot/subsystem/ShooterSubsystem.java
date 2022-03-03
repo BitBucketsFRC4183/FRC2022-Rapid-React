@@ -9,8 +9,10 @@ import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -27,7 +29,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Changeable<Double> bottomSpeed = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
-    -2050.0
+    -3000.0
   );
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 2300.0);
   private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
@@ -35,12 +37,19 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     -3000.0
   );
-  private final Changeable<Double> feeder1PO = BucketLog.changeable(Put.DOUBLE, "shooter/feederOnePercentOutput", -0.2);
-  private float hubShootSpeedDeadband = 100;
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.2);
+  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", -0.7);
+  private float hubSpinUpSpeedDeadband = 300;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
   private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
   private final Loggable<Double> roller2OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller2OutputVel");
+
+  private final Loggable<Double> topShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterActualSpeed");
+  private final Loggable<Double> bottomShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterActualSpeed");
+
+  private final Loggable<Double> topShooterError = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterError");
+  private final Loggable<Double> bottomShooterError = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterError");
 
   FlywheelSim flywheelSim;
   EncoderSim encoderSim;
@@ -58,16 +67,20 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     super(config);
   }
 
+  public boolean isShooting(){
+    return shooterState != ShooterState.STOPPED;
+  }
+
   public void stopShoot() {
     shootState.log("Idling");
     shooterState = ShooterState.STOPPED;
 
     shooterTop.set(0);
     shooterBottom.set(0);
-    feeder.set(ControlMode.PercentOutput, 0);
+    turnOffFeeders();
   }
 
-  public void shootTop() {
+  public void spinUpTop() {
     shootState.log("TopShooting");
 
     shooterTop.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
@@ -89,8 +102,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     shooterState = ShooterState.TARMAC;
   }
 
-  void turnOnFeeders() {
-    feeder.set(ControlMode.PercentOutput, feeder1PO.currentValue());
+  public void turnOnFeeders() {
+    feeder.set(ControlMode.PercentOutput, feederPO.currentValue());
   }
 
   public void turnOffFeeders() {
@@ -98,7 +111,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public void antiFeed() {
-    feeder.set(ControlMode.PercentOutput, -feeder1PO.currentValue());
+    feeder.set(ControlMode.PercentOutput, -feederHoldPO.currentValue());
   }
   @Override
   public void init() {
@@ -122,14 +135,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   boolean motorIsInSpeedDeadband(CANSparkMax motor, double speed) {
     return (
-      (motor.getEncoder().getVelocity() <= speed + hubShootSpeedDeadband) &&
-      (motor.getEncoder().getVelocity() >= speed - hubShootSpeedDeadband)
+      (motor.getEncoder().getVelocity() <= speed + hubSpinUpSpeedDeadband) &&
+      (motor.getEncoder().getVelocity() >= speed - hubSpinUpSpeedDeadband)
     );
   }
 
   public boolean isUpToSpeed() {
     return (
-      true ||
+      // true ||
       motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
       motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
     );
@@ -137,9 +150,24 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-    if (shooterState != ShooterState.STOPPED && isUpToSpeed()) {
-      turnOnFeeders();
-    } 
+    topShooterSpeed.log(LogLevel.GENERAL, shooterTop.getEncoder().getVelocity());
+    bottomShooterSpeed.log(LogLevel.GENERAL, shooterBottom.getEncoder().getVelocity());
+
+    double topError;
+    double bottomError;
+    if (isShooting())
+    {
+      topError = shooterTop.getEncoder().getVelocity() - topSpeed.currentValue();
+      bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeed.currentValue();
+    }
+    else
+    {
+      topError = shooterTop.getEncoder().getVelocity();
+      bottomError = shooterTop.getEncoder().getVelocity();
+    }
+
+    topShooterError.log(LogLevel.GENERAL, topError);
+    bottomShooterError.log(LogLevel.GENERAL, bottomError);
   }
 
   @Override

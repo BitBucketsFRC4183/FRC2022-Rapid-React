@@ -50,8 +50,8 @@ public class Config {
   public int backRightModuleSteerEncoder_ID = 10;
 
   // Intake Subsystem
-  public static int ballManagementMotor_ID = 16;
-  public static int intakeMotor_ID = 13;
+  public static int ballManagementMotor_ID = 13;
+  public static int intakeMotor_ID = 16;
 
   // Shooter
   public int shooterTop_ID = 14;
@@ -59,8 +59,8 @@ public class Config {
 
   public int shooterFeeder_ID = 17;
 
-  public int intakeSolenoid_ID1 = 0;
-  public int intakeSolenoid_ID2 = 1;
+  public int intakeSolenoid_ID1 = 1;
+  public int intakeSolenoid_ID2 = 0;
 
   // Shooter
 
@@ -112,9 +112,11 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
-    public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
+    public double robotWeight_pounds = 70.0;
 
-    public double drivetrainWheelBase_meters = 0.7112; // set wheelbase
+    public double drivetrainTrackWidth_meters = 0.4171; // set trackwidth
+
+    public double drivetrainWheelBase_meters = 0.5187; // set wheelbase
 
     public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
 
@@ -169,10 +171,10 @@ public class Config {
 
     // Shooter
     shooter.shooterTop.id = shooterTop_ID;
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00002, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/400);
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
 
     ///////////////////
     // climber motors

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class IntakeSubsystemTest extends SubsystemTest {
 
-    public static final double DELTA = 1e-2; // acceptable deviation range
+    public static final double DELTA = 0.1; // acceptable deviation range
     IntakeSubsystem subsystem;
 
     @Before
