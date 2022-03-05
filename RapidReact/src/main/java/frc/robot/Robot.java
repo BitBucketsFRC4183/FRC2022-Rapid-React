@@ -75,6 +75,7 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
     this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
     this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
@@ -205,6 +206,21 @@ public class Robot extends TimedRobot {
            )
              .executeShootPreload()
              .executeDrivePath("Drive Backwards and Reorient", 1)
+             .complete();
+          break;
+        case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
+          command =
+           new AutonomousCommand(
+             this.autonomousSubsystem,
+             this.drivetrainSubsystem,
+             this.intakeSubsystem,
+             this.shooterSubsystem
+           )
+             .executeShootPreload()
+             .executeDrivePath("Drive Backwards Double Ball P1")
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeDrivePath("Drive Backwards Double Ball P2", 2)
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
              .complete();
           break;
         case MAIN_NO_TERMINAL:
