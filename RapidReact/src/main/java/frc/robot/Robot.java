@@ -176,8 +176,6 @@ public class Robot extends TimedRobot {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       this.info.log(LogLevel.GENERAL, "auton started");
 
-      //TODO: Reset gyro (need to get information about the start pose)
-
       Command command;
       switch (this.autonomousPathChooser.getSelected()) {
         case NOTHING:
@@ -291,7 +289,7 @@ public class Robot extends TimedRobot {
   public void autonomousExit()
   {
     //Reset the odometry rotation as the robot leaves autonomous before teleop
-    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0))); //TODO: Somehow grab the initial pose from the trajectory
+    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /** This function is called once when teleop is enabled. */
