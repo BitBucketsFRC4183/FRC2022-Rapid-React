@@ -206,6 +206,8 @@ public class Robot extends TimedRobot {
            )
              .executeShootPreload()
              .executeDrivePath("Drive Backwards and Reorient", 1)
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
              .complete();
           break;
         case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
