@@ -109,10 +109,6 @@ public class Robot extends TimedRobot {
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
-    if (config.enableAutonomousSubsystem) {
-      autonomousSubsystem.field = field;
-    }
-
     // Configure the button bindings
     this.configureButtonBindings();
 
@@ -319,8 +315,6 @@ public class Robot extends TimedRobot {
   public void teleopInit()
   {
     if (config.enableDriveSubsystem) {
-      drivetrainSubsystem.field = field;
-
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
           drivetrainSubsystem,

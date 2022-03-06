@@ -5,7 +5,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -40,13 +39,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
             this.auto.setGyroReset();
         }
 
-        this.addCommands(
-                this.setup(),
-
-                this.createTrajectoryFollowerCommand()
-
-                //this.printError()
-        );
+        this.addCommands(this.setup(), this.createTrajectoryFollowerCommand());
     }
 
     private PPSwerveControllerCommand createTrajectoryFollowerCommand()
@@ -71,26 +64,8 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     {
         return new InstantCommand(() ->{
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
-            //this.drive.drivetrainModel.resetPID(this.trajectory.getInitialPose().getRotation().getRadians());
-            //this.drive.setOdometry(this.trajectory.getInitialPose());
-            //this.drive.field.setRobotPose(this.trajectory.getInitialPose());
-            //this.drive.gyro.setAngle(this.trajectory.getInitialPose().getRotation());
-            //this.drive.drivetrainModel.setKnownPose(this.trajectory.getInitialPose());
-
-            //this.drive.field.getObject("Trajectory").setTrajectory(this.trajectory);
 
             this.drive.zeroStates(this.trajectory.getInitialPose());
-        });
-    }
-
-    private InstantCommand printError()
-    {
-        return new InstantCommand(() -> {
-            Pose2d actualEnd = this.drive.field.getRobotPose();
-            Pose2d targetEnd = this.trajectory.getEndState().poseMeters;
-
-            double distance = Math.pow(Math.pow(actualEnd.getX() - targetEnd.getX(), 2) + Math.pow(actualEnd.getY() - targetEnd.getY(), 2), 0.5);
-            this.state.log(LogLevel.GENERAL, "Completed following a Trajectory! Distance Error from Target: " + distance);
         });
     }
 }

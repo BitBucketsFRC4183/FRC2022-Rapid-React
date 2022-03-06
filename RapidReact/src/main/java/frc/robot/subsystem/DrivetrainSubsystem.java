@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.config.Config;
 import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
@@ -84,8 +83,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   private Pose2d pose;
   public SwerveDriveOdometry odometry;
-
-  public Field2d field;
 
   private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
 
