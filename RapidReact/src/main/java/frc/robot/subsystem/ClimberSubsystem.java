@@ -341,7 +341,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     else
     {
       climberLeft.setSelectedSensorPosition(0);
-      climberLeft.set(0);
       climbLeftEncoderZeroed = true;
     }
 
@@ -355,7 +354,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     else
     {
       climberRight.setSelectedSensorPosition(0);
-      climberRight.set(0);
       climbRightEncoderZeroed = true;
     }
 
