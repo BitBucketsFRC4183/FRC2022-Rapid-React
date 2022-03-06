@@ -43,15 +43,15 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         this.addCommands(
                 this.setup(),
 
-                this.createTrajectoryFollowerCommand(),
+                this.createTrajectoryFollowerCommand()
 
-                this.printError()
+                //this.printError()
         );
     }
 
     private PPSwerveControllerCommand createTrajectoryFollowerCommand()
     {
-        PIDController xyController = new PIDController(1, 0, 0);
+        PIDController xyController = new PIDController(1, 0.1, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 

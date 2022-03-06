@@ -214,8 +214,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-      //drivetrainModel.setModuleStates(chassisSpeeds);
-      this.drive(this.chassisSpeeds);
+      this.setStates(this.kinematics.toSwerveModuleStates(chassisSpeeds));
 
       this.dumpInfo();
   }
@@ -234,7 +233,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
     }
 
-    field.setRobotPose(pose);
+    //field.setRobotPose(pose);
   }
 
   //DOES NOT RESET GYRO

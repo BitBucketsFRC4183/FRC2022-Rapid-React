@@ -91,8 +91,8 @@ public class Config {
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 
-    public double maxPathFollowVelocity = 0.5;
-    public double maxPathFollowAcceleration = 0.5;
+    public double maxPathFollowVelocity = 5;
+    public double maxPathFollowAcceleration = 8;
 
     public AutonomousConfig() {}
   }
@@ -121,13 +121,13 @@ public class Config {
 
     public double drivetrainWheelBase_meters = 0.7112 ; // set wheelbase
 
-    public double frontLeftModuleSteerOffset = -Math.toRadians(231.32); // set front left steer offset
+    public double frontLeftModuleSteerOffset = -Math.toRadians(232.55); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(150.46); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(331.96-180); // set front right steer offset
 
-    public double backLeftModuleSteerOffset = -Math.toRadians(255.41); // set back left steer offset
+    public double backLeftModuleSteerOffset = -Math.toRadians(255.49); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(251.54); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(70.66+180); // set back right steer offset
 
     public DriveConfig() {}
   }
