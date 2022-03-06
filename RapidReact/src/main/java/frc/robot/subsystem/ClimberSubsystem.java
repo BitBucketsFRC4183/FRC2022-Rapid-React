@@ -232,10 +232,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     /* Initialize */
     // climberRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
-    // zero sensors
-    climberLeft.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
-    climberRight.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
-
     if (Robot.isSimulation()) {
       CTREPhysicsSim.getInstance().addTalonSRX(climberLeft, .75, 5100, false);
       CTREPhysicsSim.getInstance().addTalonSRX(climberRight, .75, 5100, false);
