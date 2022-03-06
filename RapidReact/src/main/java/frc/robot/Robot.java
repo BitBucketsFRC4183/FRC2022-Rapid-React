@@ -74,13 +74,13 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Drive Back (No Trajectory)", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Shoot Preload, Drive Back and Shoot Loaded (No Trajectory)", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
-    this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
-    this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
-    this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
+    this.autonomousPathChooser.addOption("Hardcoded: Drive Back", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
+    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
     this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
 
