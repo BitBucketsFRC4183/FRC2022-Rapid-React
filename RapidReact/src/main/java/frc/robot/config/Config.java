@@ -91,6 +91,9 @@ public class Config {
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 
+    public double maxPathFollowVelocity = 0.5;
+    public double maxPathFollowAcceleration = 0.5;
+
     public AutonomousConfig() {}
   }
 

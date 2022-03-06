@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Example", AutonomousPath.PATH_PLANNER_SPLIT);
+    this.autonomousPathChooser.addOption("Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
     this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
     this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
@@ -203,21 +203,25 @@ public class Robot extends TimedRobot {
              this.shooterSubsystem
            )
              .executeShootPreload()
-             .executeDrivePath("Drive Backwards and Reorient", 1)
+             .executeDrivePath("Drive Backwards Single Ball", 1)
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
              .complete();
           break;
-        case PATH_PLANNER_SPLIT:
+        case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
           command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem
-            )
-              .executeDrivePath("Split Example P1")
-              .executeAction((d, i, s) -> i.spinForward(), 1)
-              .executeParallel("Split Example P2", (d, i, s) -> i.spinBackward(), 2)
-              .complete();
+           new AutonomousCommand(
+             this.autonomousSubsystem,
+             this.drivetrainSubsystem,
+             this.intakeSubsystem,
+             this.shooterSubsystem
+           )
+             .executeShootPreload()
+             .executeDrivePath("Drive Backwards Double Ball P1")
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeDrivePath("Drive Backwards Double Ball P2", 2)
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
+             .complete();
           break;
         case MAIN_NO_TERMINAL:
           command =
@@ -285,7 +289,7 @@ public class Robot extends TimedRobot {
   public void autonomousExit()
   {
     //Reset the odometry rotation as the robot leaves autonomous before teleop
-    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(-21.41)));
+    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /** This function is called once when teleop is enabled. */
@@ -330,7 +334,10 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     if (config.enableDriveSubsystem) {
-      buttons.resetOdometry.whenPressed(() -> this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0))));
+      buttons.resetOdometry.whenPressed(() -> {
+        this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+        this.drivetrainSubsystem.zeroGyro();
+      });
     }
 
     //Intake buttons
