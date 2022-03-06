@@ -114,17 +114,17 @@ public class Config {
 
     public double robotWeight_pounds = 70.0;
 
-    public double drivetrainTrackWidth_meters = 0.4171; // set trackwidth
+    public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
 
-    public double drivetrainWheelBase_meters = 0.5187; // set wheelbase
+    public double drivetrainWheelBase_meters = 0.7112 ; // set wheelbase
 
-    public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
+    public double frontLeftModuleSteerOffset = -Math.toRadians(231.32); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(156); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(150.46); // set front right steer offset
 
-    public double backLeftModuleSteerOffset = -Math.toRadians(250); // set back left steer offset
+    public double backLeftModuleSteerOffset = -Math.toRadians(255.41); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(250); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(251.54); // set back right steer offset
 
     public DriveConfig() {}
   }
