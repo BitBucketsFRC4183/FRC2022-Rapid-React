@@ -109,6 +109,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void antiFeed() {
     feeder.set(ControlMode.PercentOutput, -feederHoldPO.currentValue());
   }
+  
   @Override
   public void init() {
     shooterTop = MotorUtils.makeSpark(config.shooter.shooterTop);
