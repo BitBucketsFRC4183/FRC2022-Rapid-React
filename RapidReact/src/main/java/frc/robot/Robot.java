@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -73,11 +74,13 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("Example", AutonomousPath.PATH_PLANNER_SPLIT);
-    this.autonomousPathChooser.addOption("Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
-    this.autonomousPathChooser.addOption("Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
+    this.autonomousPathChooser.addOption("Hardcoded: Drive Back", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
+    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
 
     this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
 
@@ -105,22 +108,6 @@ public class Robot extends TimedRobot {
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
-
-    if (config.enableAutonomousSubsystem) {
-      autonomousSubsystem.field = field;
-    }
-    if (config.enableDriveSubsystem) {
-      drivetrainSubsystem.field = field;
-
-      drivetrainSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
-          drivetrainSubsystem,
-          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
-          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
-          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
-        )
-      );
-    }
 
     // Configure the button bindings
     this.configureButtonBindings();
@@ -194,6 +181,37 @@ public class Robot extends TimedRobot {
               this.drivetrainSubsystem
             );
           break;
+        case HARDCODED_SHOOT_AND_DRIVE_BACK:
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
+              .complete();
+          break;
+        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT:
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-3.0, 0.0, 0.0)), 2) //Drive back to the hub
+              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive back to the hub pt 2
+              .executeShootPreload()
+              .complete();
+          break;
         case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:
           command =
            new AutonomousCommand(
@@ -203,21 +221,25 @@ public class Robot extends TimedRobot {
              this.shooterSubsystem
            )
              .executeShootPreload()
-             .executeDrivePath("Drive Backwards and Reorient", 1)
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeDrivePath("Drive Backwards Single Ball", 1)
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
              .complete();
           break;
-        case PATH_PLANNER_SPLIT:
+        case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
           command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem
-            )
-              .executeDrivePath("Split Example P1")
-              .executeAction((d, i, s) -> i.spinForward(), 1)
-              .executeParallel("Split Example P2", (d, i, s) -> i.spinBackward(), 2)
-              .complete();
+           new AutonomousCommand(
+             this.autonomousSubsystem,
+             this.drivetrainSubsystem,
+             this.intakeSubsystem,
+             this.shooterSubsystem
+           )
+             .executeShootPreload()
+             .executeDrivePath("Drive Backwards Double Ball P1")
+             .executeAction((d, i, s) -> i.spinForward())
+             .executeDrivePath("Drive Backwards Double Ball P2", 2)
+             .executeAction((d, i, s) -> i.stopSpin(), 2)
+             .complete();
           break;
         case MAIN_NO_TERMINAL:
           command =
@@ -285,12 +307,24 @@ public class Robot extends TimedRobot {
   public void autonomousExit()
   {
     //Reset the odometry rotation as the robot leaves autonomous before teleop
-    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(-21.41)));
+    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit()
+  {
+    if (config.enableDriveSubsystem) {
+      drivetrainSubsystem.setDefaultCommand(
+        new DefaultDriveCommand(
+          drivetrainSubsystem,
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
+          () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
+        )
+      );
+    }
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -330,7 +364,10 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     if (config.enableDriveSubsystem) {
-      buttons.resetOdometry.whenPressed(() -> this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0))));
+      buttons.resetOdometry.whenPressed(() -> {
+        this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+        this.drivetrainSubsystem.zeroGyro();
+      });
     }
 
     //Intake buttons

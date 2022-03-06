@@ -7,17 +7,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
 import frc.robot.utils.MotorUtils;
-import frc.swervelib.SimConstants;
 
 public class ShooterSubsystem extends BitBucketsSubsystem {
 
@@ -113,6 +109,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void antiFeed() {
     feeder.set(ControlMode.PercentOutput, -feederHoldPO.currentValue());
   }
+  
   @Override
   public void init() {
     shooterTop = MotorUtils.makeSpark(config.shooter.shooterTop);
@@ -175,7 +172,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     REVPhysicsSim.getInstance().run();
 
     flywheelSim.setInput(shooterTop.get() * this.config.maxVoltage);
-    flywheelSim.update(SimConstants.SIM_SAMPLE_RATE_SEC);
+    flywheelSim.update(0.02); //Used to be SimConstants.SIM_SAMPLE_RATE_SEC
     encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
     // encoderSim.get

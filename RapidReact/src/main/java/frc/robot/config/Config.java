@@ -20,7 +20,7 @@ public class Config {
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableVisionSubsystem = false;
 
   public boolean enablePneumatics = true;
 
@@ -91,6 +91,9 @@ public class Config {
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 
+    public double maxPathFollowVelocity = 5;
+    public double maxPathFollowAcceleration = 8;
+
     public AutonomousConfig() {}
   }
 
@@ -114,17 +117,17 @@ public class Config {
 
     public double robotWeight_pounds = 70.0;
 
-    public double drivetrainTrackWidth_meters = 0.4171; // set trackwidth
+    public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
 
-    public double drivetrainWheelBase_meters = 0.5187; // set wheelbase
+    public double drivetrainWheelBase_meters = 0.7112 ; // set wheelbase
 
-    public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
+    public double frontLeftModuleSteerOffset = -Math.toRadians(232.55); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(156); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(331.96-180); // set front right steer offset
 
-    public double backLeftModuleSteerOffset = -Math.toRadians(250); // set back left steer offset
+    public double backLeftModuleSteerOffset = -Math.toRadians(255.49); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(250); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(70.66+180); // set back right steer offset
 
     public DriveConfig() {}
   }

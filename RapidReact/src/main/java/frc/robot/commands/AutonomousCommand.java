@@ -32,7 +32,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     public AutonomousCommand executeShootPreload()
     {
         this.addCommands(new InstantCommand(() -> this.shooter.spinUpTop())
-                .andThen(new WaitCommand(2)
+                .andThen(new WaitCommand(1)
                         .andThen(() -> {
                             this.shooter.turnOnFeeders();
                             this.intake.ballManagementForward();
