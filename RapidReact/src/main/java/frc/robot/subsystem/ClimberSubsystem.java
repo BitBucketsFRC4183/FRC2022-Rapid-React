@@ -41,6 +41,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberEnabled = false;
 
+  private boolean climbLeftEncoderZeroed = false;
+  private boolean climbRightEncoderZeroed = false;
+
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
 
@@ -228,8 +231,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // climberRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
     // zero sensors
-    //  TODO: actually use the limit switches to zero these at the start of the match! [[what does this mean]]
-    // You need to know the absolute encoder positions, relative to the limit switches. You can measure that by e.g. extend until you don’t see the lower limit, then retract until you see the lower limit, then set the encoder to zero
     climberLeft.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
     climberRight.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
 
@@ -328,6 +329,34 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     climberRightPosition.log(LogLevel.GENERAL, climberRight.getSelectedSensorPosition());
     climberRightError.log(LogLevel.GENERAL, climberRight.getClosedLoopError());
+
+    boolean climbLeftRevLimitSwitchClosed = climberLeft.getSensorCollection().isRevLimitSwitchClosed();
+    boolean climbRightRevLimitSwitchClosed = climberRight.getSensorCollection().isRevLimitSwitchClosed();
+
+    if (!climbLeftRevLimitSwitchClosed)
+    {
+      if (!climbLeftEncoderZeroed)
+      {
+        climberLeft.set(ControlMode.PercentOutput, -0.1);
+      }
+    }
+    else
+    {
+      climbLeftEncoderZeroed = true;
+    }
+
+    if (!climbRightRevLimitSwitchClosed)
+    {
+      if (!climbRightEncoderZeroed)
+      {
+        climberRight.set(ControlMode.PercentOutput, -0.1);
+      }
+    }
+    else
+    {
+      climbRightEncoderZeroed = true;
+    }
+
 
     if (!autoClimb) return;
 
