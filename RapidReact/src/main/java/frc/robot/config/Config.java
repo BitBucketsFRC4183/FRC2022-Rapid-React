@@ -20,7 +20,7 @@ public class Config {
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableVisionSubsystem = false;
 
   public boolean enablePneumatics = true;
 
