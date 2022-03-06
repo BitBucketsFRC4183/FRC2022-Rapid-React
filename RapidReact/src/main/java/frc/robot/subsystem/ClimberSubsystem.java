@@ -65,6 +65,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 0.5);
 
+  private final Changeable<Double> climbRetractSlow = BucketLog.changeable(Put.DOUBLE, "climber/climbRetractSlow", -0.1);
+
   private final Loggable<String> climbState = BucketLog.loggable(Put.STRING, "climber/climbState");
   private final Loggable<Boolean> elevatorTiltedState = BucketLog.loggable(Put.BOOL, "climber/elevatorTiltedState");
 
@@ -337,11 +339,13 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     {
       if (!climbLeftEncoderZeroed)
       {
-        climberLeft.set(ControlMode.PercentOutput, -0.1);
+        climberLeft.set(ControlMode.PercentOutput, climbRetractSlow.currentValue());
       }
     }
     else
     {
+      climberLeft.setSelectedSensorPosition(0);
+      climberLeft.set(0);
       climbLeftEncoderZeroed = true;
     }
 
@@ -349,11 +353,13 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     {
       if (!climbRightEncoderZeroed)
       {
-        climberRight.set(ControlMode.PercentOutput, -0.1);
+        climberRight.set(ControlMode.PercentOutput, climbRetractSlow.currentValue());
       }
     }
     else
     {
+      climberRight.setSelectedSensorPosition(0);
+      climberRight.set(0);
       climbRightEncoderZeroed = true;
     }
 
