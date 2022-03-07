@@ -42,18 +42,18 @@ public class DefaultDriveCommand extends CommandBase {
       case "Field Oriented":
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
-            translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
-            rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond,
+            translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+            translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+            rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity(),
             driveSubsystem.getGyroAngle()
           )
         );
         break;
       case "Robot Oriented":
         ChassisSpeeds robotOrient = new ChassisSpeeds(
-          translationXSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
-          translationYSupplier.getAsDouble() * driveSubsystem.maxVelocity_metersPerSecond,
-          rotationSupplier.getAsDouble() * driveSubsystem.maxAngularVelocity_radiansPerSecond
+          translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+          translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+          rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity()
         );
         driveSubsystem.drive(robotOrient);
         break;

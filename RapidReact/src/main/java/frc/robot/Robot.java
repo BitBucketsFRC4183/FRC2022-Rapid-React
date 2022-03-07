@@ -368,6 +368,10 @@ public class Robot extends TimedRobot {
         this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
         this.drivetrainSubsystem.zeroGyro();
       });
+
+      buttons.slowDrive
+              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.5)
+              .whenReleased(() -> this.drivetrainSubsystem.speedModifier = 1.0);
     }
 
     //Intake buttons
