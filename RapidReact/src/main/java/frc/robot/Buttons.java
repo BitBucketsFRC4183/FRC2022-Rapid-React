@@ -15,6 +15,7 @@ public class Buttons {
   int swerveRotation = PS4Constants.RIGHT_STICK_X.getId();
   JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4Constants.PS4.getId());
   JoystickButton resetOdometry = new JoystickButton(driverControl, PS4Constants.TRACKPAD.getId());
+  JoystickButton slowDrive = new JoystickButton(driverControl, PS4Constants.RIGHT_TRIGGER.getId());
 
   //////////////////////////////////////////////////////////////////////////////
   //Operator

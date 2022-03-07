@@ -55,6 +55,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
    */
   public double maxAngularVelocity_radiansPerSecond;
 
+  //Speed factor that edits the max velocity and max angular velocity
+  public double speedModifier;
+
   // Instance Variables
   public SwerveDriveKinematics kinematics;
 
@@ -98,6 +101,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     this.maxAngularVelocity_radiansPerSecond =
       maxVelocity_metersPerSecond /
       Math.hypot(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
+
+    this.speedModifier = 1.0;
 
     this.moduleFrontLeftLocation =
       new Translation2d(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
@@ -190,6 +195,16 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     this.gyro.calibrate();
   }
 
+  public double getMaxVelocity()
+  {
+    return this.maxVelocity_metersPerSecond * this.speedModifier;
+  }
+
+  public double getMaxAngularVelocity()
+  {
+    return this.maxAngularVelocity_radiansPerSecond * this.speedModifier;
+  }
+
   public void orient() {
     // do something here.
 
@@ -219,12 +234,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void setStates(SwerveModuleState[] states)
   {
     if (states != null) {
-      SwerveDriveKinematics.desaturateWheelSpeeds(states, maxVelocity_metersPerSecond);
+      SwerveDriveKinematics.desaturateWheelSpeeds(states, this.getMaxVelocity());
 
       for(int i = 0; i < 4; i++)
       {
         //System.out.println("Module " + i + ": " + states[i].angle.getDegrees());
-        modules.get(i).set(states[i].speedMetersPerSecond / maxVelocity_metersPerSecond * this.config.maxVoltage, states[i].angle.getRadians());
+        modules.get(i).set(states[i].speedMetersPerSecond / this.getMaxVelocity() * this.config.maxVoltage, states[i].angle.getRadians());
       }
 
       pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
