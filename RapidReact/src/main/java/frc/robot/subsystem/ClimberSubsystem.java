@@ -87,6 +87,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   private final Loggable<Boolean> climberLeftRevLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbLeftRevLimitSwitchClosed");
   private final Loggable<Boolean> climberRightRevLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbRightRevLimitSwitchClosed");
 
+  private final Loggable<Boolean> climberLeftFwdLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbLeftFwdLimitSwitchClosed");
+  private final Loggable<Boolean> climberRightFwdLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbRightFwdLimitSwitchClosed");
+
   // private final Loggable<Double> climberRightVoltage = BucketLog.loggable(Put.DOUBLE, "climber/climberRightPosition");
 
   public ClimberSubsystem(Config config) {
@@ -336,6 +339,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     climberLeftRevLimitSwitchClosedLog.log(LogLevel.GENERAL, climbLeftRevLimitSwitchClosed);
     climberRightRevLimitSwitchClosedLog.log(LogLevel.GENERAL, climbRightRevLimitSwitchClosed);
+
+    climberLeftFwdLimitSwitchClosedLog.log(LogLevel.GENERAL, climberLeft.getSensorCollection().isFwdLimitSwitchClosed());
+    climberRightFwdLimitSwitchClosedLog.log(LogLevel.GENERAL, climberRight.getSensorCollection().isFwdLimitSwitchClosed());
 
     if (!climbLeftRevLimitSwitchClosed)
     {
