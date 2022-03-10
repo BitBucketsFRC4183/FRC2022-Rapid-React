@@ -21,7 +21,8 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   DoubleSolenoid intakeSolenoid;
 
   //dashboard stuff
-  private final Changeable<Double> percentOutput = BucketLog.changeable(Put.DOUBLE, "intake/percentOutput", 0.75);
+  private final Changeable<Double> intakePercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/intakePercentOutput", 0.75);
+  private final Changeable<Double> bmsPercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/bmsPercentOutput", 0.5);
   private final Changeable<Boolean> autoExtend = BucketLog.changeable(
     Put.BOOL,
     "intake/autoExtend",
@@ -71,13 +72,13 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     if (autoExtend.currentValue() && config.enablePneumatics) {
       intakeSolenoid.set(Value.kForward);
     }
-    intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, intakePercentOutput.currentValue());
     intakeState.log("intaking");
     ballManagementForward();
   }
 
   public void spinBackward() {
-    intake.set(ControlMode.PercentOutput, -percentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, -intakePercentOutput.currentValue());
     intakeState.log("outtaking");
     ballManagementBackward();
   }
@@ -107,12 +108,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   }
 
   public void ballManagementForward() {
-    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, bmsPercentOutput.currentValue());
     bmsState.log(LogLevel.GENERAL, "bms intaking");
   }
 
   public void ballManagementBackward() {
-    ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, -bmsPercentOutput.currentValue());
     bmsState.log(LogLevel.GENERAL, "bms outtaking");
   }
 
