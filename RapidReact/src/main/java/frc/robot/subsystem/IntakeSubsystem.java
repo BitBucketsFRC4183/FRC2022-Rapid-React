@@ -46,6 +46,10 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
         intakeSolenoid =
           new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
       }
+      // default to "up"
+      intakeSolenoid.set(Value.kReverse);
+      intakeState.log("off");
+      toggleState = false;
     }
     if (Robot.isSimulation()) {
       // simulate the motors
