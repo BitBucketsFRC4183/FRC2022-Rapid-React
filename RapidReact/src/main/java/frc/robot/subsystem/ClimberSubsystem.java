@@ -64,7 +64,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberTilted = false;
 
-  private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 0.5);
+  // private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", );
 
   private final Changeable<Double> climbRetractSlow = BucketLog.changeable(
     Put.DOUBLE,
@@ -381,10 +381,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
 
     // soft limit, stop the motors if we are extending and pass our soft limit
-    if (climberLeft.getSelectedSensorPosition() >= (fullExtendPositionUprightLeft - 1000) && climberExtending) {
+    if (!climberTilted && climberLeft.getSelectedSensorPosition() >= (fullExtendPositionUprightLeft - 1000) && climberExtending) {
       climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
-    if (climberRight.getSelectedSensorPosition() >= (fullExtendPositionUprightRight - 1000) && climberExtending) {
+    if (!climberTilted && climberRight.getSelectedSensorPosition() >= (fullExtendPositionUprightRight - 1000) && climberExtending) {
       climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
 
