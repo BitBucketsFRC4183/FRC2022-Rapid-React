@@ -41,6 +41,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberEnabled = false;
 
+  private boolean climbLeftEncoderZeroed = false;
+  private boolean climbRightEncoderZeroed = false;
+
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
 
@@ -62,6 +65,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 0.5);
 
+  private final Changeable<Double> climbRetractSlow = BucketLog.changeable(Put.DOUBLE, "climber/climbRetractSlow", -0.1);
+
   private final Loggable<String> climbState = BucketLog.loggable(Put.STRING, "climber/climbState");
   private final Loggable<Boolean> elevatorTiltedState = BucketLog.loggable(Put.BOOL, "climber/elevatorTiltedState");
 
@@ -78,6 +83,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     Put.DOUBLE,
     "climber/climberRightPosition"
   );
+
+  private final Loggable<Boolean> climberLeftRevLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbLeftRevLimitSwitchClosed");
+  private final Loggable<Boolean> climberRightRevLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbRightRevLimitSwitchClosed");
+
+  private final Loggable<Boolean> climberLeftFwdLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbLeftFwdLimitSwitchClosed");
+  private final Loggable<Boolean> climberRightFwdLimitSwitchClosedLog = BucketLog.loggable(Put.BOOL, "climber/climbRightFwdLimitSwitchClosed");
 
   // private final Loggable<Double> climberRightVoltage = BucketLog.loggable(Put.DOUBLE, "climber/climberRightPosition");
 
@@ -227,12 +238,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     /* Initialize */
     // climberRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);
 
-    // zero sensors
-    //  TODO: actually use the limit switches to zero these at the start of the match! [[what does this mean]]
-    // You need to know the absolute encoder positions, relative to the limit switches. You can measure that by e.g. extend until you don’t see the lower limit, then retract until you see the lower limit, then set the encoder to zero
-    climberLeft.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
-    climberRight.getSensorCollection().setQuadraturePosition(0, MotorUtils.CONTROLLER_TIMEOUT_MS);
-
     if (Robot.isSimulation()) {
       CTREPhysicsSim.getInstance().addTalonSRX(climberLeft, .75, 5100, false);
       CTREPhysicsSim.getInstance().addTalonSRX(climberRight, .75, 5100, false);
@@ -320,6 +325,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void periodic() {
     if (!climberEnabled) return;
 
+    boolean climbLeftRevLimitSwitchClosed = climberLeft.getSensorCollection().isRevLimitSwitchClosed();
+    boolean climbRightRevLimitSwitchClosed = climberRight.getSensorCollection().isRevLimitSwitchClosed();
+
     climbState.log(LogLevel.GENERAL, currentClimbState.toString());
 
     climberLeftPosition.log(LogLevel.GENERAL, climberLeft.getSelectedSensorPosition());
@@ -328,6 +336,39 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     climberRightPosition.log(LogLevel.GENERAL, climberRight.getSelectedSensorPosition());
     climberRightError.log(LogLevel.GENERAL, climberRight.getClosedLoopError());
+
+    climberLeftRevLimitSwitchClosedLog.log(LogLevel.GENERAL, climbLeftRevLimitSwitchClosed);
+    climberRightRevLimitSwitchClosedLog.log(LogLevel.GENERAL, climbRightRevLimitSwitchClosed);
+
+    climberLeftFwdLimitSwitchClosedLog.log(LogLevel.GENERAL, climberLeft.getSensorCollection().isFwdLimitSwitchClosed());
+    climberRightFwdLimitSwitchClosedLog.log(LogLevel.GENERAL, climberRight.getSensorCollection().isFwdLimitSwitchClosed());
+
+    if (!climbLeftRevLimitSwitchClosed)
+    {
+      if (!climbLeftEncoderZeroed)
+      {
+        climberLeft.set(ControlMode.PercentOutput, climbRetractSlow.currentValue());
+      }
+    }
+    else
+    {
+      climberLeft.setSelectedSensorPosition(0);
+      climbLeftEncoderZeroed = true;
+    }
+
+    if (!climbRightRevLimitSwitchClosed)
+    {
+      if (!climbRightEncoderZeroed)
+      {
+        climberRight.set(ControlMode.PercentOutput, climbRetractSlow.currentValue());
+      }
+    }
+    else
+    {
+      climberRight.setSelectedSensorPosition(0);
+      climbRightEncoderZeroed = true;
+    }
+
 
     if (!autoClimb) return;
 
