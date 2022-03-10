@@ -15,7 +15,7 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = true;
-  public boolean enableClimberSubsystem = false;
+  public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
@@ -51,13 +51,13 @@ public class Config {
 
   // Intake Subsystem
   public static int ballManagementMotor_ID = 13;
-  public static int intakeMotor_ID = 16;
+  public static int intakeMotor_ID = 18;
 
   // Shooter
   public int shooterTop_ID = 14;
   public int shooterBottom_ID = 15;
 
-  public int shooterFeeder_ID = 17;
+  public int shooterFeeder_ID = 19;
 
   public int intakeSolenoid_ID1 = 1;
   public int intakeSolenoid_ID2 = 0;
@@ -138,7 +138,7 @@ public class Config {
     public MotorConfig intakeMotor = new MotorConfig();
     public MotorConfig ballManagementMotor = new MotorConfig();
 
-    public boolean defaultIntakeAutoExtend = true;
+    public boolean defaultIntakeAutoExtend = false;
 
     public IntakeConfig() {}
   }
@@ -193,7 +193,7 @@ public class Config {
     // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
     climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberLeft.inverted = false; // whether it should go forward or backward given some voltage
-    climber.climberLeft.sensorPhase = false; // whether going forward counts as positive or negative ticks to the encoder
+    climber.climberLeft.sensorPhase = true; // whether going forward counts as positive or negative ticks to the encoder
     climber.climberLeft.distancePeakOutput = 0.5;
     climber.climberLeft.turningPeakOutput = 1;
 
@@ -204,8 +204,8 @@ public class Config {
     climber.climberRight.motionMagicCruiseVelocity = 19000;
     climber.climberRight.motionMagicAcceleration = 10000;
     climber.climberRight.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climberRight.inverted = true;
-    climber.climberRight.sensorPhase = false;
+    climber.climberRight.inverted = false;
+    climber.climberRight.sensorPhase = true;
     climber.climberRight.distancePeakOutput = 0.5;
     climber.climberRight.turningPeakOutput = 1;
   }
