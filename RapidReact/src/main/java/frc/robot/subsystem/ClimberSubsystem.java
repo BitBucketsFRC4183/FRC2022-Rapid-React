@@ -64,7 +64,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberTilted = false;
 
-  // private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", );
+  private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 1.0 );
 
   private final Changeable<Double> climbRetractSlow = BucketLog.changeable(
     Put.DOUBLE,
