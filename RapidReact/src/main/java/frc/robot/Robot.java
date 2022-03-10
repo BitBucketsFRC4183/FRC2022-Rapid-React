@@ -182,6 +182,7 @@ public class Robot extends TimedRobot {
             );
           break;
         case HARDCODED_SHOOT_AND_DRIVE_BACK:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(150));
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,
@@ -196,6 +197,7 @@ public class Robot extends TimedRobot {
               .complete();
           break;
         case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(150));
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,
@@ -301,13 +303,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     info.log(LogLevel.GENERAL, "Still in autonomous");
-  }
-
-  @Override
-  public void autonomousExit()
-  {
-    //Reset the odometry rotation as the robot leaves autonomous before teleop
-    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
   }
 
   /** This function is called once when teleop is enabled. */
