@@ -74,8 +74,9 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Hardcoded: Drive Back", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back Left", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK_LEFT);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back Right", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK_RIGHT);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Left", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
     this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
@@ -181,8 +182,23 @@ public class Robot extends TimedRobot {
               this.drivetrainSubsystem
             );
           break;
-        case HARDCODED_SHOOT_AND_DRIVE_BACK:
+        case HARDCODED_SHOOT_AND_DRIVE_BACK_LEFT:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(150));
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
+              .complete();
+          break;
+        case HARDCODED_SHOOT_AND_DRIVE_BACK_RIGHT:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,

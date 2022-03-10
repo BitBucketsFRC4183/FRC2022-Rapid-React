@@ -33,7 +33,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     -3000.0
   );
-  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.2);
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.5);
   private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", -0.7);
   private float hubSpinUpSpeedDeadband = 300;
 
