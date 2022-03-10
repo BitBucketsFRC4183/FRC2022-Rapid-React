@@ -205,7 +205,7 @@ public class Config {
     climber.climberRight.motionMagicAcceleration = 10000;
     climber.climberRight.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberRight.inverted = false;
-    climber.climberRight.sensorPhase = true;
+    climber.climberRight.sensorPhase = false;
     climber.climberRight.distancePeakOutput = 0.5;
     climber.climberRight.turningPeakOutput = 1;
   }

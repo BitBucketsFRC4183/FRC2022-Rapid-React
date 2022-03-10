@@ -43,18 +43,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberEnabled = false;
 
-  private boolean climbLeftEncoderZeroed = false;
-  private boolean climbRightEncoderZeroed = false;
-
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
 
   private boolean autoClimbStopped = false; // if this is stopped, auto climb can't be turned on again
 
+  private boolean climberExtending = false;
   DoubleSolenoid elevatorSolenoid;
 
-  private int fullExtendPosition = 500000; // TODO: change this number
-  private int partialExtendPosition = fullExtendPosition / 2;
+  private int fullExtendPositionUprightRight = 20033;
+  private int fullExtendPositionUprightLeft = 19608;
+  private int partialExtendPosition = fullExtendPositionUprightRight / 2;
   private int fullRetractPosition = 0; // TODO: change this number
 
   // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#mechanism-is-finished-command
@@ -340,7 +339,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-
     boolean climbLeftRevLimitSwitchClosed = climberLeft.getSensorCollection().isRevLimitSwitchClosed();
     boolean climbRightRevLimitSwitchClosed = climberRight.getSensorCollection().isRevLimitSwitchClosed();
 
@@ -366,14 +364,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       climberRight.getSensorCollection().isFwdLimitSwitchClosed()
     );
 
-
     if (!climbLeftRevLimitSwitchClosed) {
       // if (!climbLeftEncoderZeroed) {
       //   climberLeft.set(ControlMode.PercentOutput, climbRetractSlow.currentValue());
       // }
     } else {
       climberLeft.setSelectedSensorPosition(0);
-      climbLeftEncoderZeroed = true;
     }
 
     if (!climbRightRevLimitSwitchClosed) {
@@ -382,7 +378,14 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       // }
     } else {
       climberRight.setSelectedSensorPosition(0);
-      climbRightEncoderZeroed = true;
+    }
+
+    // soft limit, stop the motors if we are extending and pass our soft limit
+    if (climberLeft.getSelectedSensorPosition() >= (fullExtendPositionUprightLeft - 1000) && climberExtending) {
+      climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
+    }
+    if (climberRight.getSelectedSensorPosition() >= (fullExtendPositionUprightRight - 1000) && climberExtending) {
+      climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
 
     if (!climberEnabled) return;
@@ -409,7 +412,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
         }
         break;
       case ExtendFull:
-        if (isClimberAtSetpoint(fullExtendPosition)) {
+        if (isClimberAtSetpoint(fullExtendPositionUprightRight)) {
           nextState = ClimbState.Retract;
           retractInit();
         } else {
@@ -453,9 +456,15 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
-    climberLeft.set(ControlMode.PercentOutput, climbOutput.currentValue());
+    if (climberLeft.getSelectedSensorPosition() < fullExtendPositionUprightLeft) {
+      climberLeft.set(ControlMode.PercentOutput, climbOutput.currentValue());
+      climberExtending = true;
+    }
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
-    climberRight.set(ControlMode.PercentOutput, climbOutput.currentValue());
+    if (climberRight.getSelectedSensorPosition() < fullExtendPositionUprightRight) {
+      climberRight.set(ControlMode.PercentOutput, climbOutput.currentValue());
+      climberExtending = true;
+    }
 
     climbState.log(LogLevel.GENERAL, "elevatorExtend");
   }
@@ -463,6 +472,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   public void manualElevatorRetract() {
     if (!climberEnabled) return;
     if (autoClimb) return;
+
+    climberExtending = false;
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
@@ -478,6 +489,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     climberLeft.set(0);
     climberRight.set(0);
+    climberExtending = false;
     climbState.log(LogLevel.GENERAL, "climbStopped");
   }
 
@@ -509,6 +521,8 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     // And check what the value of the error signal is
     // TODO: currently possibly you're applying feedback the wrong way
 
+    climberExtending = true;
+
     // climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition, DemandType.AuxPID, 0);
     climberLeft.set(TalonSRXControlMode.MotionMagic, partialExtendPosition);
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
@@ -517,14 +531,17 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   private void autoExtendFull() {
+    climberExtending = true;
+
     // climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
-    climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
-    climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPosition);
+    climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
+    climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
     // climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPosition, DemandType.AuxPID, 0);
   }
 
   private void autoRetractFull() {
+    climberExtending = false;
     // climberLeft.set(TalonSRXControlMode.MotionMagic, fullRetractPosition, DemandType.AuxPID, 0);
     climberLeft.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
     climberRight.set(TalonSRXControlMode.MotionMagic, fullRetractPosition);
@@ -533,6 +550,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void stopAutoClimb() {
+    climberExtending = false;
     autoClimb = false;
     autoClimbStopped = true;
     currentClimbState = ClimbState.Idle;
