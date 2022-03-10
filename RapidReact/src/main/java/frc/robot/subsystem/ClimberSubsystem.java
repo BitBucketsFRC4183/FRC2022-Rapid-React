@@ -456,12 +456,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
-    if (climberLeft.getSelectedSensorPosition() < fullExtendPositionUprightLeft) {
+    if (climberTilted || climberLeft.getSelectedSensorPosition() < fullExtendPositionUprightLeft) {
       climberLeft.set(ControlMode.PercentOutput, climbOutput.currentValue());
       climberExtending = true;
     }
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
-    if (climberRight.getSelectedSensorPosition() < fullExtendPositionUprightRight) {
+    if (climberTilted || climberRight.getSelectedSensorPosition() < fullExtendPositionUprightRight) {
       climberRight.set(ControlMode.PercentOutput, climbOutput.currentValue());
       climberExtending = true;
     }
