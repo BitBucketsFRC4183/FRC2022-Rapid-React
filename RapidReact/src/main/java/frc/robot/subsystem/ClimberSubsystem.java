@@ -64,7 +64,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   private boolean climberTilted = false;
 
-  private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 0.5);
+  private final Changeable<Double> climbOutput = BucketLog.changeable(Put.DOUBLE, "climber/climbOutput", 1.0 );
 
   private final Changeable<Double> climbRetractSlow = BucketLog.changeable(
     Put.DOUBLE,
@@ -381,10 +381,10 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     }
 
     // soft limit, stop the motors if we are extending and pass our soft limit
-    if (climberLeft.getSelectedSensorPosition() >= (fullExtendPositionUprightLeft - 1000) && climberExtending) {
+    if (!climberTilted && climberLeft.getSelectedSensorPosition() >= (fullExtendPositionUprightLeft - 1000) && climberExtending) {
       climberLeft.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
-    if (climberRight.getSelectedSensorPosition() >= (fullExtendPositionUprightRight - 1000) && climberExtending) {
+    if (!climberTilted && climberRight.getSelectedSensorPosition() >= (fullExtendPositionUprightRight - 1000) && climberExtending) {
       climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
 
@@ -456,12 +456,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
     // TODO: you should have the joystick/ button move the motion magic setpoint, not the motor in PWM mode
-    if (climberLeft.getSelectedSensorPosition() < fullExtendPositionUprightLeft) {
+    if (climberTilted || climberLeft.getSelectedSensorPosition() < fullExtendPositionUprightLeft) {
       climberLeft.set(ControlMode.PercentOutput, climbOutput.currentValue());
       climberExtending = true;
     }
     // climberRight.follow(climberLeft, FollowerType.AuxOutput1);
-    if (climberRight.getSelectedSensorPosition() < fullExtendPositionUprightRight) {
+    if (climberTilted || climberRight.getSelectedSensorPosition() < fullExtendPositionUprightRight) {
       climberRight.set(ControlMode.PercentOutput, climbOutput.currentValue());
       climberExtending = true;
     }
