@@ -499,5 +499,9 @@ public class Robot extends TimedRobot {
       )
       .whenReleased(() -> autoClimbStopRightPressed = false);
     }
+
+    buttons.rgb.whenPressed(() -> {
+      rgbSubsystem.funnyButton();
+    });
   }
 }

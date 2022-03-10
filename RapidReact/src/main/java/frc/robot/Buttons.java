@@ -36,6 +36,8 @@ public class Buttons {
   JoystickButton autoClimbStopLeft = new JoystickButton(operatorControl, PS4Constants.L2.getId());
   JoystickButton autoClimbStopRight = new JoystickButton(operatorControl, PS4Constants.R2.getId());
 
+  JoystickButton rgb = new JoystickButton(operatorControl, PS4Constants.SHARE.getId());
+
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up
 }
