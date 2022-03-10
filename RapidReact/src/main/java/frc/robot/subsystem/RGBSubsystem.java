@@ -40,7 +40,13 @@ public class RGBSubsystem extends BitBucketsSubsystem {
     motor.set(BlinkenColors.Colors_Hot_Pink.getValue());
   }
 
-  public void colorChange() {}
+  public void colorChange() {
+
+  }
+
+  public void funnyButton() {
+    motor.set(BlinkenColors.Rainbow_Party_Palette.getValue());
+  }
 
   @Override
   public void periodic() {
