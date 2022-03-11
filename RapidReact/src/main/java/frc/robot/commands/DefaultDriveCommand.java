@@ -19,7 +19,8 @@ public class DefaultDriveCommand extends CommandBase {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
 
-  private final SlewRateLimiter limiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter limiterX = new SlewRateLimiter(3);
+  private final SlewRateLimiter limiterY = new SlewRateLimiter(3);
 
 
   public DefaultDriveCommand(
@@ -47,8 +48,8 @@ public class DefaultDriveCommand extends CommandBase {
       case "Field Oriented":
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            limiter.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
-            limiter.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
+            limiterX.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
+            limiterY.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
             rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity(),
             driveSubsystem.getGyroAngle()
           )
@@ -56,8 +57,8 @@ public class DefaultDriveCommand extends CommandBase {
         break;
       case "Robot Oriented":
         ChassisSpeeds robotOrient = new ChassisSpeeds(
-          limiter.calculate(translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
-          limiter.calculate(translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
+          limiterX.calculate(translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
+          limiterY.calculate(translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
           rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity()
         );
         driveSubsystem.drive(robotOrient);
