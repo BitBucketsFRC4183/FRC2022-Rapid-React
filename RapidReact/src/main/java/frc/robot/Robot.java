@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
-  private boolean driverClimbEnabledPressed;
+  private boolean driverClimbEnabledPressed = true;
   private boolean operatorClimbEnabledPressed;
 
   private boolean autoClimbStopLeftPressed;
@@ -467,17 +467,17 @@ public class Robot extends TimedRobot {
           }
         )
         .whenReleased(() -> operatorClimbEnabledPressed = false);
-      buttons.driverEnableClimber
-        .whenPressed(
-          () -> {
-            driverClimbEnabledPressed = true;
-            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.toggleClimberEnabled();
-              rgbSubsystem.climberEnabled();
-            }
-          }
-        )
-        .whenReleased(() -> driverClimbEnabledPressed = false);
+      // buttons.driverEnableClimber
+      //   .whenPressed(
+      //     () -> {
+      //       driverClimbEnabledPressed = true;
+      //       if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+      //         climberSubsystem.toggleClimberEnabled();
+      //         rgbSubsystem.climberEnabled();
+      //       }
+      //     }
+      //   )
+      //   .whenReleased(() -> driverClimbEnabledPressed = false);
     
       buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
       buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
@@ -485,30 +485,31 @@ public class Robot extends TimedRobot {
       buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
       buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
       
-      buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
-      buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
-      buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
+      // removing auto climb
+    //   buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
+    //   buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
+    //   buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
     
-      buttons.autoClimbStopLeft.whenPressed(
-        () -> {
-          autoClimbStopLeftPressed = true;
-          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-          {
-            climberSubsystem.stopAutoClimb();
-          }
-        }
-      )
-      .whenReleased(() -> autoClimbStopLeftPressed = false);
-      buttons.autoClimbStopRight.whenPressed(
-        () -> {
-          autoClimbStopRightPressed = true;
-          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-          {
-            climberSubsystem.stopAutoClimb();
-          }
-        }
-      )
-      .whenReleased(() -> autoClimbStopRightPressed = false);
+    //   buttons.autoClimbStopLeft.whenPressed(
+    //     () -> {
+    //       autoClimbStopLeftPressed = true;
+    //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+    //       {
+    //         climberSubsystem.stopAutoClimb();
+    //       }
+    //     }
+    //   )
+    //   .whenReleased(() -> autoClimbStopLeftPressed = false);
+    //   buttons.autoClimbStopRight.whenPressed(
+    //     () -> {
+    //       autoClimbStopRightPressed = true;
+    //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+    //       {
+    //         climberSubsystem.stopAutoClimb();
+    //       }
+    //     }
+    //   )
+    //   .whenReleased(() -> autoClimbStopRightPressed = false);
     }
 
     buttons.rgb.whenPressed(() -> {
