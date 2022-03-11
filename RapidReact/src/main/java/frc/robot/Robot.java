@@ -183,21 +183,6 @@ public class Robot extends TimedRobot {
             );
           break;
         case HARDCODED_SHOOT_AND_DRIVE_BACK_LEFT:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(150));
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem
-            )
-              .executeShootPreload() //Shoot Preload
-              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
-              .complete();
-          break;
-        case HARDCODED_SHOOT_AND_DRIVE_BACK_RIGHT:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command =
             new AutonomousCommand(
@@ -212,8 +197,23 @@ public class Robot extends TimedRobot {
               .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
               .complete();
           break;
+        case HARDCODED_SHOOT_AND_DRIVE_BACK_RIGHT:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-210));
+          command =
+            new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem
+            )
+              .executeShootPreload() //Shoot Preload
+              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
+              .complete();
+          break;
         case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(150));
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,
