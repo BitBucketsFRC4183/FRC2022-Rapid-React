@@ -331,7 +331,6 @@ public class Robot extends TimedRobot {
   public void teleopInit()
   {
 
-
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(

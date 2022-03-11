@@ -108,6 +108,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   }
 
   public void forceIntaking() {
+    toggleState = true;
     intakeSolenoid.set(Value.kForward);
     intakeState.log("intaking");
   }
