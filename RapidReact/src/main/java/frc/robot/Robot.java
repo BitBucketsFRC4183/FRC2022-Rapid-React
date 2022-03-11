@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -61,6 +62,7 @@ public class Robot extends TimedRobot {
   private boolean autoClimbStopRightPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
+  private final SlewRateLimiter limiter = new SlewRateLimiter(3);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -325,6 +327,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit()
   {
+
+
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
