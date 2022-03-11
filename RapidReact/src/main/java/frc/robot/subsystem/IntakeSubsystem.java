@@ -21,7 +21,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   DoubleSolenoid intakeSolenoid;
 
   //dashboard stuff
-  private final Changeable<Double> intakePercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/intakePercentOutput", 0.75);
+  private final Changeable<Double> intakePercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/intakePercentOutput", 0.6);
   private final Changeable<Double> bmsPercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/bmsPercentOutput", 0.5);
   private final Changeable<Boolean> autoExtend = BucketLog.changeable(
     Put.BOOL,
