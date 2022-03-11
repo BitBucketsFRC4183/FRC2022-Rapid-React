@@ -259,12 +259,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void zeroGyro()
   {
     gyro.reset();
+    gyro.setAngleAdjustment(0);
   }
 
   public void resetGyroWithOffset(Rotation2d r)
   {
-    this.zeroGyro();
-    this.gyro.setAngleAdjustment(r.getDegrees());
+    gyro.reset();
+    gyro.setAngleAdjustment(r.getDegrees());
   }
 
   public Rotation2d getGyroAngle() {
