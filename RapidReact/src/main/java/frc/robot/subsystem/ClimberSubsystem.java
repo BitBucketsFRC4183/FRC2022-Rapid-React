@@ -268,6 +268,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
         elevatorSolenoid =
           new DoubleSolenoid(PneumaticsModuleType.REVPH, config.elevatorSolenoid_ID1, config.elevatorSolenoid_ID2);
       }
+      setElevatorTilted(false);
     }
 
     currentClimbState = ClimbState.Idle;
