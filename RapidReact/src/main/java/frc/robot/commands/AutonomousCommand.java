@@ -36,7 +36,7 @@ public class AutonomousCommand extends SequentialCommandGroup
                         .andThen(() -> {
                             this.shooter.turnOnFeeders();
                             this.intake.ballManagementForward();
-                        }).andThen(new WaitCommand(2)
+                        }).andThen(new WaitCommand(0.5)
                                 .andThen(() -> {
                                     this.shooter.stopShoot();
 
