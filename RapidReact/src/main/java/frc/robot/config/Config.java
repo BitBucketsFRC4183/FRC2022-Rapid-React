@@ -15,12 +15,12 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = true;
-  public boolean enableClimberSubsystem = false;
+  public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = true;
+  public boolean enableVisionSubsystem = false;
 
   public boolean enablePneumatics = true;
 
@@ -51,16 +51,16 @@ public class Config {
 
   // Intake Subsystem
   public static int ballManagementMotor_ID = 13;
-  public static int intakeMotor_ID = 16;
+  public static int intakeMotor_ID = 18;
 
   // Shooter
   public int shooterTop_ID = 14;
   public int shooterBottom_ID = 15;
 
-  public int shooterFeeder_ID = 17;
+  public int shooterFeeder_ID = 19;
 
-  public int intakeSolenoid_ID1 = 0;
-  public int intakeSolenoid_ID2 = 1;
+  public int intakeSolenoid_ID1 = 1;
+  public int intakeSolenoid_ID2 = 0;
 
   // Shooter
 
@@ -91,6 +91,9 @@ public class Config {
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 
+    public double maxPathFollowVelocity = 5;
+    public double maxPathFollowAcceleration = 8;
+
     public AutonomousConfig() {}
   }
 
@@ -112,17 +115,19 @@ public class Config {
   // Drive Config
   public class DriveConfig {
 
+    public double robotWeight_pounds = 70.0;
+
     public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
 
-    public double drivetrainWheelBase_meters = 0.7112; // set wheelbase
+    public double drivetrainWheelBase_meters = 0.7112 ; // set wheelbase
 
-    public double frontLeftModuleSteerOffset = -Math.toRadians(237); // set front left steer offset
+    public double frontLeftModuleSteerOffset = -Math.toRadians(232.55); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(156); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(331.96-180); // set front right steer offset
 
-    public double backLeftModuleSteerOffset = -Math.toRadians(250); // set back left steer offset
+    public double backLeftModuleSteerOffset = -Math.toRadians(255.49); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(250); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(70.66+180); // set back right steer offset
 
     public DriveConfig() {}
   }
@@ -133,7 +138,7 @@ public class Config {
     public MotorConfig intakeMotor = new MotorConfig();
     public MotorConfig ballManagementMotor = new MotorConfig();
 
-    public boolean defaultIntakeAutoExtend = true;
+    public boolean defaultIntakeAutoExtend = false;
 
     public IntakeConfig() {}
   }
@@ -169,12 +174,10 @@ public class Config {
 
     // Shooter
     shooter.shooterTop.id = shooterTop_ID;
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
-    shooter.shooterBottom.inverted = false;
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00002, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/400);
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0, /*D*/0, /*F*/0.00018);
-    shooter.shooterBottom.inverted = true;
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
 
     ///////////////////
     // climber motors
@@ -190,7 +193,7 @@ public class Config {
     // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
     climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
     climber.climberLeft.inverted = false; // whether it should go forward or backward given some voltage
-    climber.climberLeft.sensorPhase = false; // whether going forward counts as positive or negative ticks to the encoder
+    climber.climberLeft.sensorPhase = true; // whether going forward counts as positive or negative ticks to the encoder
     climber.climberLeft.distancePeakOutput = 0.5;
     climber.climberLeft.turningPeakOutput = 1;
 
@@ -201,7 +204,7 @@ public class Config {
     climber.climberRight.motionMagicCruiseVelocity = 19000;
     climber.climberRight.motionMagicAcceleration = 10000;
     climber.climberRight.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
-    climber.climberRight.inverted = true;
+    climber.climberRight.inverted = false;
     climber.climberRight.sensorPhase = false;
     climber.climberRight.distancePeakOutput = 0.5;
     climber.climberRight.turningPeakOutput = 1;

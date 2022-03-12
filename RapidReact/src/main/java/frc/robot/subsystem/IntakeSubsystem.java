@@ -21,13 +21,15 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   DoubleSolenoid intakeSolenoid;
 
   //dashboard stuff
-  private final Changeable<Double> percentOutput = BucketLog.changeable(Put.DOUBLE, "intake/percentOutput", 0.75);
+  private final Changeable<Double> intakePercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/intakePercentOutput", 0.6);
+  private final Changeable<Double> bmsPercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/bmsPercentOutput", 0.5);
   private final Changeable<Boolean> autoExtend = BucketLog.changeable(
     Put.BOOL,
     "intake/autoExtend",
     config.intake.defaultIntakeAutoExtend
   );
   private final Loggable<String> intakeState = BucketLog.loggable(Put.STRING, "intake/intakeState");
+  public final Loggable<String> bmsState = BucketLog.loggable(Put.STRING, "intake/bmsState");
 
   public IntakeSubsystem(Config config) {
     super(config);
@@ -45,6 +47,10 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
         intakeSolenoid =
           new DoubleSolenoid(PneumaticsModuleType.REVPH, config.intakeSolenoid_ID1, config.intakeSolenoid_ID2);
       }
+      // default to "up"
+      intakeSolenoid.set(Value.kReverse);
+      intakeState.log("off");
+      toggleState = false;
     }
     if (Robot.isSimulation()) {
       // simulate the motors
@@ -66,18 +72,15 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     if (autoExtend.currentValue() && config.enablePneumatics) {
       intakeSolenoid.set(Value.kForward);
     }
-    intake.set(ControlMode.PercentOutput, percentOutput.currentValue());
-    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, intakePercentOutput.currentValue());
     intakeState.log("intaking");
+    ballManagementForward();
   }
 
   public void spinBackward() {
-    if (autoExtend.currentValue() && config.enablePneumatics) {
-      intakeSolenoid.set(Value.kForward);
-    }
-    intake.set(ControlMode.PercentOutput, -percentOutput.currentValue());
-    ballManagement.set(ControlMode.PercentOutput, -percentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, -intakePercentOutput.currentValue());
     intakeState.log("outtaking");
+    ballManagementBackward();
   }
 
   public void stopSpin() {
@@ -85,8 +88,8 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
       intakeSolenoid.set(Value.kReverse);
     }
     intake.set(ControlMode.PercentOutput, 0);
-    ballManagement.set(ControlMode.PercentOutput, 0);
     intakeState.log("stopped");
+    stopBallManagement();
   }
 
   //toggles turning the intake on or off
@@ -104,11 +107,25 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     }
   }
 
+  public void forceIntaking() {
+    toggleState = true;
+    intakeSolenoid.set(Value.kForward);
+    intakeState.log("intaking");
+  }
+
   public void ballManagementForward() {
-    ballManagement.set(ControlMode.PercentOutput, percentOutput.currentValue());
+    ballManagement.set(ControlMode.PercentOutput, bmsPercentOutput.currentValue());
+    bmsState.log(LogLevel.GENERAL, "bms intaking");
+  }
+
+  public void ballManagementBackward() {
+    ballManagement.set(ControlMode.PercentOutput, -bmsPercentOutput.currentValue());
+    bmsState.log(LogLevel.GENERAL, "bms outtaking");
   }
 
   public void stopBallManagement() {
     ballManagement.set(ControlMode.PercentOutput, 0);
+    bmsState.log(LogLevel.GENERAL, "bms stopped");
   }
+
 }
