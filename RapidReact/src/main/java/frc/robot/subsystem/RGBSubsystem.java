@@ -39,6 +39,10 @@ public class RGBSubsystem extends BitBucketsSubsystem {
     motor.set(BlinkenColors.Rainbow_Party_Palette.getValue());
   }
 
+  public void normalize() {
+    motor.set(BlinkenColors.Colors_Violet.getValue());
+  }
+
   @Override
   public void periodic() {
     // TODO Auto-generated method stub

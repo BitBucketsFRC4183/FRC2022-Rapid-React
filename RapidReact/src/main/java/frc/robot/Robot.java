@@ -468,11 +468,23 @@ public class Robot extends TimedRobot {
       //   )
       //   .whenReleased(() -> driverClimbEnabledPressed = false);
     
-      buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
-      buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorExtend.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorExtend();
+      });
+      buttons.elevatorExtend.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
     
-      buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
-      buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorRetract.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorRetract();
+      });
+      buttons.elevatorRetract.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
       
       // removing auto climb
     //   buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
