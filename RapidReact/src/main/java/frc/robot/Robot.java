@@ -195,6 +195,7 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> s.antiFeed()) // Run the feeder in reverse so that ball stays inside bms
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
               .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
               .complete();
@@ -210,6 +211,7 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> s.antiFeed()) // Run the feeder in reverse so that ball stays inside bms
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
               .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
               .complete();
@@ -225,6 +227,7 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> s.antiFeed()) // Run the feeder in reverse so that ball stays inside bms
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
               .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-3.0, 0.0, 0.0)), 2) //Drive back to the hub
