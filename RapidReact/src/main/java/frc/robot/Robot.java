@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
               .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0.0)), 2) //Drive back to the hub
               .executeAction((d, i, s) -> d.stop(), 2.0) //Drive back to the hub pt 2
-              .executeShootPreload()
+              .executeShootPreloadLow()
               .complete();
           break;
         case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:

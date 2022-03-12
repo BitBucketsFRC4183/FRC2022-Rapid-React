@@ -46,6 +46,23 @@ public class AutonomousCommand extends SequentialCommandGroup
         return this;
     }
 
+    public AutonomousCommand executeShootPreloadLow()
+    {
+        this.addCommands(new InstantCommand(() -> this.shooter.shootLow())
+                .andThen(new WaitCommand(1)
+                        .andThen(() -> {
+                            this.shooter.turnOnFeeders();
+                            this.intake.ballManagementForward();
+                        }).andThen(new WaitCommand(0.5)
+                                .andThen(() -> {
+                                    this.shooter.stopShoot();
+
+                                    this.shooter.turnOffFeeders();
+                                    this.intake.ballManagementBackward();
+                                }))));
+        return this;
+    }
+
     public AutonomousCommand executeDrivePath(String pathPlanner)
     {
         this.addCommands(new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive));
