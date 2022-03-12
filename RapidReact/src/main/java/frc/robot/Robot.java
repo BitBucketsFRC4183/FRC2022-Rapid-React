@@ -446,42 +446,16 @@ public class Robot extends TimedRobot {
         shooterSubsystem.turnOffFeeders();
         intakeSubsystem.stopBallManagement();
       });
-    
-      buttons.tarmacShootOrToggleElevator.whenPressed(
-        () -> {
-          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
-            climberSubsystem.elevatorToggle();
-          } else {
-            shooterSubsystem.shootTarmac();
-            //lmao
-            if (drivetrainSubsystem != null) {
-              drivetrainSubsystem.orient();
-            }
-          }
-        }
-      );
-      buttons.tarmacShootOrToggleElevator.whenReleased(
-        () -> {
-          if (config.enableShooterSubsystem) {
-            shooterSubsystem.stopShoot();
-          }
-        }
-      );
+
     }
 
     //Climber buttons
     if (config.enableClimberSubsystem) {
-      buttons.operatorEnableClimber
-        .whenPressed(
-          () -> {
-            operatorClimbEnabledPressed = true;
-            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.toggleClimberEnabled();
-              rgbSubsystem.climberEnabled();
-            }
-          }
-        )
-        .whenReleased(() -> operatorClimbEnabledPressed = false);
+
+      buttons.toggleElevator.whenPressed(
+              () -> climberSubsystem.elevatorToggle()
+      );
+
       // buttons.driverEnableClimber
       //   .whenPressed(
       //     () -> {

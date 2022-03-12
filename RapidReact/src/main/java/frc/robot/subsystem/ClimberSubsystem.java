@@ -1,17 +1,6 @@
 package frc.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.FollowerType;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
-import com.ctre.phoenix.motorcontrol.SensorTerm;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -40,8 +29,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   WPI_TalonSRX climberRight = new WPI_TalonSRX(config.climberMotor_IDRight);
   MotorConfig leaderConfig = config.climber.climberLeft;
   MotorConfig followerConfig = config.climber.climberRight;
-
-  private boolean climberEnabled = false;
 
   private boolean autoClimb; // is autoclimb enabled
   private boolean autoClimbPressed = false; // is the autoclimb button currently being pressed
@@ -389,8 +376,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
       climberRight.set(TalonSRXControlMode.MotionMagic, fullExtendPositionUprightRight);
     }
 
-    if (!climberEnabled) return;
-
     if (!autoClimb) return;
 
     ClimbState nextState = ClimbState.Idle;
@@ -441,18 +426,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climberRight.set(0);
   }
 
-  public void toggleClimberEnabled() {
-    climberEnabled = !climberEnabled;
-
-    if (climberEnabled) {
-      climbState.log(LogLevel.GENERAL, "climberEnabled");
-    } else {
-      climbState.log(LogLevel.GENERAL, "climberDisabled");
-    }
-  }
-
   public void manualElevatorExtend() {
-    if (!climberEnabled) return;
     if (autoClimb) return;
 
     // TODO: LIMIT SWITCHES https://docs.ctre-phoenix.com/en/stable/ch13_MC.html#limit-switches
@@ -471,7 +445,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void manualElevatorRetract() {
-    if (!climberEnabled) return;
     if (autoClimb) return;
 
     climberExtending = false;
@@ -486,7 +459,6 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   }
 
   public void elevatorStop() {
-    if (!climberEnabled) return;
 
     climberLeft.set(0);
     climberRight.set(0);
@@ -498,19 +470,12 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
   // autoClimbReleased() just sets the flag to false
   public void autoClimb() {
     if (!config.enableClimberSubsystem) return;
-    if (!climberEnabled) return;
     if (autoClimbStopped) return;
 
     autoClimb = true;
     autoClimbPressed = true;
 
     climbState.log(LogLevel.GENERAL, currentClimbState.toString());
-  }
-
-  public void autoClimbReleased() {
-    if (!climberEnabled) return;
-
-    autoClimbPressed = false;
   }
 
   private void autoExtendPartial() {
@@ -576,13 +541,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     setElevatorTilted(!climberTilted);
   }
 
-  public boolean isClimberEnabled() {
-    return climberEnabled;
-  }
-
   public void resetClimbStuff() {
-    if (!climberEnabled) return;
-
     autoClimbPressed = false;
     climberTilted = false;
     withinThresholdLoops1 = 0;

@@ -22,7 +22,7 @@ public class Buttons {
   Joystick operatorControl = new Joystick(1);
   JoystickButton hubSpinUp = new JoystickButton(operatorControl, PS4.R1);
   JoystickButton lowShoot = new JoystickButton(operatorControl, PS4.R2);
-  JoystickButton tarmacShootOrToggleElevator = new JoystickButton(operatorControl, PS4.L1);
+  JoystickButton toggleElevator = new JoystickButton(operatorControl, PS4.L1);
   JoystickButton feedInFire = new JoystickButton(operatorControl, PS4.L2);
 
   JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4.CIRCLE);
