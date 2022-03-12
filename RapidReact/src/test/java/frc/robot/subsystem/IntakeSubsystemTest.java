@@ -32,6 +32,8 @@ public class IntakeSubsystemTest extends SubsystemTest {
         // spin the intake motor
         subsystem.spinForward();
 
+
+
         // wait for the CTRE sim to update (weird)
         waitForCTREUpdate();
 

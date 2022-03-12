@@ -107,6 +107,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     }
   }
 
+  public void forceIntaking() {
+    toggleState = true;
+    intakeSolenoid.set(Value.kForward);
+    intakeState.log("intaking");
+  }
+
   public void ballManagementForward() {
     ballManagement.set(ControlMode.PercentOutput, bmsPercentOutput.currentValue());
     bmsState.log(LogLevel.GENERAL, "bms intaking");

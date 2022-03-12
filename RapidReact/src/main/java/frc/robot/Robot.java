@@ -194,7 +194,10 @@ public class Robot extends TimedRobot {
               this.shooterSubsystem
             )
               .executeShootPreload() //Shoot Preload
-              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
+              .executeAction((d, i, s) -> {
+                i.forceIntaking();
+                i.spinForward();
+              }) //Activate Intake
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
               .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
               .complete();
@@ -327,7 +330,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit()
   {
-
 
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
