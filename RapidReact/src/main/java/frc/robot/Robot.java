@@ -233,7 +233,7 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeAction((d, i, s) -> {
-                // i.forceIntaking();
+                i.forceIntaking();
                 i.spinForward();
                 s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
               })
@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
               .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0.0)), 2) //Drive back to the hub
               .executeAction((d, i, s) -> d.stop(), 2.0) //Drive back to the hub pt 2
-              .executeShootPreload()
+              .executeShootPreloadLow()
               .complete();
           break;
         case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:
@@ -468,11 +468,23 @@ public class Robot extends TimedRobot {
       //   )
       //   .whenReleased(() -> driverClimbEnabledPressed = false);
     
-      buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
-      buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorExtend.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorExtend();
+      });
+      buttons.elevatorExtend.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
     
-      buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
-      buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorRetract.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorRetract();
+      });
+      buttons.elevatorRetract.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
       
       // removing auto climb
     //   buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
