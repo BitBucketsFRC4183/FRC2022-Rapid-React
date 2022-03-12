@@ -37,7 +37,7 @@ public class IntakeSubsystemTest extends SubsystemTest {
         // wait for the CTRE sim to update (weird)
         waitForCTREUpdate();
 
-        // verify we applied 75% of the bus voltage to the motor (this is the default speed)
+        // verify we applied 66% of the bus voltage to the motor (this is the default speed)
         assertEquals(-0.60 * 11.5, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
     }
 
