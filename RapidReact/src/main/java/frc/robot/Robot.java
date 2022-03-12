@@ -233,7 +233,7 @@ public class Robot extends TimedRobot {
             )
               .executeShootPreload() //Shoot Preload
               .executeAction((d, i, s) -> {
-                // i.forceIntaking();
+                i.forceIntaking();
                 i.spinForward();
                 s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
               })
