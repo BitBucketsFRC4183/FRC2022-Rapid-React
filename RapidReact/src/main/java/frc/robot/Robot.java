@@ -198,10 +198,11 @@ public class Robot extends TimedRobot {
                             i.spinForward();
                             s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
                           })
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0.0)), 1) //Drive out of the tarmac
+                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, -0.05)), 1) //Drive out of the tarmac
                           .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0.0)), 2) //Drive back to the hub
-                          .executeAction((d, i, s) -> d.stop(), 2.0) //Drive back to the hub pt 2
+                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, -0.05)), 2) //Drive back to the hub
+                          .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+                          .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
                           .executeShootPreloadLow()
                           .complete();
           break;
@@ -220,10 +221,11 @@ public class Robot extends TimedRobot {
                 i.spinForward();
                 s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
               })
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0.0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, -0.05)), 1) //Drive out of the tarmac
               .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0.0)), 2) //Drive back to the hub
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, -0.05)), 2) //Drive back to the hub
               .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+              .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
               .executeShootPreload()
               .complete();
           break;
