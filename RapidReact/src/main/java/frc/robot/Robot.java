@@ -76,8 +76,8 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
-    this.autonomousPathChooser.addOption("Harded: Shoot preload low lmao", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
     this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
@@ -205,7 +205,7 @@ public class Robot extends TimedRobot {
                           .executeShootPreloadLow()
                           .complete();
           break;
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT:
+        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command =
             new AutonomousCommand(
