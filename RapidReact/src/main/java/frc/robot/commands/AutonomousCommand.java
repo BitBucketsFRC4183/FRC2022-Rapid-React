@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -12,6 +15,8 @@ import frc.robot.subsystem.DrivetrainSubsystem;
 import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 
+import java.util.Optional;
+
 public class AutonomousCommand extends SequentialCommandGroup
 {
     private AutonomousSubsystem auto;
@@ -21,17 +26,25 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/commandState");
 
+    private Optional<Pose2d> initialPosition;
+
     public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter)
     {
         this.auto = auto;
         this.drive = drive;
         this.intake = intake;
         this.shooter = shooter;
+
+        this.initialPosition = Optional.empty();
     }
 
-    public AutonomousCommand executeShootPreload()
+    public AutonomousCommand shootPreload(boolean top)
     {
-        this.addCommands(new InstantCommand(() -> this.shooter.spinUpTop())
+        InstantCommand shootCommand;
+        if(top) shootCommand = new InstantCommand(() -> this.shooter.spinUpTop());
+        else shootCommand = new InstantCommand(() -> this.shooter.shootLow());
+
+        this.addCommands(shootCommand
                 .andThen(new WaitCommand(1)
                         .andThen(() -> {
                             this.shooter.turnOnFeeders();
@@ -43,36 +56,26 @@ public class AutonomousCommand extends SequentialCommandGroup
                                     this.shooter.turnOffFeeders();
                                     this.intake.ballManagementBackward();
                                 }))));
-        return this;
-    }
 
-    public AutonomousCommand executeShootPreloadLow()
-    {
-        this.addCommands(new InstantCommand(() -> this.shooter.shootLow())
-                .andThen(new WaitCommand(1)
-                        .andThen(() -> {
-                            this.shooter.turnOnFeeders();
-                            this.intake.ballManagementForward();
-                        }).andThen(new WaitCommand(0.5)
-                                .andThen(() -> {
-                                    this.shooter.stopShoot();
-
-                                    this.shooter.turnOffFeeders();
-                                    this.intake.ballManagementBackward();
-                                }))));
         return this;
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
     {
-        this.addCommands(new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive));
+        PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
+        this.addCommands(new AutonomousFollowPathCommand(t, this.auto, this.drive));
+
+        if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
         return this;
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner, double delayBeforeStart)
     {
+        PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
         this.addCommands(new WaitCommand(delayBeforeStart)
-                .andThen(new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)));
+                .andThen(new AutonomousFollowPathCommand(t, this.auto, this.drive)));
+
+        if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
         return this;
     }
 
@@ -89,21 +92,14 @@ public class AutonomousCommand extends SequentialCommandGroup
         return this;
     }
 
-    public AutonomousCommand executeParallel(String pathPlanner, SubsystemAction action)
+    private void setInitialPosition(PathPlannerTrajectory trajectory)
     {
-        this.addCommands(
-                new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)
-                        .alongWith(this.actionToCommand(action)));
-        return this;
-    }
+        PathPlannerTrajectory.PathPlannerState state = trajectory.getInitialState();
 
-    public AutonomousCommand executeParallel(String pathPlanner, SubsystemAction action, double delayBeforeStart)
-    {
-        this.addCommands(new WaitCommand(delayBeforeStart)
-                        .andThen(
-                                new AutonomousFollowPathCommand(pathPlanner, this.auto, this.drive)
-                                        .alongWith(this.actionToCommand(action))));
-        return this;
+        this.initialPosition = Optional.of(new Pose2d(
+                state.poseMeters.getTranslation(),
+                state.holonomicRotation
+        ));
     }
 
     public AutonomousCommand complete()
@@ -113,6 +109,12 @@ public class AutonomousCommand extends SequentialCommandGroup
             i.stopSpin();
             s.disable();
         }));
+
+        //Set Odometry
+        Pose2d zeroPos = new Pose2d(0, 0, new Rotation2d(0));
+        this.drive.resetGyroWithOffset(this.initialPosition.orElse(zeroPos).getRotation());
+        this.drive.setOdometry(this.initialPosition.orElse(zeroPos));
+
         return this;
     }
 

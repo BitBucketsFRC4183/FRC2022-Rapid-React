@@ -1,11 +1,9 @@
 package frc.robot.commands;
 
-import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -26,22 +24,13 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
 
     private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/followPathState");
 
-    public AutonomousFollowPathCommand(String trajectoryPath, AutonomousSubsystem auto, DrivetrainSubsystem drive)
+    public AutonomousFollowPathCommand(PathPlannerTrajectory trajectory, AutonomousSubsystem auto, DrivetrainSubsystem drive)
     {
         this.autoConfig = new Config().auto;
 
-        this.trajectory = trajectoryPath.equals(this.autoConfig.nothingPath) ? PathPlanner.loadPath(trajectoryPath, 0, 0) : PathPlanner.loadPath(trajectoryPath, this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration);
+        this.trajectory = trajectory;
         this.auto = auto;
         this.drive = drive;
-
-        if(!this.auto.isGyroReset())
-        {
-            this.drive.resetGyroWithOffset(this.trajectory.getInitialPose().getRotation());
-            this.auto.setGyroReset();
-        }
-
-        Pose2d start = new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation);
-        this.drive.setOdometry(start);
 
         this.addCommands(this.setup(), this.createTrajectoryFollowerCommand());
     }
