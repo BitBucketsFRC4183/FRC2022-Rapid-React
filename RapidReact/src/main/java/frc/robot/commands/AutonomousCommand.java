@@ -40,7 +40,7 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public AutonomousCommand shootPreload(boolean top)
     {
-        this.addCommands((top ? new InstantCommand(() -> this.shooter.spinUpTop()) : new InstantCommand(() -> this.shooter.shootLow()))
+        this.addCommands(new InstantCommand(top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow())
                 .andThen(new WaitCommand(1)
                         .andThen(() -> {
                             this.shooter.turnOnFeeders();
