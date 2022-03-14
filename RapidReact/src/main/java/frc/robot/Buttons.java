@@ -3,38 +3,40 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.utils.PS4Constants;
+import frc.robot.utils.PS4;
 
 public class Buttons {
 
   //////////////////////////////////////////////////////////////////////////////
   // Driver
   Joystick driverControl = new Joystick(0);
-  int swerveForward = PS4Constants.LEFT_STICK_Y.getId();
-  int swerveStrafe = PS4Constants.LEFT_STICK_X.getId();
-  int swerveRotation = PS4Constants.RIGHT_STICK_X.getId();
-  JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4Constants.PS4.getId());
-  JoystickButton resetOdometry = new JoystickButton(driverControl, PS4Constants.TRACKPAD.getId());
-  JoystickButton slowDrive = new JoystickButton(driverControl, PS4Constants.RIGHT_TRIGGER.getId());
+  int swerveForward = PS4.LEFT_STICK_Y;
+  int swerveStrafe = PS4.LEFT_STICK_X;
+  int swerveRotation = PS4.RIGHT_STICK_X;
+  JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4.PS4);
+  JoystickButton resetOdometry = new JoystickButton(driverControl, PS4.TRACKPAD);
+  JoystickButton slowDrive = new JoystickButton(driverControl, PS4.R2);
 
   //////////////////////////////////////////////////////////////////////////////
   //Operator
   Joystick operatorControl = new Joystick(1);
-  JoystickButton hubSpinUp = new JoystickButton(operatorControl, PS4Constants.R1.getId());
-  JoystickButton lowShoot = new JoystickButton(operatorControl, PS4Constants.R2.getId());
-  JoystickButton tarmacShootOrToggleElevator = new JoystickButton(operatorControl, PS4Constants.L1.getId());
-  JoystickButton feedInFire = new JoystickButton(operatorControl, PS4Constants.L2.getId());
+  JoystickButton hubSpinUp = new JoystickButton(operatorControl, PS4.R1);
+  JoystickButton lowShoot = new JoystickButton(operatorControl, PS4.R2);
+  JoystickButton toggleElevator = new JoystickButton(operatorControl, PS4.L1);
+  JoystickButton feedInFire = new JoystickButton(operatorControl, PS4.L2);
 
-  JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4Constants.CIRCLE.getId());
-  JoystickButton intake = new JoystickButton(operatorControl, PS4Constants.TRIANGLE.getId());
-  JoystickButton outtake = new JoystickButton(operatorControl, PS4Constants.CROSS.getId());
+  JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4.CIRCLE);
+  JoystickButton intake = new JoystickButton(operatorControl, PS4.TRIANGLE);
+  JoystickButton outtake = new JoystickButton(operatorControl, PS4.CROSS);
 
-  JoystickButton operatorEnableClimber = new JoystickButton(operatorControl, PS4Constants.PS4.getId());
-  JoystickButton climbAuto = new JoystickButton(operatorControl, PS4Constants.TRACKPAD.getId());
-  JoystickButton resetClimbStuff = new JoystickButton(operatorControl, PS4Constants.OPTIONS.getId());
+  JoystickButton operatorEnableClimber = new JoystickButton(operatorControl, PS4.PS4);
+  JoystickButton climbAuto = new JoystickButton(operatorControl, PS4.TRACKPAD);
+  JoystickButton resetClimbStuff = new JoystickButton(operatorControl, PS4.OPTIONS);
 
-  JoystickButton autoClimbStopLeft = new JoystickButton(operatorControl, PS4Constants.L2.getId());
-  JoystickButton autoClimbStopRight = new JoystickButton(operatorControl, PS4Constants.R2.getId());
+  JoystickButton autoClimbStopLeft = new JoystickButton(operatorControl, PS4.L2);
+  JoystickButton autoClimbStopRight = new JoystickButton(operatorControl, PS4.R2);
+
+  JoystickButton rgb = new JoystickButton(operatorControl, PS4.SHARE);
 
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up

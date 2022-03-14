@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +18,10 @@ public class DefaultDriveCommand extends CommandBase {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
+
+  private final SlewRateLimiter limiterX = new SlewRateLimiter(2);
+  private final SlewRateLimiter limiterY = new SlewRateLimiter(2);
+
 
   public DefaultDriveCommand(
     DrivetrainSubsystem drivetrainSubsystem,
@@ -38,12 +43,13 @@ public class DefaultDriveCommand extends CommandBase {
   @Override
   public void execute() {
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
+
     switch (orientationChooser.getSelected()) {
       case "Field Oriented":
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
-            translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+            limiterX.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
+            limiterY.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
             rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity(),
             driveSubsystem.getGyroAngle()
           )
@@ -51,8 +57,8 @@ public class DefaultDriveCommand extends CommandBase {
         break;
       case "Robot Oriented":
         ChassisSpeeds robotOrient = new ChassisSpeeds(
-          translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
-          translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity(),
+          limiterX.calculate(translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
+          limiterY.calculate(translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
           rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity()
         );
         driveSubsystem.drive(robotOrient);

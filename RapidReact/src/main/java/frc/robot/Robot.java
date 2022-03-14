@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -54,13 +55,14 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
-  private boolean driverClimbEnabledPressed;
+  private boolean driverClimbEnabledPressed = true;
   private boolean operatorClimbEnabledPressed;
 
   private boolean autoClimbStopLeftPressed;
   private boolean autoClimbStopRightPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
+  private final SlewRateLimiter limiter = new SlewRateLimiter(3);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -74,8 +76,9 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Hardcoded: Drive Back", AutonomousPath.HARDCODED_SHOOT_AND_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
     this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
     this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
@@ -181,7 +184,7 @@ public class Robot extends TimedRobot {
               this.drivetrainSubsystem
             );
           break;
-        case HARDCODED_SHOOT_AND_DRIVE_BACK:
+        case HARDCODED_SHOOT_DRIVE_BACK:
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,
@@ -190,12 +193,41 @@ public class Robot extends TimedRobot {
               this.shooterSubsystem
             )
               .executeShootPreload() //Shoot Preload
-              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
+              .executeAction((d, i, s) -> {
+                i.forceIntaking();
+                i.spinForward();
+                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
+              })
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
               .complete();
           break;
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT:
+
+        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
+          command =
+                  new AutonomousCommand(
+                          this.autonomousSubsystem,
+                          this.drivetrainSubsystem,
+                          this.intakeSubsystem,
+                          this.shooterSubsystem
+                  )
+                          .executeShootPreload() //Shoot Preload
+                          .executeAction((d, i, s) -> {
+                            i.forceIntaking();
+                            i.spinForward();
+                            s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
+                          })
+                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
+                          .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
+                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
+                          .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+                          .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
+                          .executeShootPreloadLow()
+                          .complete();
+          break;
+        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH:
+          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command =
             new AutonomousCommand(
               this.autonomousSubsystem,
@@ -204,11 +236,16 @@ public class Robot extends TimedRobot {
               this.shooterSubsystem
             )
               .executeShootPreload() //Shoot Preload
-              .executeAction((d, i, s) -> i.spinForward()) //Activate Intake
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(3.0, 0.0, 0.0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive out of the tarmac pt 2
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-3.0, 0.0, 0.0)), 2) //Drive back to the hub
-              .executeAction((d, i, s) -> d.stop(), 1.0) //Drive back to the hub pt 2
+              .executeAction((d, i, s) -> {
+                i.forceIntaking();
+                i.spinForward();
+                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
+              })
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
+              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
+              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
+              .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+              .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
               .executeShootPreload()
               .complete();
           break;
@@ -303,17 +340,11 @@ public class Robot extends TimedRobot {
     info.log(LogLevel.GENERAL, "Still in autonomous");
   }
 
-  @Override
-  public void autonomousExit()
-  {
-    //Reset the odometry rotation as the robot leaves autonomous before teleop
-    this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
-  }
-
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit()
   {
+
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -420,84 +451,75 @@ public class Robot extends TimedRobot {
         shooterSubsystem.turnOffFeeders();
         intakeSubsystem.stopBallManagement();
       });
-    
-      buttons.tarmacShootOrToggleElevator.whenPressed(
-        () -> {
-          if (config.enableClimberSubsystem && climberSubsystem.isClimberEnabled()) {
-            climberSubsystem.elevatorToggle();
-          } else {
-            shooterSubsystem.shootTarmac();
-            //lmao
-            if (drivetrainSubsystem != null) {
-              drivetrainSubsystem.orient();
-            }
-          }
-        }
-      );
-      buttons.tarmacShootOrToggleElevator.whenReleased(
-        () -> {
-          if (config.enableShooterSubsystem) {
-            shooterSubsystem.stopShoot();
-          }
-        }
-      );
+
     }
 
     //Climber buttons
     if (config.enableClimberSubsystem) {
-      buttons.operatorEnableClimber
-        .whenPressed(
-          () -> {
-            operatorClimbEnabledPressed = true;
-            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.toggleClimberEnabled();
-              rgbSubsystem.climberEnabled();
-            }
-          }
-        )
-        .whenReleased(() -> operatorClimbEnabledPressed = false);
-      buttons.driverEnableClimber
-        .whenPressed(
-          () -> {
-            driverClimbEnabledPressed = true;
-            if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-              climberSubsystem.toggleClimberEnabled();
-              rgbSubsystem.climberEnabled();
-            }
-          }
-        )
-        .whenReleased(() -> driverClimbEnabledPressed = false);
+
+      buttons.toggleElevator.whenPressed(
+              () -> climberSubsystem.elevatorToggle()
+      );
+
+      // buttons.driverEnableClimber
+      //   .whenPressed(
+      //     () -> {
+      //       driverClimbEnabledPressed = true;
+      //       if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
+      //         climberSubsystem.toggleClimberEnabled();
+      //         rgbSubsystem.climberEnabled();
+      //       }
+      //     }
+      //   )
+      //   .whenReleased(() -> driverClimbEnabledPressed = false);
     
-      buttons.elevatorExtend.whenPressed(climberSubsystem::manualElevatorExtend);
-      buttons.elevatorExtend.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorExtend.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorExtend();
+      });
+      buttons.elevatorExtend.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
     
-      buttons.elevatorRetract.whenPressed(climberSubsystem::manualElevatorRetract);
-      buttons.elevatorRetract.whenReleased(climberSubsystem::elevatorStop);
+      buttons.elevatorRetract.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorRetract();
+      });
+      buttons.elevatorRetract.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
       
-      buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
-      buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
-      buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
+      // removing auto climb
+    //   buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
+    //   buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
+    //   buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
     
-      buttons.autoClimbStopLeft.whenPressed(
-        () -> {
-          autoClimbStopLeftPressed = true;
-          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-          {
-            climberSubsystem.stopAutoClimb();
-          }
-        }
-      )
-      .whenReleased(() -> autoClimbStopLeftPressed = false);
-      buttons.autoClimbStopRight.whenPressed(
-        () -> {
-          autoClimbStopRightPressed = true;
-          if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-          {
-            climberSubsystem.stopAutoClimb();
-          }
-        }
-      )
-      .whenReleased(() -> autoClimbStopRightPressed = false);
+    //   buttons.autoClimbStopLeft.whenPressed(
+    //     () -> {
+    //       autoClimbStopLeftPressed = true;
+    //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+    //       {
+    //         climberSubsystem.stopAutoClimb();
+    //       }
+    //     }
+    //   )
+    //   .whenReleased(() -> autoClimbStopLeftPressed = false);
+    //   buttons.autoClimbStopRight.whenPressed(
+    //     () -> {
+    //       autoClimbStopRightPressed = true;
+    //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
+    //       {
+    //         climberSubsystem.stopAutoClimb();
+    //       }
+    //     }
+    //   )
+    //   .whenReleased(() -> autoClimbStopRightPressed = false);
     }
+
+    buttons.rgb.whenPressed(() -> {
+      rgbSubsystem.funnyButton();
+    });
   }
 }
