@@ -249,6 +249,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       }
 
       pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
+
+      SmartDashboard.putNumber("/drivetrain/actual_X", odometry.getPoseMeters().getX());
+      SmartDashboard.putNumber("/drivetrain/actual_Y", odometry.getPoseMeters().getY());
+      SmartDashboard.putNumber("/drivetrain/actual_Theta", odometry.getPoseMeters().getRotation().getRadians());
     }
 
     //field.setRobotPose(pose);

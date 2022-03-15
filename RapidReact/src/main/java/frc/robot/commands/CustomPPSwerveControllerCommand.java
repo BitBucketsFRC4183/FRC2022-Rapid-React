@@ -94,6 +94,10 @@ public class CustomPPSwerveControllerCommand extends CommandBase
         SmartDashboard.putString("/drivetrain/desiredState", desiredState.toString());
         System.out.println("Desired State: " + desiredState.toString());
 
+        SmartDashboard.putNumber("/drivetrain/desired_X", desiredState.poseMeters.getX());
+        SmartDashboard.putNumber("/drivetrain/desired_Y", desiredState.poseMeters.getY());
+        SmartDashboard.putNumber("/drivetrain/desired_Theta", desiredState.poseMeters.getRotation().getRadians());
+
         m_outputModuleStates.accept(targetModuleStates);
     }
 

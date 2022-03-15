@@ -39,7 +39,6 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
 
     private CustomPPSwerveControllerCommand createTrajectoryFollowerCommand()
     {
-        PIDController xyController = this.autoConfig.pathXYController;
         ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.thetaPID.getKP(), this.autoConfig.thetaPID.getKI(), this.autoConfig.thetaPID.getKD(), new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -47,8 +46,8 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
                 this.trajectory, //Trajectory
                 () -> this.drive.odometry.getPoseMeters(), //Robot Pose supplier
                 this.drive.kinematics, //Swerve Drive Kinematics
-                xyController, //PID Controller: X
-                xyController, //PID Controller: Y
+                new PIDController(2.2956, 0, 0), //PID Controller: X
+                new PIDController(2.2956, 0, 0), //PID Controller: Y
                 thetaController, //PID Controller: Θ
                 this.drive::setStates, //SwerveModuleState setter
                 this.drive

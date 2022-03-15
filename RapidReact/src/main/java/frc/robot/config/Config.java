@@ -1,6 +1,5 @@
 package frc.robot.config;
 
-import edu.wpi.first.math.controller.PIDController;
 import frc.robot.config.MotorConfig.EncoderType;
 
 public class Config {
@@ -96,8 +95,9 @@ public class Config {
     public double maxPathFollowAcceleration = 2;
 
     //2.2956
-    public PIDController pathXYController = new PIDController(4, 0, 0);
-    public PID thetaPID = new PID(3, 0, 0.02);
+    //public PIDController pathXController = new PIDController(2.2956, 0, 0);
+    //public PIDController pathYController = new PIDController(2.2956, 0, 0);
+    public PID thetaPID = new PID(3, 0, 0.02); //new PID(3, 0, 0.02);
 
     public AutonomousConfig() {}
   }
