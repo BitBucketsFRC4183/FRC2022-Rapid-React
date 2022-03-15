@@ -8,7 +8,8 @@ import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
 import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
@@ -89,6 +91,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public SwerveDriveOdometry odometry;
 
   private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
+
+  private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
 
 
   @Override
@@ -241,7 +245,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       for(int i = 0; i < 4; i++)
       {
         //System.out.println("Module " + i + ": " + states[i].angle.getDegrees());
-        modules.get(i).set(states[i].speedMetersPerSecond / this.getMaxVelocity() * this.config.maxVoltage, states[i].angle.getRadians());
+        modules.get(i).set(velocityToDriveVolts(states[i].speedMetersPerSecond), states[i].angle.getRadians());
       }
 
       pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
@@ -250,11 +254,26 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     //field.setRobotPose(pose);
   }
 
+  /**
+   * Convert target velocity to motor volts.
+   *
+   * @param speedMetersPerSecond
+   * @return volts
+   */
+  private double velocityToDriveVolts(double speedMetersPerSecond) {
+    double ff = this.feedForward.calculate(speedMetersPerSecond);
+    return MathUtil.clamp(ff, -this.config.maxVoltage, this.config.maxVoltage);
+
+    // below is a naive guess for output volts, linear map of desired velocity to volts
+    // return speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
+  }
+
   //DOES NOT RESET GYRO
   public void setOdometry(Pose2d startingPosition) {
     odometry = new SwerveDriveOdometry(kinematics, this.gyro.getRotation2d(), startingPosition);
 
     odometryLoggable.log(LogLevel.DEBUG, "Reset Odometry to Starting Position: " + startingPosition);
+    SmartDashboard.putString("/drivetrain/start_position", startingPosition.toString());
     //this.dumpInfo();
   }
 
@@ -278,12 +297,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   {
     StringJoiner s = new StringJoiner("\n")
             .add("-----------------")
-            .add("Robot Position: " + this.pose)
             .add("Odometry Position: " + this.odometry.getPoseMeters())
             .add("Drivetrain Gyro Heading: " + this.gyro.getRotation2d())
             .add("-----------------");
 
-    odometryLoggable.log(LogLevel.DEBUG, s.toString());
+    //odometryLoggable.log(LogLevel.DEBUG, s.toString());
+
+    SmartDashboard.putString("/drivetrain/odometry_position", this.odometry.getPoseMeters().toString());
+    SmartDashboard.putString("/drivetrain/gyro_heading", this.gyro.getRotation2d().toString());
   }
 
   public void zeroStates(Pose2d start)
@@ -291,6 +312,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     SwerveModuleState zeroState = new SwerveModuleState(0, start.getRotation());
     SwerveModuleState[] states = {zeroState, zeroState, zeroState, zeroState};
     this.setStates(states);
+
 
     this.odometry.resetPosition(start, start.getRotation());
   }

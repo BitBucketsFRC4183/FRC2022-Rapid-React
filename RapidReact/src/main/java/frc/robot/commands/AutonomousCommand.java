@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -93,7 +94,7 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         this.initialPosition = Optional.of(new Pose2d(
                 state.poseMeters.getTranslation(),
-                state.holonomicRotation
+                new Rotation2d(0)//state.holonomicRotation
         ));
     }
 
@@ -107,6 +108,7 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         //Set Odometry
         Pose2d zeroPos = new Pose2d(0, 0, new Rotation2d(0));
+        SmartDashboard.putString("/drivetrain/initial_path_position", this.initialPosition.get().toString());
         this.drive.resetGyroWithOffset(this.initialPosition.orElse(zeroPos).getRotation());
         this.drive.setOdometry(this.initialPosition.orElse(zeroPos));
 

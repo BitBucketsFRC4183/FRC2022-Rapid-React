@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward)", AutonomousPath.TEST_PATH_1M_FORWARD);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
@@ -176,6 +177,11 @@ public class Robot extends TimedRobot {
               this.drivetrainSubsystem,
               this.rgbSubsystem
             );
+          break;
+        case TEST_PATH_1M_FORWARD:
+          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
+                  .executeDrivePath("Test Path (1m Forward)")
+                  .complete();
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
           command =
@@ -347,6 +353,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     info.log(LogLevel.GENERAL, "Still in autonomous");
+
+    System.out.println("Odometry Position: " + this.drivetrainSubsystem.odometry.getPoseMeters());
+    System.out.println("Gyro Heading: " + this.drivetrainSubsystem.gyro.getRotation2d());
   }
 
   /** This function is called once when teleop is enabled. */

@@ -1,10 +1,8 @@
 package frc.robot.commands;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -36,16 +34,16 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         this.drive = drive;
         this.rgb = rgb;
 
-        this.addCommands(this.setup(), this.createTrajectoryFollowerCommand());
+        this.addCommands(this.setup(), this.createTrajectoryFollowerCommand(), this.setDown());
     }
 
-    private PPSwerveControllerCommand createTrajectoryFollowerCommand()
+    private CustomPPSwerveControllerCommand createTrajectoryFollowerCommand()
     {
-        PIDController xyController = new PIDController(1, 0.1, 0);
-        ProfiledPIDController thetaController = new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
+        PIDController xyController = this.autoConfig.pathXYController;
+        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.thetaPID.getKP(), this.autoConfig.thetaPID.getKI(), this.autoConfig.thetaPID.getKD(), new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        return new PPSwerveControllerCommand(
+        return new CustomPPSwerveControllerCommand(
                 this.trajectory, //Trajectory
                 () -> this.drive.odometry.getPoseMeters(), //Robot Pose supplier
                 this.drive.kinematics, //Swerve Drive Kinematics
@@ -62,13 +60,13 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         return new InstantCommand(() ->{
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
 
-            this.drive.zeroStates(new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation));
+            //this.drive.zeroStates(new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation));
 
             this.rgb.autoDriving();
         });
     }
 
-    private InstantCommand afterExecution()
+    private InstantCommand setDown()
     {
         return new InstantCommand(() -> {
             this.state.log(LogLevel.GENERAL, "Finished Following a Trajectory!");
