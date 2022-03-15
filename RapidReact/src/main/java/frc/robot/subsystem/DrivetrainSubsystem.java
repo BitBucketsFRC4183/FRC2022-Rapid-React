@@ -228,6 +228,15 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
+
+    this.odometry.update(
+            this.gyro.getRotation2d(), //Gyro Angle
+            new SwerveModuleState(this.moduleFrontLeft.getDriveVelocity(), new Rotation2d(this.moduleFrontLeft.getSteerAngle())), //Front Left
+            new SwerveModuleState(this.moduleFrontRight.getDriveVelocity(), new Rotation2d(this.moduleFrontRight.getSteerAngle())), //Front Right
+            new SwerveModuleState(this.moduleBackLeft.getDriveVelocity(), new Rotation2d(this.moduleBackLeft.getSteerAngle())), //Back Left
+            new SwerveModuleState(this.moduleBackRight.getDriveVelocity(), new Rotation2d(this.moduleBackRight.getSteerAngle())) //Back Right
+    );
+
       this.dumpInfo();
   }
 
@@ -242,7 +251,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         modules.get(i).set(velocityToDriveVolts(states[i].speedMetersPerSecond), states[i].angle.getRadians());
       }
 
-      pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
+      //pose = odometry.update(this.gyro.getRotation2d(), states[0], states[1], states[2], states[3]);
 
       SmartDashboard.putNumber("/drivetrain/actual_X", odometry.getPoseMeters().getX());
       SmartDashboard.putNumber("/drivetrain/actual_Y", odometry.getPoseMeters().getY());
