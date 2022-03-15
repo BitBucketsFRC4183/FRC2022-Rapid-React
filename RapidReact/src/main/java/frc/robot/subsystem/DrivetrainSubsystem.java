@@ -132,7 +132,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     this.gyro = new AHRS(SPI.Port.kMXP, (byte)200);
 
-    this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    //this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     this.initializeModules();
 
@@ -221,19 +221,13 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   public void drive(ChassisSpeeds chassisSpeeds) {
-    this.chassisSpeeds = chassisSpeeds;
-  }
+    //this.chassisSpeeds = chassisSpeeds;
 
-  @Override
-  public void simulationPeriodic() {
-    //this.setStates(this.drivetrainModel.getSwerveModuleStates());
-    //this.drivetrainModel.update(false, this.config.maxVoltage);
+    this.setStates(this.kinematics.toSwerveModuleStates(chassisSpeeds));
   }
 
   @Override
   public void periodic() {
-      this.setStates(this.kinematics.toSwerveModuleStates(chassisSpeeds));
-
       this.dumpInfo();
   }
 
@@ -254,8 +248,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       SmartDashboard.putNumber("/drivetrain/actual_Y", odometry.getPoseMeters().getY());
       SmartDashboard.putNumber("/drivetrain/actual_Theta", odometry.getPoseMeters().getRotation().getRadians());
     }
-
-    //field.setRobotPose(pose);
   }
 
   /**

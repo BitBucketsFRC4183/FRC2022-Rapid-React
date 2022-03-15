@@ -3,7 +3,6 @@ package frc.robot.commands;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
@@ -39,15 +38,17 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
 
     private CustomPPSwerveControllerCommand createTrajectoryFollowerCommand()
     {
-        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.thetaPID.getKP(), this.autoConfig.thetaPID.getKI(), this.autoConfig.thetaPID.getKD(), new TrapezoidProfile.Constraints(this.autoConfig.maxPathFollowVelocity, this.autoConfig.maxPathFollowAcceleration));
+        PIDController xController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
+        PIDController yController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
+        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.pathThetaPID.getKP(), this.autoConfig.pathThetaPID.getKI(), this.autoConfig.pathThetaPID.getKD(), this.autoConfig.pathTrapezoidProfileConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         return new CustomPPSwerveControllerCommand(
                 this.trajectory, //Trajectory
                 () -> this.drive.odometry.getPoseMeters(), //Robot Pose supplier
                 this.drive.kinematics, //Swerve Drive Kinematics
-                new PIDController(2.2956, 0, 0), //PID Controller: X
-                new PIDController(2.2956, 0, 0), //PID Controller: Y
+                xController, //PID Controller: X
+                yController, //PID Controller: Y
                 thetaController, //PID Controller: Θ
                 this.drive::setStates, //SwerveModuleState setter
                 this.drive
