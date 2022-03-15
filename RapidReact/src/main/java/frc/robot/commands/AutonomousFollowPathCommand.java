@@ -15,23 +15,26 @@ import frc.robot.log.Loggable;
 import frc.robot.log.Put;
 import frc.robot.subsystem.AutonomousSubsystem;
 import frc.robot.subsystem.DrivetrainSubsystem;
+import frc.robot.subsystem.RGBSubsystem;
 
 public class AutonomousFollowPathCommand extends SequentialCommandGroup
 {
     private final PathPlannerTrajectory trajectory;
     private AutonomousSubsystem auto;
     private DrivetrainSubsystem drive;
+    private RGBSubsystem rgb;
     private Config.AutonomousConfig autoConfig;
 
     private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/followPathState");
 
-    public AutonomousFollowPathCommand(PathPlannerTrajectory trajectory, AutonomousSubsystem auto, DrivetrainSubsystem drive)
+    public AutonomousFollowPathCommand(PathPlannerTrajectory trajectory, AutonomousSubsystem auto, DrivetrainSubsystem drive, RGBSubsystem rgb)
     {
         this.autoConfig = new Config().auto;
 
         this.trajectory = trajectory;
         this.auto = auto;
         this.drive = drive;
+        this.rgb = rgb;
 
         this.addCommands(this.setup(), this.createTrajectoryFollowerCommand());
     }
@@ -60,6 +63,17 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
 
             this.drive.zeroStates(new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation));
+
+            this.rgb.autoDriving();
+        });
+    }
+
+    private InstantCommand afterExecution()
+    {
+        return new InstantCommand(() -> {
+            this.state.log(LogLevel.GENERAL, "Finished Following a Trajectory!");
+
+            this.rgb.autoNotDriving();
         });
     }
 }

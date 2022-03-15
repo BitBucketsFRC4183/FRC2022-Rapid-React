@@ -1,8 +1,6 @@
 package frc.robot.subsystem;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import frc.robot.config.Config;
 import frc.robot.config.Config;
 import frc.robot.log.BucketLog;
 import frc.robot.log.Changeable;
@@ -41,6 +39,16 @@ public class RGBSubsystem extends BitBucketsSubsystem {
 
   public void normalize() {
     motor.set(BlinkenColors.Colors_Violet.getValue());
+  }
+
+  public void autoDriving()
+  {
+    motor.set(BlinkenColors.Fire_Medium.getValue());
+  }
+
+  public void autoNotDriving()
+  {
+    motor.set(BlinkenColors.Twinkles_Party_Palette.getValue());
   }
 
   @Override

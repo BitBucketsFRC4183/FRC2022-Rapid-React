@@ -10,10 +10,7 @@ import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
 import frc.robot.log.Put;
-import frc.robot.subsystem.AutonomousSubsystem;
-import frc.robot.subsystem.DrivetrainSubsystem;
-import frc.robot.subsystem.IntakeSubsystem;
-import frc.robot.subsystem.ShooterSubsystem;
+import frc.robot.subsystem.*;
 
 import java.util.Optional;
 
@@ -23,17 +20,19 @@ public class AutonomousCommand extends SequentialCommandGroup
     private DrivetrainSubsystem drive;
     private IntakeSubsystem intake;
     private ShooterSubsystem shooter;
+    private RGBSubsystem rgb;
 
     private final Loggable<String> state = BucketLog.loggable(Put.STRING, "auto/commandState");
 
     private Optional<Pose2d> initialPosition;
 
-    public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter)
+    public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, RGBSubsystem rgb)
     {
         this.auto = auto;
         this.drive = drive;
         this.intake = intake;
         this.shooter = shooter;
+        this.rgb = rgb;
 
         this.initialPosition = Optional.empty();
     }
@@ -59,7 +58,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     public AutonomousCommand executeDrivePath(String pathPlanner)
     {
         PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
-        this.addCommands(new AutonomousFollowPathCommand(t, this.auto, this.drive));
+        this.addCommands(new AutonomousFollowPathCommand(t, this.auto, this.drive, this.rgb));
 
         if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
         return this;
@@ -69,7 +68,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     {
         PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
         this.addCommands(new WaitCommand(delayBeforeStart)
-                .andThen(new AutonomousFollowPathCommand(t, this.auto, this.drive)));
+                .andThen(new AutonomousFollowPathCommand(t, this.auto, this.drive, this.rgb)));
 
         if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
         return this;
