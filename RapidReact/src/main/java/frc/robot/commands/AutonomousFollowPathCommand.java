@@ -3,6 +3,7 @@ package frc.robot.commands;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
@@ -40,7 +41,7 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     {
         PIDController xController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
         PIDController yController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
-        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.pathThetaPID.getKP(), this.autoConfig.pathThetaPID.getKI(), this.autoConfig.pathThetaPID.getKD(), this.autoConfig.pathTrapezoidProfileConstraints);
+        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.pathThetaPID.getKP(), this.autoConfig.pathThetaPID.getKI(), this.autoConfig.pathThetaPID.getKD(), new TrapezoidProfile.Constraints(this.drive.getMaxAngularVelocity(), this.drive.getMaxAngularVelocity() * 10.0));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         return new CustomPPSwerveControllerCommand(

@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
     this.autonomousPathChooser.addOption("Test Path (1m Forward)", AutonomousPath.TEST_PATH_1M_FORWARD);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", AutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
@@ -424,7 +425,7 @@ public class Robot extends TimedRobot {
       });
 
       buttons.slowDrive
-              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.5)
+              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
               .whenReleased(() -> this.drivetrainSubsystem.speedModifier = 1.0);
     }
 

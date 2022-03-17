@@ -108,6 +108,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       maxVelocity_metersPerSecond /
       Math.hypot(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
 
+   SmartDashboard.putNumber("/drivetrain/max_angular_velocity", this.maxAngularVelocity_radiansPerSecond);
+
     this.speedModifier = 1.0;
 
     this.moduleFrontLeftLocation =
@@ -310,6 +312,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     SmartDashboard.putString("/drivetrain/odometry_position", this.odometry.getPoseMeters().toString());
     SmartDashboard.putString("/drivetrain/gyro_heading", this.gyro.getRotation2d().toString());
+    SmartDashboard.putNumber("/drivetrain/speed_modifier", this.speedModifier);
   }
 
   public void zeroStates(Pose2d start)

@@ -92,8 +92,8 @@ public class Config {
     public String genericPath = "Path";
     public String driveBackwardsPath = "Drive Backwards";
 
-    public double maxPathFollowVelocity = 2;
-    public double maxPathFollowAcceleration = 2;
+    public double maxPathFollowVelocity = 1;
+    public double maxPathFollowAcceleration = 1;
 
     public PID pathXYPID = new PID(2.2956, 0, 0);
     public PID pathThetaPID = new PID(3, 0, 0.02);
