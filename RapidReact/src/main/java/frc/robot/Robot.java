@@ -76,6 +76,8 @@ public class Robot extends TimedRobot {
     this.field = new Field2d();
 
     this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward)", AutonomousPath.TEST_PATH_1M_FORWARD);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", AutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
     this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
@@ -171,17 +173,29 @@ public class Robot extends TimedRobot {
         case NOTHING:
           command =
             new AutonomousFollowPathCommand(
-              config.auto.nothingPath,
+              this.autonomousSubsystem.buildPath(config.auto.nothingPath),
               this.autonomousSubsystem,
-              this.drivetrainSubsystem
+              this.drivetrainSubsystem,
+              this.rgbSubsystem
             );
+          break;
+        case TEST_PATH_1M_FORWARD:
+          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
+                  .executeDrivePath("Test Path (1m Forward)")
+                  .complete();
+          break;
+        case TEST_PATH_1M_FORWARD_1M_UP:
+          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
+                  .executeDrivePath("Test Path (1m Forward, 1m Up)")
+                  .complete();
           break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
           command =
             new AutonomousFollowPathCommand(
-              config.auto.driveBackwardsPath,
+              this.autonomousSubsystem.buildPath(config.auto.driveBackwardsPath),
               this.autonomousSubsystem,
-              this.drivetrainSubsystem
+              this.drivetrainSubsystem,
+              this.rgbSubsystem
             );
           break;
         case HARDCODED_SHOOT_DRIVE_BACK:
@@ -190,9 +204,10 @@ public class Robot extends TimedRobot {
               this.autonomousSubsystem,
               this.drivetrainSubsystem,
               this.intakeSubsystem,
-              this.shooterSubsystem
+              this.shooterSubsystem,
+              this.rgbSubsystem
             )
-              .executeShootPreload() //Shoot Preload
+              .shootPreload(true) //Shoot Preload
               .executeAction((d, i, s) -> {
                 i.forceIntaking();
                 i.spinForward();
@@ -210,9 +225,10 @@ public class Robot extends TimedRobot {
                           this.autonomousSubsystem,
                           this.drivetrainSubsystem,
                           this.intakeSubsystem,
-                          this.shooterSubsystem
+                          this.shooterSubsystem,
+                          this.rgbSubsystem
                   )
-                          .executeShootPreload() //Shoot Preload
+                          .shootPreload(true) //Shoot Preload
                           .executeAction((d, i, s) -> {
                             i.forceIntaking();
                             i.spinForward();
@@ -223,7 +239,7 @@ public class Robot extends TimedRobot {
                           .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
                           .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
                           .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-                          .executeShootPreloadLow()
+                          .shootPreload(false)
                           .complete();
           break;
         case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH:
@@ -233,9 +249,10 @@ public class Robot extends TimedRobot {
               this.autonomousSubsystem,
               this.drivetrainSubsystem,
               this.intakeSubsystem,
-              this.shooterSubsystem
+              this.shooterSubsystem,
+              this.rgbSubsystem
             )
-              .executeShootPreload() //Shoot Preload
+              .shootPreload(true) //Shoot Preload
               .executeAction((d, i, s) -> {
                 i.forceIntaking();
                 i.spinForward();
@@ -246,7 +263,7 @@ public class Robot extends TimedRobot {
               .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
               .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
               .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-              .executeShootPreload()
+              .shootPreload(true)
               .complete();
           break;
         case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:
@@ -255,9 +272,10 @@ public class Robot extends TimedRobot {
              this.autonomousSubsystem,
              this.drivetrainSubsystem,
              this.intakeSubsystem,
-             this.shooterSubsystem
+             this.shooterSubsystem,
+             this.rgbSubsystem
            )
-             .executeShootPreload()
+             .shootPreload(true)
              .executeAction((d, i, s) -> i.spinForward())
              .executeDrivePath("Drive Backwards Single Ball", 1)
              .executeAction((d, i, s) -> i.stopSpin(), 2)
@@ -269,9 +287,10 @@ public class Robot extends TimedRobot {
              this.autonomousSubsystem,
              this.drivetrainSubsystem,
              this.intakeSubsystem,
-             this.shooterSubsystem
+             this.shooterSubsystem,
+             this.rgbSubsystem
            )
-             .executeShootPreload()
+             .shootPreload(true)
              .executeDrivePath("Drive Backwards Double Ball P1")
              .executeAction((d, i, s) -> i.spinForward())
              .executeDrivePath("Drive Backwards Double Ball P2", 2)
@@ -284,9 +303,10 @@ public class Robot extends TimedRobot {
               this.autonomousSubsystem,
               this.drivetrainSubsystem,
               this.intakeSubsystem,
-              this.shooterSubsystem
+              this.shooterSubsystem,
+              this.rgbSubsystem
             )
-              .executeShootPreload() //Shoot Preload
+              .shootPreload(true) //Shoot Preload
               .executeDrivePath("Main P1") //Drive to the first ball
               .executeAction((d, i, s) -> i.spinForward()) //Activate intake
               .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
@@ -305,9 +325,10 @@ public class Robot extends TimedRobot {
               this.autonomousSubsystem,
               this.drivetrainSubsystem,
               this.intakeSubsystem,
-              this.shooterSubsystem
+              this.shooterSubsystem,
+              this.rgbSubsystem
             )
-              .executeShootPreload() //Shoot Preload
+              .shootPreload(true) //Shoot Preload
               .executeDrivePath("Main P1") //Drive to the first ball
               .executeAction((d, i, s) -> i.spinForward()) //Activate intake
               .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
@@ -338,6 +359,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     info.log(LogLevel.GENERAL, "Still in autonomous");
+
+    System.out.println("Odometry Position: " + this.drivetrainSubsystem.odometry.getPoseMeters());
+    System.out.println("Gyro Heading: " + this.drivetrainSubsystem.gyro.getRotation2d());
   }
 
   /** This function is called once when teleop is enabled. */
@@ -401,7 +425,7 @@ public class Robot extends TimedRobot {
       });
 
       buttons.slowDrive
-              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.5)
+              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
               .whenReleased(() -> this.drivetrainSubsystem.speedModifier = 1.0);
     }
 
