@@ -183,6 +183,11 @@ public class Robot extends TimedRobot {
                   .executeDrivePath("Test Path (1m Forward)")
                   .complete();
           break;
+        case TEST_PATH_1M_FORWARD_1M_UP:
+          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
+                  .executeDrivePath("Test Path (1m Forward, 1m Up)")
+                  .complete();
+          break;
         case PATH_PLANNER_DRIVE_BACKWARDS:
           command =
             new AutonomousFollowPathCommand(
