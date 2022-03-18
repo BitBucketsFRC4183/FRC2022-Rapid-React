@@ -44,22 +44,31 @@ public class DefaultDriveCommand extends CommandBase {
   public void execute() {
     // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
 
+    double xOutput = limiterX.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity();
+    double yOutput = limiterY.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity();
+    double rotationOutput = rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity();
+
+    
     switch (orientationChooser.getSelected()) {
       case "Field Oriented":
+      if (xOutput == 0 && yOutput == 0 && rotationOutput == 0) {
+        driveSubsystem.stopSticky();
+      } else { 
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            limiterX.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
-            limiterY.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
-            rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity(),
+            xOutput,
+            yOutput,
+            rotationOutput,
             driveSubsystem.getGyroAngle()
           )
         );
+      }
         break;
       case "Robot Oriented":
         ChassisSpeeds robotOrient = new ChassisSpeeds(
-          limiterX.calculate(translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
-          limiterY.calculate(translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
-          rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity()
+          xOutput,
+          yOutput,
+          rotationOutput
         );
         driveSubsystem.drive(robotOrient);
         break;

@@ -213,6 +213,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     return this.maxAngularVelocity_radiansPerSecond * this.speedModifier;
   }
 
+  public void stopSticky() {
+    this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+  }
+
   public void orient() {
     // do something here.
 
