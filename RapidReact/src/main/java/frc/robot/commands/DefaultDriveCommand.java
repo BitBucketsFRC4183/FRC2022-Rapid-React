@@ -48,8 +48,8 @@ public class DefaultDriveCommand extends CommandBase {
       case "Field Oriented":
         driveSubsystem.drive(
           ChassisSpeeds.fromFieldRelativeSpeeds(
-            limiterX.calculate(translationXSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
-            limiterY.calculate(translationYSupplier.getAsDouble()) * driveSubsystem.getMaxVelocity(),
+            limiterX.calculate(translationXSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
+            limiterY.calculate(translationYSupplier.getAsDouble() * driveSubsystem.getMaxVelocity()),
             rotationSupplier.getAsDouble() * driveSubsystem.getMaxAngularVelocity(),
             driveSubsystem.getGyroAngle()
           )
