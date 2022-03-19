@@ -16,6 +16,8 @@ public class Buttons {
   JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4.PS4);
   JoystickButton resetOdometry = new JoystickButton(driverControl, PS4.TRACKPAD);
   JoystickButton slowDrive = new JoystickButton(driverControl, PS4.R2);
+  JoystickButton snapToAngle = new JoystickButton(driverControl, PS4.CROSS);
+
 
   //////////////////////////////////////////////////////////////////////////////
   //Operator
