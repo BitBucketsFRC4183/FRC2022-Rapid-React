@@ -85,9 +85,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private Translation2d moduleBackLeftLocation;
   private Translation2d moduleBackRightLocation;
 
-  private ChassisSpeeds chassisSpeeds;
-
-  private Pose2d pose;
   public SwerveDriveOdometry odometry;
 
   private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
@@ -214,12 +211,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   public void stopSticky() {
-    this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     setStates(new SwerveModuleState[]{
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Front Left
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Front Right
-      new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Back Left
-      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)) //Back Right
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Front Left
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Front Right
+      new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Back Left
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45)) //Back Right
     });
   }
 
