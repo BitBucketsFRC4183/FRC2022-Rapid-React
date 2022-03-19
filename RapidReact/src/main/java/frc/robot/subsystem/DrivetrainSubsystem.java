@@ -215,12 +215,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   public void stopSticky() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
-    var states = new SwerveModuleState[]{
+    setStates(new SwerveModuleState[]{
       new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Front Left
       new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Front Right
       new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Back Left
       new SwerveModuleState(0, Rotation2d.fromDegrees(-45)) //Back Right
-    };
+    });
   }
 
   public void orient() {
