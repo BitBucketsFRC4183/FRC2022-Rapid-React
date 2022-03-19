@@ -153,6 +153,7 @@ public class Config {
 
     public MotorConfig shooterTop = new MotorConfig();
     public MotorConfig shooterBottom = new MotorConfig();
+    public MotorConfig feeder = new MotorConfig();
 
     public ShooterConfig() {}
   }
@@ -187,6 +188,9 @@ public class Config {
     shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
     shooter.shooterBottom.inverted = true;
 
+    shooter.feeder.id = shooterFeeder_ID;
+    shooter.feeder.inverted = true;
+    
     ///////////////////
     // climber motors
     climber.climberLeft.id = climberMotor_IDLeft;
