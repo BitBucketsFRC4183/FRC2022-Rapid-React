@@ -61,8 +61,6 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         return new InstantCommand(() ->{
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
 
-            //this.drive.zeroStates(new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation));
-
             this.rgb.autoDriving();
         });
     }

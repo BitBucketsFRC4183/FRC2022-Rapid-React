@@ -315,16 +315,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     SmartDashboard.putNumber("/drivetrain/speed_modifier", this.speedModifier);
   }
 
-  public void zeroStates(Pose2d start)
-  {
-    SwerveModuleState zeroState = new SwerveModuleState(0, start.getRotation());
-    SwerveModuleState[] states = {zeroState, zeroState, zeroState, zeroState};
-    this.setStates(states);
-
-
-    this.odometry.resetPosition(start, start.getRotation());
-  }
-
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
