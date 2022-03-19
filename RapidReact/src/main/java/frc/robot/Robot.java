@@ -25,8 +25,10 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
+import frc.robot.utils.OldAutonomousPath;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -61,7 +63,9 @@ public class Robot extends TimedRobot {
   private boolean autoClimbStopLeftPressed;
   private boolean autoClimbStopRightPressed;
 
-  private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
+  private SendableChooser<OldAutonomousPath> autonomousPathChooser = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousPicker = new SendableChooser<>();
+
   private final SlewRateLimiter limiter = new SlewRateLimiter(3);
 
   /**
@@ -75,19 +79,22 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward)", AutonomousPath.TEST_PATH_1M_FORWARD);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", AutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
-    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
+    this.autonomousPathChooser.addOption("Nothing", OldAutonomousPath.NOTHING);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward)", OldAutonomousPath.TEST_PATH_1M_FORWARD);
+    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", OldAutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
+    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
+    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", OldAutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", OldAutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
+    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", OldAutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", OldAutonomousPath.MAIN_NO_TERMINAL);
+    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", OldAutonomousPath.MAIN_WITH_TERMINAL);
 
-    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
+    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", OldAutonomousPath.NOTHING);
+
+    Arrays.stream(AutonomousPath.values()).forEach(path -> this.autonomousPicker.addOption(path.dashboardName, path));
+    this.autonomousPicker.setDefaultOption(AutonomousPath.NOTHING.dashboardName, AutonomousPath.NOTHING);
 
     SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
 
