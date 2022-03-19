@@ -3,9 +3,17 @@ package frc.robot.utils;
 public enum AutonomousPath
 {
     NOTHING("Nothing", "Nothing"),
-    ONE_BALL__PRELOAD_TARMAC("1 Preload and Tarmac", "One Ball Auto: Exit Tarmac"),
-    ONE_BALL__PRELOAD_TARMAC_INTAKE("1.5 Preload, Tarmac, Intake Only", "One Ball Auto: Exit Tarmac, Intake"),
-    TWO_BALL__PRELOAD_TARMAC_INTAKE_SHOOT("2 Preload, Tarmac, Intake, Shoot", "Two Ball Auto: Exit Tarmac, Intake, Shoot Ball");
+
+    TEST_1M_FORWARD("Test Path (1m Forward)", "Test Path: 1m Forward"),
+    TEST_1M_FORWARD_1M_UP("Test Path (1m Forward, 1m Up)", "Test Path: 1m Forward, 1m Up"),
+
+    HARDCODED("", "Hardcoded"),
+
+    ONE_BALL("1 Ball Auto"),
+    ONE_BALL_INTAKE("1.5 Ball Auto"),
+    TWO_BALL("2 Ball Auto"),
+    THREE_BALL("3 Ball Auto"),
+    FOUR_BALL("4 Ball Auto");
 
     public final String pathName;
     public final String dashboardName;
@@ -14,5 +22,10 @@ public enum AutonomousPath
     {
         this.pathName = pathName;
         this.dashboardName = dashboardName;
+    }
+
+    AutonomousPath(String pathName)
+    {
+        this(pathName, pathName);
     }
 }

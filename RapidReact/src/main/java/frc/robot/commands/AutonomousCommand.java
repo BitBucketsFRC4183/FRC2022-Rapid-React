@@ -12,6 +12,7 @@ import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
 import frc.robot.log.Put;
 import frc.robot.subsystem.*;
+import frc.robot.utils.AutonomousPath;
 
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class AutonomousCommand extends SequentialCommandGroup
         this.initialPosition = Optional.empty();
     }
 
-    public AutonomousCommand shootPreload(boolean top)
+    public AutonomousCommand shootLoaded(boolean top)
     {
         this.addCommands(new InstantCommand(top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow())
                 .andThen(new WaitCommand(1)
@@ -54,6 +55,20 @@ public class AutonomousCommand extends SequentialCommandGroup
                                 }))));
 
         return this;
+    }
+
+    public AutonomousCommand dropIntake()
+    {
+        return this.executeAction((d, i, s) -> {
+            i.forceIntaking();
+            i.spinForward();
+            s.antiFeed();
+        });
+    }
+
+    public AutonomousCommand executeDrivePath(AutonomousPath path, double delay)
+    {
+        return this.executeDrivePath(path.pathName, delay);
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
