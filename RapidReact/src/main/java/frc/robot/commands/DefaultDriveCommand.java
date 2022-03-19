@@ -62,16 +62,21 @@ public class DefaultDriveCommand extends CommandBase {
             driveSubsystem.getGyroAngle()
           )
         );
-      }
         break;
+      }
       case "Robot Oriented":
+      if (xOutput == 0 && yOutput == 0 && rotationOutput == 0) {
+        driveSubsystem.stopSticky();
+      } else {
         ChassisSpeeds robotOrient = new ChassisSpeeds(
           xOutput,
           yOutput,
           rotationOutput
         );
         driveSubsystem.drive(robotOrient);
+      
         break;
+      }
     }
   }
 
