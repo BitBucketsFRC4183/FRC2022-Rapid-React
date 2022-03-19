@@ -384,14 +384,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(shooterSubsystem.isShooting()){
-      if(shooterSubsystem.isUpToSpeed()){
-        intakeSubsystem.ballManagementForward();
-      }
-      else{
-        intakeSubsystem.stopBallManagement();
-      }
-    }
+
   }
 
   /** This function is called once when the robot is disabled. */
