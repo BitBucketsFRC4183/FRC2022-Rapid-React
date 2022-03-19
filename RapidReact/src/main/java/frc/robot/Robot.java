@@ -157,7 +157,13 @@ public class Robot extends TimedRobot {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       this.info.log(LogLevel.GENERAL, "auton started");
 
-      AutonomousCommand command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem, this.rgbSubsystem);
+      AutonomousCommand command = new AutonomousCommand(
+              this.autonomousSubsystem,
+              this.drivetrainSubsystem,
+              this.intakeSubsystem,
+              this.shooterSubsystem,
+              this.rgbSubsystem
+      );
 
       switch(this.autonomousChooser.getSelected())
       {
