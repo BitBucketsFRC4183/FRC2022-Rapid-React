@@ -72,7 +72,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
     if (autoExtend.currentValue() && config.enablePneumatics) {
       intakeSolenoid.set(Value.kForward);
     }
-    // intake.set(ControlMode.PercentOutput, intakePercentOutput.currentValue());
+    intake.set(ControlMode.PercentOutput, intakePercentOutput.currentValue());
     intakeState.log("intaking");
     ballManagementForward();
   }
@@ -96,7 +96,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void toggle() {
     if (config.enablePneumatics && autoExtend.currentValue() == false) {
       if (!toggleState) {
-        // intakeSolenoid.set(Value.kForward);
+        intakeSolenoid.set(Value.kForward);
         intakeState.log("intaking");
         toggleState = true;
       } else {
@@ -109,7 +109,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   public void forceIntaking() {
     toggleState = true;
-    // intakeSolenoid.set(Value.kForward);
+    intakeSolenoid.set(Value.kForward);
     intakeState.log("intaking");
   }
 
