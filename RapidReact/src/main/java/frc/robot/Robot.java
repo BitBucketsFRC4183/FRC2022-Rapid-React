@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -55,14 +54,8 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
-  private boolean driverClimbEnabledPressed = true;
-  private boolean operatorClimbEnabledPressed;
-
-  private boolean autoClimbStopLeftPressed;
-  private boolean autoClimbStopRightPressed;
 
   private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
-  private final SlewRateLimiter limiter = new SlewRateLimiter(3);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -421,7 +414,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -544,68 +539,27 @@ public class Robot extends TimedRobot {
     if (config.enableClimberSubsystem) {
       buttons.toggleElevator.whenPressed(() -> climberSubsystem.elevatorToggle());
 
-      // buttons.driverEnableClimber
-      //   .whenPressed(
-      //     () -> {
-      //       driverClimbEnabledPressed = true;
-      //       if (operatorClimbEnabledPressed && driverClimbEnabledPressed) {
-      //         climberSubsystem.toggleClimberEnabled();
-      //         rgbSubsystem.climberEnabled();
-      //       }
-      //     }
-      //   )
-      //   .whenReleased(() -> driverClimbEnabledPressed = false);
-
-      buttons.elevatorExtend.whenPressed(
-        () -> {
-          rgbSubsystem.climberEnabled();
-          climberSubsystem.manualElevatorExtend();
-        }
+      buttons.toggleElevator.whenPressed(
+              () -> climberSubsystem.elevatorToggle()
       );
-      buttons.elevatorExtend.whenReleased(
-        () -> {
-          rgbSubsystem.normalize();
-          climberSubsystem.elevatorStop();
-        }
-      );
-
-      buttons.elevatorRetract.whenPressed(
-        () -> {
-          rgbSubsystem.climberEnabled();
-          climberSubsystem.manualElevatorRetract();
-        }
-      );
-      buttons.elevatorRetract.whenReleased(
-        () -> {
-          rgbSubsystem.normalize();
-          climberSubsystem.elevatorStop();
-        }
-      );
-      // removing auto climb
-      //   buttons.climbAuto.whenPressed(climberSubsystem::autoClimb);
-      //   buttons.climbAuto.whenReleased(climberSubsystem::autoClimbReleased);
-      //   buttons.resetClimbStuff.whenPressed(climberSubsystem::resetClimbStuff);
-
-      //   buttons.autoClimbStopLeft.whenPressed(
-      //     () -> {
-      //       autoClimbStopLeftPressed = true;
-      //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-      //       {
-      //         climberSubsystem.stopAutoClimb();
-      //       }
-      //     }
-      //   )
-      //   .whenReleased(() -> autoClimbStopLeftPressed = false);
-      //   buttons.autoClimbStopRight.whenPressed(
-      //     () -> {
-      //       autoClimbStopRightPressed = true;
-      //       if (autoClimbStopLeftPressed && autoClimbStopRightPressed)
-      //       {
-      //         climberSubsystem.stopAutoClimb();
-      //       }
-      //     }
-      //   )
-      //   .whenReleased(() -> autoClimbStopRightPressed = false);
+      
+      buttons.elevatorExtend.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorExtend();
+      });
+      buttons.elevatorExtend.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
+    
+      buttons.elevatorRetract.whenPressed(() -> {
+        rgbSubsystem.climberEnabled();
+        climberSubsystem.manualElevatorRetract();
+      });
+      buttons.elevatorRetract.whenReleased(() -> {
+        rgbSubsystem.normalize();
+        climberSubsystem.elevatorStop();
+      });
     }
 
     buttons.rgb.whenPressed(
