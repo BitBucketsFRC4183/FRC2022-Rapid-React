@@ -22,7 +22,6 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -111,6 +110,8 @@ public class Robot extends TimedRobot {
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
+  boolean wasShooting;
+
   /**
    * This function is called every robot packet, no matter the mode. Use this for
    * items like
@@ -126,6 +127,20 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     //this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
+
+    if (shooterSubsystem.isShooting()) {
+      wasShooting = true;
+      if (shooterSubsystem.isUpToSpeed()) {
+        rgbSubsystem.upToSpeed();
+      } else {
+        rgbSubsystem.notUpToSpeed();
+      }
+    } else {
+      if (wasShooting) {
+        rgbSubsystem.normalize();
+        wasShooting = false;
+      }
+    }
   }
 
   /**
@@ -150,32 +165,23 @@ public class Robot extends TimedRobot {
       this.info.log(LogLevel.GENERAL, "auton started");
 
       AutonomousCommand command = new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
+        this.autonomousSubsystem,
+        this.drivetrainSubsystem,
+        this.intakeSubsystem,
+        this.shooterSubsystem,
+        this.rgbSubsystem
       );
 
-      switch(this.autonomousChooser.getSelected())
-      {
+      switch (this.autonomousChooser.getSelected()) {
         case NOTHING:
-          command
-            .executeDrivePath(AutonomousPath.NOTHING, 0)
-            .complete();
+          command.executeDrivePath(AutonomousPath.NOTHING, 0).complete();
           break;
-
         case TEST_1M_FORWARD:
-          command
-            .executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0)
-            .complete();
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0).complete();
           break;
         case TEST_1M_FORWARD_1M_UP:
-          command
-            .executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0)
-            .complete();
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0).complete();
           break;
-
         case HARDCODED:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command
@@ -189,19 +195,11 @@ public class Robot extends TimedRobot {
             .shootLoaded(false)
             .complete();
           break;
-
         case ONE_BALL:
-          command
-            .shootLoaded(true)
-            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
-            .complete();
+          command.shootLoaded(true).executeDrivePath(AutonomousPath.ONE_BALL, 1).complete();
           break;
         case ONE_BALL_INTAKE:
-          command
-            .shootLoaded(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
-            .complete();
+          command.shootLoaded(true).dropIntake().executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1).complete();
           break;
         case TWO_BALL_HANGAR:
           command
@@ -236,7 +234,6 @@ public class Robot extends TimedRobot {
             .shootLoaded(true)
             .complete();
           break;
-
         default:
           info.log(LogLevel.CRITICAL, "Invalid Autonomous Path " + this.autonomousChooser.getSelected() + ".");
           return;
@@ -257,9 +254,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit()
-  {
-
+  public void teleopInit() {
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -274,9 +269,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -312,14 +305,16 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     if (config.enableDriveSubsystem) {
-      buttons.resetOdometry.whenPressed(() -> {
-        this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
-        this.drivetrainSubsystem.zeroGyro();
-      });
+      buttons.resetOdometry.whenPressed(
+        () -> {
+          this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+          this.drivetrainSubsystem.zeroGyro();
+        }
+      );
 
       buttons.slowDrive
-              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
-              .whenReleased(() -> this.drivetrainSubsystem.speedModifier = 1.0);
+        .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
+        .whenReleased(() -> this.drivetrainSubsystem.speedModifier = .75);
     }
 
     //Intake buttons
@@ -350,55 +345,69 @@ public class Robot extends TimedRobot {
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
 
-      buttons.hubSpinUp.whenPressed(() -> {
-        shooterSubsystem.spinUpTop();
-      });
-      buttons.hubSpinUp.whenReleased(() -> {
-        shooterSubsystem.stopShoot();
-        if (config.enableIntakeSubsystem) {
+      buttons.hubSpinUp.whenPressed(
+        () -> {
+          shooterSubsystem.spinUpTop();
+        }
+      );
+      buttons.hubSpinUp.whenReleased(
+        () -> {
+          shooterSubsystem.stopShoot();
+          if (config.enableIntakeSubsystem) {
+            intakeSubsystem.stopBallManagement();
+          }
+        }
+      );
+
+      buttons.feedInFire.whenPressed(
+        () -> {
+          shooterSubsystem.turnOnFeeders();
+          intakeSubsystem.ballManagementForward();
+        }
+      );
+      buttons.feedInFire.whenReleased(
+        () -> {
+          shooterSubsystem.turnOffFeeders();
           intakeSubsystem.stopBallManagement();
         }
-      });
-
-      buttons.feedInFire.whenPressed(() -> {
-        shooterSubsystem.turnOnFeeders();
-        intakeSubsystem.ballManagementForward();
-      });
-      buttons.feedInFire.whenReleased(() -> {
-        shooterSubsystem.turnOffFeeders();
-        intakeSubsystem.stopBallManagement();
-      });
-
+      );
     }
 
     //Climber buttons
     if (config.enableClimberSubsystem) {
+      buttons.toggleElevator.whenPressed(() -> climberSubsystem.elevatorToggle());
 
-      buttons.toggleElevator.whenPressed(
-              () -> climberSubsystem.elevatorToggle()
+      buttons.elevatorExtend.whenPressed(
+        () -> {
+          rgbSubsystem.climberEnabled();
+          climberSubsystem.manualElevatorExtend();
+        }
       );
-      
-      buttons.elevatorExtend.whenPressed(() -> {
-        rgbSubsystem.climberEnabled();
-        climberSubsystem.manualElevatorExtend();
-      });
-      buttons.elevatorExtend.whenReleased(() -> {
-        rgbSubsystem.normalize();
-        climberSubsystem.elevatorStop();
-      });
-    
-      buttons.elevatorRetract.whenPressed(() -> {
-        rgbSubsystem.climberEnabled();
-        climberSubsystem.manualElevatorRetract();
-      });
-      buttons.elevatorRetract.whenReleased(() -> {
-        rgbSubsystem.normalize();
-        climberSubsystem.elevatorStop();
-      });
+      buttons.elevatorExtend.whenReleased(
+        () -> {
+          rgbSubsystem.normalize();
+          climberSubsystem.elevatorStop();
+        }
+      );
+
+      buttons.elevatorRetract.whenPressed(
+        () -> {
+          rgbSubsystem.climberEnabled();
+          climberSubsystem.manualElevatorRetract();
+        }
+      );
+      buttons.elevatorRetract.whenReleased(
+        () -> {
+          rgbSubsystem.normalize();
+          climberSubsystem.elevatorStop();
+        }
+      );
     }
 
-    buttons.rgb.whenPressed(() -> {
-      rgbSubsystem.funnyButton();
-    });
+    buttons.rgb.whenPressed(
+      () -> {
+        rgbSubsystem.funnyButton();
+      }
+    );
   }
 }

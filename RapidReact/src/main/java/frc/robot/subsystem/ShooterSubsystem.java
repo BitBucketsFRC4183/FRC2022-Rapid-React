@@ -40,8 +40,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
-  private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
-  private final Loggable<Double> roller2OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller2OutputVel");
+  private final Loggable<Double> shooterTopOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterTopOutputVel");
+  private final Loggable<Double> shooterBottomOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterBottomOutputVel");
 
   private final Loggable<Double> topShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterActualSpeed");
   private final Loggable<Double> bottomShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterActualSpeed");
@@ -158,6 +158,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     {
       topError = shooterTop.getEncoder().getVelocity() - topSpeed.currentValue();
       bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeed.currentValue();
+
     }
     else
     {
@@ -185,8 +186,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     // flywheelSim.update(Constants.kRobotMainLoopPeriod);
     // encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
-    roller1OutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
-    roller2OutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
+    shooterTopOutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
+    shooterBottomOutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
   }
 
   @Override
