@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -24,7 +23,6 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
-import frc.robot.utils.OldAutonomousPath;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,8 +60,7 @@ public class Robot extends TimedRobot {
   private boolean autoClimbStopLeftPressed;
   private boolean autoClimbStopRightPressed;
 
-  private SendableChooser<OldAutonomousPath> autonomousPathChooser = new SendableChooser<>();
-  private SendableChooser<AutonomousPath> autonomousPicker = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousChooser = new SendableChooser<>();
 
   private final SlewRateLimiter limiter = new SlewRateLimiter(3);
 
@@ -78,24 +75,10 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    this.autonomousPathChooser.addOption("Nothing", OldAutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward)", OldAutonomousPath.TEST_PATH_1M_FORWARD);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", OldAutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", OldAutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
-    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", OldAutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", OldAutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", OldAutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", OldAutonomousPath.MAIN_NO_TERMINAL);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", OldAutonomousPath.MAIN_WITH_TERMINAL);
-
-    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", OldAutonomousPath.NOTHING);
-
-    Arrays.stream(AutonomousPath.values()).forEach(path -> this.autonomousPicker.addOption(path.dashboardName, path));
-    this.autonomousPicker.setDefaultOption(AutonomousPath.NOTHING.dashboardName, AutonomousPath.NOTHING);
-
-    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
+    //Autonomous Selection
+    Arrays.stream(AutonomousPath.values()).forEach(path -> this.autonomousChooser.addOption(path.dashboardName, path));
+    this.autonomousChooser.setDefaultOption(AutonomousPath.NOTHING.dashboardName, AutonomousPath.NOTHING);
+    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousChooser);
 
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
@@ -176,7 +159,7 @@ public class Robot extends TimedRobot {
 
       AutonomousCommand command = new AutonomousCommand(this.autonomousSubsystem, this.drivetrainSubsystem, this.intakeSubsystem, this.shooterSubsystem, this.rgbSubsystem);
 
-      switch(this.autonomousPicker.getSelected())
+      switch(this.autonomousChooser.getSelected())
       {
         case NOTHING:
           command
@@ -248,187 +231,9 @@ public class Robot extends TimedRobot {
             .shootLoaded(true)
             .complete();
           break;
-      }
 
-      switch (this.autonomousPathChooser.getSelected()) {
-        case NOTHING:
-          command =
-            new AutonomousFollowPathCommand(
-              this.autonomousSubsystem.buildPath(config.auto.nothingPath),
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.rgbSubsystem
-            );
-          break;
-        case TEST_PATH_1M_FORWARD:
-          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
-                  .executeDrivePath("Test Path (1m Forward)")
-                  .complete();
-          break;
-        case TEST_PATH_1M_FORWARD_1M_UP:
-          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
-                  .executeDrivePath("Test Path (1m Forward, 1m Up)")
-                  .complete();
-          break;
-        case PATH_PLANNER_DRIVE_BACKWARDS:
-          command =
-            new AutonomousFollowPathCommand(
-              this.autonomousSubsystem.buildPath(config.auto.driveBackwardsPath),
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.rgbSubsystem
-            );
-          break;
-        case HARDCODED_SHOOT_DRIVE_BACK:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootLoaded(true) //Shoot Preload
-              .executeAction((d, i, s) -> {
-                i.forceIntaking();
-                i.spinForward();
-                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-              })
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-              .complete();
-          break;
-
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
-          command =
-                  new AutonomousCommand(
-                          this.autonomousSubsystem,
-                          this.drivetrainSubsystem,
-                          this.intakeSubsystem,
-                          this.shooterSubsystem,
-                          this.rgbSubsystem
-                  )
-                          .shootLoaded(true) //Shoot Preload
-                          .executeAction((d, i, s) -> {
-                            i.forceIntaking();
-                            i.spinForward();
-                            s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-                          })
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-                          .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
-                          .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
-                          .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-                          .shootLoaded(false)
-                          .complete();
-          break;
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootLoaded(true) //Shoot Preload
-              .executeAction((d, i, s) -> {
-                i.forceIntaking();
-                i.spinForward();
-                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-              })
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
-              .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
-              .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-              .shootLoaded(true)
-              .complete();
-          break;
-        case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:
-          command =
-           new AutonomousCommand(
-             this.autonomousSubsystem,
-             this.drivetrainSubsystem,
-             this.intakeSubsystem,
-             this.shooterSubsystem,
-             this.rgbSubsystem
-           )
-             .shootLoaded(true)
-             .executeAction((d, i, s) -> i.spinForward())
-             .executeDrivePath("Drive Backwards Single Ball", 1)
-             .executeAction((d, i, s) -> i.stopSpin(), 2)
-             .complete();
-          break;
-        case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
-          command =
-           new AutonomousCommand(
-             this.autonomousSubsystem,
-             this.drivetrainSubsystem,
-             this.intakeSubsystem,
-             this.shooterSubsystem,
-             this.rgbSubsystem
-           )
-             .shootLoaded(true)
-             .executeDrivePath("Drive Backwards Double Ball P1")
-             .executeAction((d, i, s) -> i.spinForward())
-             .executeDrivePath("Drive Backwards Double Ball P2", 2)
-             .executeAction((d, i, s) -> i.stopSpin(), 2)
-             .complete();
-          break;
-        case MAIN_NO_TERMINAL:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootLoaded(true) //Shoot Preload
-              .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
-              .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
-              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
-              .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
-              .executeAction((d, i, s) -> {
-                s.turnOnFeeders(); //Activate feeders
-                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
-              }, 2) //Wait 2 seconds for the shooter to spin up
-              .complete();
-          break;
-        case MAIN_WITH_TERMINAL:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootLoaded(true) //Shoot Preload
-              .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
-              .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
-              .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
-              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
-              .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
-              .executeAction((d, i, s) -> {
-                s.turnOnFeeders(); //Activate feeders
-                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
-              }, 2) //Wait 2 seconds for the shooter to spin up
-              .complete();
-          break;
         default:
-          info.log(
-            LogLevel.CRITICAL,
-            "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
-          );
-
+          info.log(LogLevel.CRITICAL, "Invalid Autonomous Path " + this.autonomousChooser.getSelected() + ".");
           return;
       }
 
