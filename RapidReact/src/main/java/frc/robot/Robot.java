@@ -203,11 +203,19 @@ public class Robot extends TimedRobot {
             .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
             .complete();
           break;
-        case TWO_BALL:
+        case TWO_BALL_HANGAR:
           command
             .shootLoaded(true)
             .dropIntake()
-            .executeDrivePath(AutonomousPath.TWO_BALL, 1)
+            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)
+            .shootLoaded(true)
+            .complete();
+          break;
+        case TWO_BALL_WALL:
+          command
+            .shootLoaded(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)
             .shootLoaded(true)
             .complete();
           break;
