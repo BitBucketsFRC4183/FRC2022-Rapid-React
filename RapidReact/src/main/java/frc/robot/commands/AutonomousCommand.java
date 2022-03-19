@@ -111,7 +111,7 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         this.initialPosition = Optional.of(new Pose2d(
                 state.poseMeters.getTranslation(),
-                new Rotation2d(0)//state.holonomicRotation
+                state.holonomicRotation
         ));
     }
 
