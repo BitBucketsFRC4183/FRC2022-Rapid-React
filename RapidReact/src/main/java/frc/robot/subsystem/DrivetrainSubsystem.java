@@ -27,7 +27,6 @@ import frc.robot.log.BucketLog;
 import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
 import frc.robot.log.Put;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -91,7 +90,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
 
-
   @Override
   public void init() {
     this.maxVelocity_metersPerSecond =
@@ -105,7 +103,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
       maxVelocity_metersPerSecond /
       Math.hypot(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
 
-   SmartDashboard.putNumber("/drivetrain/max_angular_velocity", this.maxAngularVelocity_radiansPerSecond);
+    SmartDashboard.putNumber("/drivetrain/max_angular_velocity", this.maxAngularVelocity_radiansPerSecond);
 
     this.speedModifier = 1.0;
 
@@ -129,7 +127,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
         moduleBackRightLocation
       );
 
-    this.gyro = new AHRS(SPI.Port.kMXP, (byte)200);
+    this.gyro = new AHRS(SPI.Port.kMXP, (byte) 200);
 
     //this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -148,50 +146,54 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
     // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
-    
+
     // By default we will use Falcon 500s in standard configuration. But if you use
     // a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
     // Setup motor configuration
-    this.moduleFrontLeft = Mk4SwerveModuleHelper.createFalcon500(
-            //Smart Dashboard Tab
-            tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
-            Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
-            config.frontLeftModuleDriveMotor_ID, //Drive Motor
-            config.frontLeftModuleSteerMotor_ID, //Steer Motor
-            config.frontLeftModuleSteerEncoder_ID, //Steer Encoder
-            config.drive.frontLeftModuleSteerOffset //Steer Offset
-    );
+    this.moduleFrontLeft =
+      Mk4SwerveModuleHelper.createFalcon500(
+        //Smart Dashboard Tab
+        tab.getLayout("Front Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(0, 0),
+        Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
+        config.frontLeftModuleDriveMotor_ID, //Drive Motor
+        config.frontLeftModuleSteerMotor_ID, //Steer Motor
+        config.frontLeftModuleSteerEncoder_ID, //Steer Encoder
+        config.drive.frontLeftModuleSteerOffset //Steer Offset
+      );
 
-    this.moduleFrontRight = Mk4SwerveModuleHelper.createFalcon500(
-            //Smart Dashboard Tab
-            tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
-            Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
-            config.frontRightModuleDriveMotor_ID, //Drive Motor
-            config.frontRightModuleSteerMotor_ID, //Steer Motor
-            config.frontRightModuleSteerEncoder_ID, //Steer Encoder
-            config.drive.frontRightModuleSteerOffset //Steer Offset
-    );
+    this.moduleFrontRight =
+      Mk4SwerveModuleHelper.createFalcon500(
+        //Smart Dashboard Tab
+        tab.getLayout("Front Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(2, 0),
+        Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
+        config.frontRightModuleDriveMotor_ID, //Drive Motor
+        config.frontRightModuleSteerMotor_ID, //Steer Motor
+        config.frontRightModuleSteerEncoder_ID, //Steer Encoder
+        config.drive.frontRightModuleSteerOffset //Steer Offset
+      );
 
-    this.moduleBackLeft = Mk4SwerveModuleHelper.createFalcon500(
-            //Smart Dashboard Tab
-            tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
-            Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
-            config.backLeftModuleDriveMotor_ID, //Drive Motor
-            config.backLeftModuleSteerMotor_ID, //Steer Motor
-            config.backLeftModuleSteerEncoder_ID, //Steer Encoder
-            config.drive.backLeftModuleSteerOffset //Steer Offset
-    );
+    this.moduleBackLeft =
+      Mk4SwerveModuleHelper.createFalcon500(
+        //Smart Dashboard Tab
+        tab.getLayout("Back Left Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(4, 0),
+        Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
+        config.backLeftModuleDriveMotor_ID, //Drive Motor
+        config.backLeftModuleSteerMotor_ID, //Steer Motor
+        config.backLeftModuleSteerEncoder_ID, //Steer Encoder
+        config.drive.backLeftModuleSteerOffset //Steer Offset
+      );
 
-    this.moduleBackRight = Mk4SwerveModuleHelper.createFalcon500(
-            //Smart Dashboard Tab
-            tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
-            Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
-            config.backRightModuleDriveMotor_ID, //Drive Motor
-            config.backRightModuleSteerMotor_ID, //Steer Motor
-            config.backRightModuleSteerEncoder_ID, //Steer Encoder
-            config.drive.backRightModuleSteerOffset //Steer Offset
-    );
+    this.moduleBackRight =
+      Mk4SwerveModuleHelper.createFalcon500(
+        //Smart Dashboard Tab
+        tab.getLayout("Back Right Module", BuiltInLayouts.kList).withSize(2, 4).withPosition(6, 0),
+        Mk4SwerveModuleHelper.GearRatio.L2, //Gear Ratio
+        config.backRightModuleDriveMotor_ID, //Drive Motor
+        config.backRightModuleSteerMotor_ID, //Steer Motor
+        config.backRightModuleSteerEncoder_ID, //Steer Encoder
+        config.drive.backRightModuleSteerOffset //Steer Offset
+      );
 
     // We will also create a list of all the modules so we can easily access them later
     modules = new ArrayList<>(List.of(moduleFrontLeft, moduleFrontRight, moduleBackLeft, moduleBackRight));
@@ -200,13 +202,11 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     this.gyro.calibrate();
   }
 
-  public double getMaxVelocity()
-  {
+  public double getMaxVelocity() {
     return this.maxVelocity_metersPerSecond * this.speedModifier;
   }
 
-  public double getMaxAngularVelocity()
-  {
+  public double getMaxAngularVelocity() {
     return this.maxAngularVelocity_radiansPerSecond * this.speedModifier;
   }
 
@@ -236,25 +236,43 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void periodic() {
-
     this.odometry.update(
-            this.gyro.getRotation2d(), //Gyro Angle
-            new SwerveModuleState(this.moduleFrontLeft.getDriveVelocity(), new Rotation2d(this.moduleFrontLeft.getSteerAngle())), //Front Left
-            new SwerveModuleState(this.moduleFrontRight.getDriveVelocity(), new Rotation2d(this.moduleFrontRight.getSteerAngle())), //Front Right
-            new SwerveModuleState(this.moduleBackLeft.getDriveVelocity(), new Rotation2d(this.moduleBackLeft.getSteerAngle())), //Back Left
-            new SwerveModuleState(this.moduleBackRight.getDriveVelocity(), new Rotation2d(this.moduleBackRight.getSteerAngle())) //Back Right
-    );
+        this.gyro.getRotation2d(), //Gyro Angle
+        new SwerveModuleState(
+          this.moduleFrontLeft.getDriveVelocity(),
+          new Rotation2d(this.moduleFrontLeft.getSteerAngle())
+        ), //Front Left
+        new SwerveModuleState(
+          this.moduleFrontRight.getDriveVelocity(),
+          new Rotation2d(this.moduleFrontRight.getSteerAngle())
+        ), //Front Right
+        new SwerveModuleState(
+          this.moduleBackLeft.getDriveVelocity(),
+          new Rotation2d(this.moduleBackLeft.getSteerAngle())
+        ), //Back Left
+        new SwerveModuleState(
+          this.moduleBackRight.getDriveVelocity(),
+          new Rotation2d(this.moduleBackRight.getSteerAngle())
+        ) //Back Right
+      );
 
-      this.dumpInfo();
+    this.dumpInfo();
+    double gyroAngle = getGyroAngle().getDegrees();
+    gyroAngle %= 360;
+    if (gyroAngle < -180) {
+      gyroAngle += 360;
+    } else if (gyroAngle > 180) {
+      gyroAngle -= 360;
+    }
+    double finalGyroAngle = gyroAngle;
+    SmartDashboard.putNumber("RobotAngleRadians", finalGyroAngle);
   }
 
-  public void setStates(SwerveModuleState[] states)
-  {
+  public void setStates(SwerveModuleState[] states) {
     if (states != null) {
       SwerveDriveKinematics.desaturateWheelSpeeds(states, this.getMaxVelocity());
 
-      for(int i = 0; i < 4; i++)
-      {
+      for (int i = 0; i < 4; i++) {
         //System.out.println("Module " + i + ": " + states[i].angle.getDegrees());
         modules.get(i).set(velocityToDriveVolts(states[i].speedMetersPerSecond), states[i].angle.getRadians());
       }
@@ -276,7 +294,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   private double velocityToDriveVolts(double speedMetersPerSecond) {
     double ff = this.feedForward.calculate(speedMetersPerSecond);
     return MathUtil.clamp(ff, -this.config.maxVoltage, this.config.maxVoltage);
-
     // below is a naive guess for output volts, linear map of desired velocity to volts
     // return speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE;
   }
@@ -290,14 +307,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     //this.dumpInfo();
   }
 
-  public void zeroGyro()
-  {
+  public void zeroGyro() {
     gyro.reset();
     gyro.setAngleAdjustment(0);
   }
 
-  public void resetGyroWithOffset(Rotation2d r)
-  {
+  public void resetGyroWithOffset(Rotation2d r) {
     gyro.reset();
     gyro.setAngleAdjustment(r.getDegrees());
   }
@@ -306,13 +321,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     return this.gyro.getRotation2d();
   }
 
-  private void dumpInfo()
-  {
+  private void dumpInfo() {
     StringJoiner s = new StringJoiner("\n")
-            .add("-----------------")
-            .add("Odometry Position: " + this.odometry.getPoseMeters())
-            .add("Drivetrain Gyro Heading: " + this.gyro.getRotation2d())
-            .add("-----------------");
+      .add("-----------------")
+      .add("Odometry Position: " + this.odometry.getPoseMeters())
+      .add("Drivetrain Gyro Heading: " + this.gyro.getRotation2d())
+      .add("-----------------");
 
     //odometryLoggable.log(LogLevel.DEBUG, s.toString());
 
@@ -321,12 +335,10 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     SmartDashboard.putNumber("/drivetrain/speed_modifier", this.speedModifier);
   }
 
-  public void zeroStates(Pose2d start)
-  {
+  public void zeroStates(Pose2d start) {
     SwerveModuleState zeroState = new SwerveModuleState(0, start.getRotation());
-    SwerveModuleState[] states = {zeroState, zeroState, zeroState, zeroState};
+    SwerveModuleState[] states = { zeroState, zeroState, zeroState, zeroState };
     this.setStates(states);
-
 
     this.odometry.resetPosition(start, start.getRotation());
   }
@@ -334,10 +346,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   public void stop() {
     this.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
   }
-  
+
   @Override
   public void disable() {
     stop();
   }
-  
 }
