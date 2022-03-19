@@ -229,7 +229,6 @@ public class Robot extends TimedRobot {
           break;
         case FOUR_BALL:
           command
-            .shootLoaded(true)
             .dropIntake()
             .executeDrivePath("4 Ball Auto P1", 1)
             .shootLoaded(true)
