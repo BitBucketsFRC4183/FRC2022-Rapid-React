@@ -25,13 +25,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Changeable<Double> bottomSpeed = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
-    -2200.0
+    2200.0
   );
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 1600.0);
   private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeedLow",
-    -2000.0
+    2000.0
   );
   private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.5);
   private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", -0.7);
