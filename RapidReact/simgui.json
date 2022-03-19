@@ -347,6 +347,9 @@
       "climber": {
         "open": true
       },
+      "drivetrain": {
+        "open": true
+      },
       "intake": {
         "open": true
       },
