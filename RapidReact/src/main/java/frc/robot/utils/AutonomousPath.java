@@ -11,7 +11,8 @@ public enum AutonomousPath
 
     ONE_BALL("1 Ball Auto"),
     ONE_BALL_INTAKE("1.5 Ball Auto"),
-    TWO_BALL("2 Ball Auto"),
+    TWO_BALL_HANGAR("2 Ball Auto Hangar"),
+    TWO_BALL_WALL("2 Ball Auto Wall"),
     THREE_BALL("3 Ball Auto"),
     FOUR_BALL("4 Ball Auto");
 
