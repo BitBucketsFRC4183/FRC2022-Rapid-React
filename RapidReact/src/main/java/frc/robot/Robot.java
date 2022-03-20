@@ -229,9 +229,9 @@ public class Robot extends TimedRobot {
           command
             .shootLoaded(true)
             .dropIntake()
-            .executeDrivePath("4 Ball Auto P1", 1)
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
             .shootLoaded(true)
-            .executeDrivePath("4 Ball Auto P2", 2)
+            .executeDrivePath("4 Ball Auto P2", 1)
             .shootLoaded(true)
             .complete();
           break;
