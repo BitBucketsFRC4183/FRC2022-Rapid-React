@@ -22,6 +22,9 @@ public class AutoShootCommand extends InstantCommand
         this.shooter = shooter;
         this.intake = intake;
         this.rgb = rgb;
+
+        //Default Parameters
+        this.withParameters(2, true);
     }
 
     public AutoShootCommand withParameters(int ballCount, boolean top)
@@ -42,6 +45,7 @@ public class AutoShootCommand extends InstantCommand
     {
         return new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()) //Activate shooter
                 .andThen(new WaitUntilCommand(() -> this.shooter.isUpToSpeed()) //Wait until shooter is up to speed
+                .andThen(() -> this.rgb.autoShootingSingle()) //Very important RGB
                 .andThen(() -> { //Activate feeders (and BMS just in case)
                     this.shooter.turnOnFeeders();
                     this.intake.ballManagementForward();
@@ -54,6 +58,7 @@ public class AutoShootCommand extends InstantCommand
     {
         return new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()) //Activate shooter
                 .andThen(new WaitUntilCommand(() -> this.shooter.isUpToSpeed()) //Wait until shooter is up to speed
+                .andThen(() -> this.rgb.autoShootingDouble()) //Very important RGB
                 .andThen(() -> { //Activate feeders (and BMS just in case)
                     this.shooter.turnOnFeeders();
                     this.intake.ballManagementForward();

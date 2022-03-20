@@ -59,6 +59,16 @@ public class RGBSubsystem extends BitBucketsSubsystem {
     motor.set(BlinkenColors.Colors_Red.getValue());  
   }
 
+  public void autoShootingSingle()
+  {
+    motor.set(BlinkenColors.Strobe_White.getValue());
+  }
+
+  public void autoShootingDouble()
+  {
+    motor.set(BlinkenColors.Strobe_Gold.getValue());
+  }
+
   @Override
   public void periodic() {
     // TODO Auto-generated method stub

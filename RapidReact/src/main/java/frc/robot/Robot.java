@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
@@ -22,6 +23,7 @@ import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -185,54 +187,61 @@ public class Robot extends TimedRobot {
         case HARDCODED:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command
-            .shootLoaded(true) //Shoot Preload
+            .shootOne(true) //Shoot Preload
             .dropIntake()
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
             .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
             .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
             .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-            .shootLoaded(false)
+            .shootOne(false)
             .complete();
           break;
         case ONE_BALL:
-          command.shootLoaded(true).executeDrivePath(AutonomousPath.ONE_BALL, 1).complete();
+          command
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
+            .complete();
           break;
         case ONE_BALL_INTAKE:
-          command.shootLoaded(true).dropIntake().executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1).complete();
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
+            .complete();
           break;
         case TWO_BALL_HANGAR:
           command
-            .shootLoaded(true)
+            .shootOne(true)
             .dropIntake()
             .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)
-            .shootLoaded(true)
+            .shootOne(true)
             .complete();
           break;
         case TWO_BALL_WALL:
           command
-            .shootLoaded(true)
+            .shootOne(true)
             .dropIntake()
             .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)
-            .shootLoaded(true)
+            .shootOne(true)
             .complete();
           break;
         case THREE_BALL:
           command
-            .shootLoaded(true)
+            .shootOne(true)
             .dropIntake()
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
-            .shootLoaded(true)
+            .shootTwo(true)
             .complete();
           break;
         case FOUR_BALL:
           command
-            .shootLoaded(true)
+            .shootOne(true)
             .dropIntake()
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
-            .shootLoaded(true)
+            .shootTwo(true)
             .executeDrivePath("4 Ball Auto P2", 1)
-            .shootLoaded(true)
+            .shootOne(true)
             .complete();
           break;
         default:
@@ -359,6 +368,8 @@ public class Robot extends TimedRobot {
           }
         }
       );
+
+      buttons.autoShoot.whenPressed(() -> new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).schedule());
 
       buttons.feedInFire.whenPressed(
         () -> {
