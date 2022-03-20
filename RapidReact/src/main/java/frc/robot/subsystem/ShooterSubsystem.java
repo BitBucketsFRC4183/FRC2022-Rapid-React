@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.REVPhysicsSim;
@@ -33,8 +32,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     2000.0
   );
-  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.5);
-  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.7);
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.7);
+  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.8);
 
   private float hubSpinUpSpeedDeadband = 300;
 
