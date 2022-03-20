@@ -88,6 +88,8 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         return new InstantCommand(() -> {
             this.state.log(LogLevel.GENERAL, "Finished Following a Trajectory!");
 
+            this.drive.stopSticky();
+
             this.rgb.autoNotDriving();
         });
     }
