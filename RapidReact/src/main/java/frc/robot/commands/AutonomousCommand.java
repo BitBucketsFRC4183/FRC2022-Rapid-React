@@ -42,18 +42,19 @@ public class AutonomousCommand extends SequentialCommandGroup
     public AutonomousCommand shootLoaded(boolean top)
     {
         this.addCommands(
-            new InstantCommand(top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow())
-            .andThen(new WaitCommand(1)
+            new InstantCommand(()->drive.stopSticky())
+            .andThen(top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow())
+            .andThen(new WaitCommand(1.5)
             .andThen(() -> {
                 this.shooter.turnOnFeeders();
                 this.intake.ballManagementForward();
             })
-            .andThen(new WaitCommand(0.5)
+            .andThen(new WaitCommand(1)
             .andThen(() -> {
                 this.shooter.stopShoot();
 
                 this.shooter.turnOffFeeders();
-                this.intake.ballManagementBackward();
+                this.intake.stopBallManagement();
             }))));
 
         return this;
@@ -111,14 +112,14 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         this.initialPosition = Optional.of(new Pose2d(
                 state.poseMeters.getTranslation(),
-                new Rotation2d(0)//state.holonomicRotation
+                state.holonomicRotation
         ));
     }
 
     public AutonomousCommand complete()
     {
         this.addCommands(this.actionToCommand((d, i, s) -> {
-            d.stop();
+            d.stopSticky();
             i.stopSpin();
             s.disable();
         }));

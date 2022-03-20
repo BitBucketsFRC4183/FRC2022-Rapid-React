@@ -89,8 +89,8 @@ public class Config {
 
     public String nothingPath = "Nothing";
 
-    public double maxPathFollowVelocity = 1;
-    public double maxPathFollowAcceleration = 1;
+    public double maxPathFollowVelocity = 3;
+    public double maxPathFollowAcceleration = 2;
 
     public PID pathXYPID = new PID(2.2956, 0, 0);
     public PID pathThetaPID = new PID(3, 0, 0.02);

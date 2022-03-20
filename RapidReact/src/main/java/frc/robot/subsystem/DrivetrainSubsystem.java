@@ -107,7 +107,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
    SmartDashboard.putNumber("/drivetrain/max_angular_velocity", this.maxAngularVelocity_radiansPerSecond);
 
-    this.speedModifier = 1.0;
+    this.speedModifier = .75;
 
     this.moduleFrontLeftLocation =
       new Translation2d(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
