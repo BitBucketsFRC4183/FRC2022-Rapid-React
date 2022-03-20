@@ -14,7 +14,8 @@ public enum AutonomousPath
     TWO_BALL_HANGAR("2 Ball Auto Hangar"),
     TWO_BALL_WALL("2 Ball Auto Wall"),
     THREE_BALL("3 Ball Auto"),
-    FOUR_BALL("4 Ball Auto");
+    FOUR_BALL("4 Ball Auto"),
+    FIVE_BALL("5 Ball Auto");
 
     public final String pathName;
     public final String dashboardName;

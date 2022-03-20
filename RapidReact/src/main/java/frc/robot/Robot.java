@@ -241,6 +241,18 @@ public class Robot extends TimedRobot {
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
             .shootTwo(true)
             .executeDrivePath("4 Ball Auto P2", 1)
+            .executeDrivePath("4 Ball Auto P3", 0.5)
+            .shootOne(true)
+            .complete();
+          break;
+        case FIVE_BALL:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto P2", 1)
+            .executeDrivePath("4 Ball Auto P3", 3)
             .shootOne(true)
             .complete();
           break;
