@@ -33,8 +33,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     2000.0
   );
-  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", -0.5);
-  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", -0.7);
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.5);
+  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.7);
 
   private float hubSpinUpSpeedDeadband = 300;
 
@@ -116,7 +116,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void init() {
     shooterTop = MotorUtils.makeSpark(config.shooter.shooterTop);
     shooterBottom = MotorUtils.makeSpark(config.shooter.shooterBottom);
-    feeder = new WPI_TalonSRX(config.shooterFeeder_ID);
+    feeder = MotorUtils.makeSRX(config.shooter.feeder);
 
     //limit the voltage of the feeder motors
     feeder.configVoltageCompSaturation(11);
