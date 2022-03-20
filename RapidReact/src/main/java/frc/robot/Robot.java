@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -241,6 +242,18 @@ public class Robot extends TimedRobot {
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
             .shootTwo(true)
             .executeDrivePath("4 Ball Auto P2", 1)
+            .executeDrivePath("4 Ball Auto P3", 0.5)
+            .shootOne(true)
+            .complete();
+          break;
+        case FIVE_BALL:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto P2", 1)
+            .executeDrivePath("4 Ball Auto P3", 3)
             .shootOne(true)
             .complete();
           break;
@@ -279,7 +292,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if((int)Timer.getMatchTime() == 30) this.rgbSubsystem.alertMatchTimeLeft();
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
