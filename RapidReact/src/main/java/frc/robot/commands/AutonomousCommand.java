@@ -12,6 +12,7 @@ import frc.robot.log.LogLevel;
 import frc.robot.log.Loggable;
 import frc.robot.log.Put;
 import frc.robot.subsystem.*;
+import frc.robot.utils.AutonomousPath;
 
 import java.util.Optional;
 
@@ -38,22 +39,37 @@ public class AutonomousCommand extends SequentialCommandGroup
         this.initialPosition = Optional.empty();
     }
 
-    public AutonomousCommand shootPreload(boolean top)
+    private AutonomousCommand shootLoaded(int ballCount, boolean top)
     {
-        this.addCommands(new InstantCommand(top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow())
-                .andThen(new WaitCommand(1)
-                        .andThen(() -> {
-                            this.shooter.turnOnFeeders();
-                            this.intake.ballManagementForward();
-                        }).andThen(new WaitCommand(0.5)
-                                .andThen(() -> {
-                                    this.shooter.stopShoot();
-
-                                    this.shooter.turnOffFeeders();
-                                    this.intake.ballManagementBackward();
-                                }))));
-
+        this.addCommands(
+                new AutoShootCommand(this.shooter, this.intake, this.rgb)
+                        .withParameters(ballCount, top)
+        );
         return this;
+    }
+
+    public AutonomousCommand shootOne(boolean top)
+    {
+        return this.shootLoaded(1, top);
+    }
+
+    public AutonomousCommand shootTwo(boolean top)
+    {
+        return this.shootLoaded(2, top);
+    }
+
+    public AutonomousCommand dropIntake()
+    {
+        return this.executeAction((d, i, s) -> {
+            i.forceIntaking();
+            i.spinForward();
+            s.antiFeed();
+        });
+    }
+
+    public AutonomousCommand executeDrivePath(AutonomousPath path, double delay)
+    {
+        return this.executeDrivePath(path.pathName, delay);
     }
 
     public AutonomousCommand executeDrivePath(String pathPlanner)
@@ -94,14 +110,14 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         this.initialPosition = Optional.of(new Pose2d(
                 state.poseMeters.getTranslation(),
-                new Rotation2d(0)//state.holonomicRotation
+                state.holonomicRotation
         ));
     }
 
     public AutonomousCommand complete()
     {
         this.addCommands(this.actionToCommand((d, i, s) -> {
-            d.stop();
+            d.stopSticky();
             i.stopSpin();
             s.disable();
         }));

@@ -1,6 +1,5 @@
 package frc.robot.config;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.config.MotorConfig.EncoderType;
 
 public class Config {
@@ -89,15 +88,12 @@ public class Config {
   public class AutonomousConfig {
 
     public String nothingPath = "Nothing";
-    public String genericPath = "Path";
-    public String driveBackwardsPath = "Drive Backwards";
 
-    public double maxPathFollowVelocity = 1;
-    public double maxPathFollowAcceleration = 1;
+    public double maxPathFollowVelocity = 3;
+    public double maxPathFollowAcceleration = 2;
 
     public PID pathXYPID = new PID(2.2956, 0, 0);
     public PID pathThetaPID = new PID(3, 0, 0.02);
-    public TrapezoidProfile.Constraints pathTrapezoidProfileConstraints = new TrapezoidProfile.Constraints(this.maxPathFollowVelocity, this.maxPathFollowAcceleration);
 
     public AutonomousConfig() {}
   }

@@ -11,10 +11,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.AutonomousFollowPathCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -26,6 +25,7 @@ import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
 
-  private SendableChooser<AutonomousPath> autonomousPathChooser = new SendableChooser<>();
+  private SendableChooser<AutonomousPath> autonomousChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -68,21 +68,10 @@ public class Robot extends TimedRobot {
     this.buttons = new Buttons();
     this.field = new Field2d();
 
-    this.autonomousPathChooser.addOption("Nothing", AutonomousPath.NOTHING);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward)", AutonomousPath.TEST_PATH_1M_FORWARD);
-    this.autonomousPathChooser.addOption("Test Path (1m Forward, 1m Up)", AutonomousPath.TEST_PATH_1M_FORWARD_1M_UP);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH);
-    this.autonomousPathChooser.addOption("Hardcoded: Shoot Preload, Drive Back and Shoot Loaded Low", AutonomousPath.HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW);
-    this.autonomousPathChooser.addOption("PathPlanner: Drive Backwards", AutonomousPath.PATH_PLANNER_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload and Drive Backwards", AutonomousPath.PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS);
-    this.autonomousPathChooser.addOption("PathPlanner: Shoot Preload, Intake Two Balls", AutonomousPath.PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - No Terminal", AutonomousPath.MAIN_NO_TERMINAL);
-    this.autonomousPathChooser.addOption("PathPlanner: Main - With Terminal", AutonomousPath.MAIN_WITH_TERMINAL);
-
-    this.autonomousPathChooser.setDefaultOption("Default (Nothing)", AutonomousPath.NOTHING);
-
-    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousPathChooser);
+    //Autonomous Selection
+    Arrays.stream(AutonomousPath.values()).forEach(path -> this.autonomousChooser.addOption(path.dashboardName, path));
+    this.autonomousChooser.setDefaultOption(AutonomousPath.NOTHING.dashboardName, AutonomousPath.NOTHING);
+    SmartDashboard.putData("Autonomous Path Chooser", this.autonomousChooser);
 
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
@@ -123,6 +112,8 @@ public class Robot extends TimedRobot {
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
   }
 
+  boolean wasShooting;
+
   /**
    * This function is called every robot packet, no matter the mode. Use this for
    * items like
@@ -138,6 +129,20 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     //this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
+
+    if (shooterSubsystem.isShooting()) {
+      wasShooting = true;
+      if (shooterSubsystem.isUpToSpeed()) {
+        rgbSubsystem.upToSpeed();
+      } else {
+        rgbSubsystem.notUpToSpeed();
+      }
+    } else {
+      if (wasShooting) {
+        rgbSubsystem.normalize();
+        wasShooting = false;
+      }
+    }
   }
 
   /**
@@ -161,186 +166,86 @@ public class Robot extends TimedRobot {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       this.info.log(LogLevel.GENERAL, "auton started");
 
-      Command command;
-      switch (this.autonomousPathChooser.getSelected()) {
-        case NOTHING:
-          command =
-            new AutonomousFollowPathCommand(
-              this.autonomousSubsystem.buildPath(config.auto.nothingPath),
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.rgbSubsystem
-            );
-          break;
-        case TEST_PATH_1M_FORWARD:
-          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
-                  .executeDrivePath("Test Path (1m Forward)")
-                  .complete();
-          break;
-        case TEST_PATH_1M_FORWARD_1M_UP:
-          command = new AutonomousCommand(autonomousSubsystem, drivetrainSubsystem, intakeSubsystem, shooterSubsystem, rgbSubsystem)
-                  .executeDrivePath("Test Path (1m Forward, 1m Up)")
-                  .complete();
-          break;
-        case PATH_PLANNER_DRIVE_BACKWARDS:
-          command =
-            new AutonomousFollowPathCommand(
-              this.autonomousSubsystem.buildPath(config.auto.driveBackwardsPath),
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.rgbSubsystem
-            );
-          break;
-        case HARDCODED_SHOOT_DRIVE_BACK:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootPreload(true) //Shoot Preload
-              .executeAction((d, i, s) -> {
-                i.forceIntaking();
-                i.spinForward();
-                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-              })
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-              .complete();
-          break;
+      AutonomousCommand command = new AutonomousCommand(
+        this.autonomousSubsystem,
+        this.drivetrainSubsystem,
+        this.intakeSubsystem,
+        this.shooterSubsystem,
+        this.rgbSubsystem
+      );
 
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_LOW:
+      switch (this.autonomousChooser.getSelected()) {
+        case NOTHING:
+          command.executeDrivePath(AutonomousPath.NOTHING, 0).complete();
+          break;
+        case TEST_1M_FORWARD:
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0).complete();
+          break;
+        case TEST_1M_FORWARD_1M_UP:
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0).complete();
+          break;
+        case HARDCODED:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
-          command =
-                  new AutonomousCommand(
-                          this.autonomousSubsystem,
-                          this.drivetrainSubsystem,
-                          this.intakeSubsystem,
-                          this.shooterSubsystem,
-                          this.rgbSubsystem
-                  )
-                          .shootPreload(true) //Shoot Preload
-                          .executeAction((d, i, s) -> {
-                            i.forceIntaking();
-                            i.spinForward();
-                            s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-                          })
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-                          .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-                          .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
-                          .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
-                          .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-                          .shootPreload(false)
-                          .complete();
+          command
+            .shootOne(true) //Shoot Preload
+            .dropIntake()
+            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
+            .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
+            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
+            .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+            .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
+            .shootOne(false)
+            .complete();
           break;
-        case HARDCODED_SHOOT_DRIVE_BACK_AND_SHOOT_HIGH:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootPreload(true) //Shoot Preload
-              .executeAction((d, i, s) -> {
-                i.forceIntaking();
-                i.spinForward();
-                s.antiFeed(); // Run the feeder in reverse so that ball stays inside bms
-              })
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-              .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-              .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
-              .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
-              .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-              .shootPreload(true)
-              .complete();
+        case ONE_BALL:
+          command
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
+            .complete();
           break;
-        case PATH_PLANNER_SHOOT_AND_DRIVE_BACKWARDS:
-          command =
-           new AutonomousCommand(
-             this.autonomousSubsystem,
-             this.drivetrainSubsystem,
-             this.intakeSubsystem,
-             this.shooterSubsystem,
-             this.rgbSubsystem
-           )
-             .shootPreload(true)
-             .executeAction((d, i, s) -> i.spinForward())
-             .executeDrivePath("Drive Backwards Single Ball", 1)
-             .executeAction((d, i, s) -> i.stopSpin(), 2)
-             .complete();
+        case ONE_BALL_INTAKE:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
+            .complete();
           break;
-        case PATH_PLANNER_SHOOT_INTAKE_TWO_BALLS:
-          command =
-           new AutonomousCommand(
-             this.autonomousSubsystem,
-             this.drivetrainSubsystem,
-             this.intakeSubsystem,
-             this.shooterSubsystem,
-             this.rgbSubsystem
-           )
-             .shootPreload(true)
-             .executeDrivePath("Drive Backwards Double Ball P1")
-             .executeAction((d, i, s) -> i.spinForward())
-             .executeDrivePath("Drive Backwards Double Ball P2", 2)
-             .executeAction((d, i, s) -> i.stopSpin(), 2)
-             .complete();
+        case TWO_BALL_HANGAR:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)
+            .shootOne(true)
+            .complete();
           break;
-        case MAIN_NO_TERMINAL:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootPreload(true) //Shoot Preload
-              .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
-              .executeDrivePath("Main P2 Ball", 2.0) //Skip terminal, go straight to the second ball
-              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
-              .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
-              .executeAction((d, i, s) -> {
-                s.turnOnFeeders(); //Activate feeders
-                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
-              }, 2) //Wait 2 seconds for the shooter to spin up
-              .complete();
+        case TWO_BALL_WALL:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)
+            .shootOne(true)
+            .complete();
           break;
-        case MAIN_WITH_TERMINAL:
-          command =
-            new AutonomousCommand(
-              this.autonomousSubsystem,
-              this.drivetrainSubsystem,
-              this.intakeSubsystem,
-              this.shooterSubsystem,
-              this.rgbSubsystem
-            )
-              .shootPreload(true) //Shoot Preload
-              .executeDrivePath("Main P1") //Drive to the first ball
-              .executeAction((d, i, s) -> i.spinForward()) //Activate intake
-              .executeDrivePath("Main P2 Terminal", 2.0) //Head to the Terminal ball and push it in
-              .executeDrivePath("Main P2.5 Terminal") //Head to the second ball
-              .executeAction((d, i, s) -> i.spinBackward(), 2.0) //Turn off the intake after getting the ball
-              .executeDrivePath("Main P3") //Drive to the base of the hub
-              .executeAction((d, i, s) -> s.spinUpTop()) //Shoot - Spin up Top
-              .executeAction((d, i, s) -> {
-                s.turnOnFeeders(); //Activate feeders
-                i.ballManagementForward(); //Activate BMS in case a ball doesn't get pulled by the feeders
-              }, 2) //Wait 2 seconds for the shooter to spin up
-              .complete();
+        case THREE_BALL:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
+            .shootTwo(true)
+            .complete();
+          break;
+        case FOUR_BALL:
+          command
+            .shootOne(true)
+            .dropIntake()
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto P2", 1)
+            .shootOne(true)
+            .complete();
           break;
         default:
-          info.log(
-            LogLevel.CRITICAL,
-            "Invalid Autonomous Path! (SendableChooser Output: " + this.autonomousPathChooser.getSelected() + ")"
-          );
-
+          info.log(LogLevel.CRITICAL, "Invalid Autonomous Path " + this.autonomousChooser.getSelected() + ".");
           return;
       }
 
@@ -359,9 +264,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit()
-  {
-
+  public void teleopInit() {
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -376,9 +279,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-
-  }
+  public void teleopPeriodic() {}
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -414,14 +315,16 @@ public class Robot extends TimedRobot {
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
     if (config.enableDriveSubsystem) {
-      buttons.resetOdometry.whenPressed(() -> {
-        this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
-        this.drivetrainSubsystem.zeroGyro();
-      });
+      buttons.resetOdometry.whenPressed(
+        () -> {
+          this.drivetrainSubsystem.setOdometry(new Pose2d(0, 0, new Rotation2d(0)));
+          this.drivetrainSubsystem.zeroGyro();
+        }
+      );
 
       buttons.slowDrive
-              .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
-              .whenReleased(() -> this.drivetrainSubsystem.speedModifier = 1.0);
+        .whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25)
+        .whenReleased(() -> this.drivetrainSubsystem.speedModifier = .75);
     }
 
     //Intake buttons
@@ -452,55 +355,71 @@ public class Robot extends TimedRobot {
       buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
       buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
 
-      buttons.hubSpinUp.whenPressed(() -> {
-        shooterSubsystem.spinUpTop();
-      });
-      buttons.hubSpinUp.whenReleased(() -> {
-        shooterSubsystem.stopShoot();
-        if (config.enableIntakeSubsystem) {
+      buttons.hubSpinUp.whenPressed(
+        () -> {
+          shooterSubsystem.spinUpTop();
+        }
+      );
+      buttons.hubSpinUp.whenReleased(
+        () -> {
+          shooterSubsystem.stopShoot();
+          if (config.enableIntakeSubsystem) {
+            intakeSubsystem.stopBallManagement();
+          }
+        }
+      );
+
+      buttons.autoShoot.whenPressed(() -> new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).schedule());
+
+      buttons.feedInFire.whenPressed(
+        () -> {
+          shooterSubsystem.turnOnFeeders();
+          intakeSubsystem.ballManagementForward();
+        }
+      );
+      buttons.feedInFire.whenReleased(
+        () -> {
+          shooterSubsystem.turnOffFeeders();
           intakeSubsystem.stopBallManagement();
         }
-      });
-
-      buttons.feedInFire.whenPressed(() -> {
-        shooterSubsystem.turnOnFeeders();
-        intakeSubsystem.ballManagementForward();
-      });
-      buttons.feedInFire.whenReleased(() -> {
-        shooterSubsystem.turnOffFeeders();
-        intakeSubsystem.stopBallManagement();
-      });
-
+      );
     }
 
     //Climber buttons
     if (config.enableClimberSubsystem) {
+      buttons.toggleElevator.whenPressed(() -> climberSubsystem.elevatorToggle());
 
-      buttons.toggleElevator.whenPressed(
-              () -> climberSubsystem.elevatorToggle()
+      buttons.elevatorExtend.whenPressed(
+        () -> {
+          rgbSubsystem.climberEnabled();
+          climberSubsystem.manualElevatorExtend();
+        }
       );
-      
-      buttons.elevatorExtend.whenPressed(() -> {
-        rgbSubsystem.climberEnabled();
-        climberSubsystem.manualElevatorExtend();
-      });
-      buttons.elevatorExtend.whenReleased(() -> {
-        rgbSubsystem.normalize();
-        climberSubsystem.elevatorStop();
-      });
-    
-      buttons.elevatorRetract.whenPressed(() -> {
-        rgbSubsystem.climberEnabled();
-        climberSubsystem.manualElevatorRetract();
-      });
-      buttons.elevatorRetract.whenReleased(() -> {
-        rgbSubsystem.normalize();
-        climberSubsystem.elevatorStop();
-      });
+      buttons.elevatorExtend.whenReleased(
+        () -> {
+          rgbSubsystem.normalize();
+          climberSubsystem.elevatorStop();
+        }
+      );
+
+      buttons.elevatorRetract.whenPressed(
+        () -> {
+          rgbSubsystem.climberEnabled();
+          climberSubsystem.manualElevatorRetract();
+        }
+      );
+      buttons.elevatorRetract.whenReleased(
+        () -> {
+          rgbSubsystem.normalize();
+          climberSubsystem.elevatorStop();
+        }
+      );
     }
 
-    buttons.rgb.whenPressed(() -> {
-      rgbSubsystem.funnyButton();
-    });
+    buttons.rgb.whenPressed(
+      () -> {
+        rgbSubsystem.funnyButton();
+      }
+    );
   }
 }

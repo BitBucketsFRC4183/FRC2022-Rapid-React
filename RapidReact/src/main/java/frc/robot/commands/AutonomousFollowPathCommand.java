@@ -39,9 +39,27 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
 
     private CustomPPSwerveControllerCommand createTrajectoryFollowerCommand()
     {
-        PIDController xController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
-        PIDController yController = new PIDController(this.autoConfig.pathXYPID.getKP(), this.autoConfig.pathXYPID.getKI(), this.autoConfig.pathXYPID.getKD());
-        ProfiledPIDController thetaController = new ProfiledPIDController(this.autoConfig.pathThetaPID.getKP(), this.autoConfig.pathThetaPID.getKI(), this.autoConfig.pathThetaPID.getKD(), new TrapezoidProfile.Constraints(this.drive.getMaxAngularVelocity(), this.drive.getMaxAngularVelocity() * 10.0));
+        PIDController xController = new PIDController(
+                this.autoConfig.pathXYPID.getKP(),
+                this.autoConfig.pathXYPID.getKI(),
+                this.autoConfig.pathXYPID.getKD()
+        );
+
+        PIDController yController = new PIDController(
+                this.autoConfig.pathXYPID.getKP(),
+                this.autoConfig.pathXYPID.getKI(),
+                this.autoConfig.pathXYPID.getKD()
+        );
+
+        ProfiledPIDController thetaController = new ProfiledPIDController(
+                this.autoConfig.pathThetaPID.getKP(),
+                this.autoConfig.pathThetaPID.getKI(),
+                this.autoConfig.pathThetaPID.getKD(),
+                new TrapezoidProfile.Constraints(
+                        this.drive.getMaxAngularVelocity(), //Angular Velocity
+                        this.drive.getMaxAngularVelocity() * 10.0) //Angular Acceleration
+        );
+
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         return new CustomPPSwerveControllerCommand(
@@ -61,8 +79,6 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
         return new InstantCommand(() ->{
             this.state.log(LogLevel.GENERAL, "Starting to Follow a Trajectory!");
 
-            //this.drive.zeroStates(new Pose2d(this.trajectory.getInitialState().poseMeters.getTranslation(), this.trajectory.getInitialState().holonomicRotation));
-
             this.rgb.autoDriving();
         });
     }
@@ -71,6 +87,8 @@ public class AutonomousFollowPathCommand extends SequentialCommandGroup
     {
         return new InstantCommand(() -> {
             this.state.log(LogLevel.GENERAL, "Finished Following a Trajectory!");
+
+            this.drive.stopSticky();
 
             this.rgb.autoNotDriving();
         });
