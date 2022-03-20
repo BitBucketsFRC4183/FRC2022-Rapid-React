@@ -89,10 +89,11 @@ public class Config {
 
     public String nothingPath = "Nothing";
 
-    public double maxPathFollowVelocity = 3;
+    public double maxPathFollowVelocity = 1.5;
     public double maxPathFollowAcceleration = 2;
 
-    public PID pathXYPID = new PID(2.2956, 0, 0);
+    //public PID pathXYPID = new PID(2.2956, 0, 0);
+    public PID pathXYPID = new PID(3.2416, 0, 0);
     public PID pathThetaPID = new PID(3, 0, 0.02);
 
     public AutonomousConfig() {}
@@ -176,12 +177,11 @@ public class Config {
 
     // Shooter
     shooter.shooterTop.id = shooterTop_ID;
-
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00002, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/400);
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/1.497E-10, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/100);
     shooter.shooterBottom.inverted = false;
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/1.497E-10, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/100);
     shooter.shooterBottom.inverted = true;
 
     shooter.feeder.id = shooterFeeder_ID;
