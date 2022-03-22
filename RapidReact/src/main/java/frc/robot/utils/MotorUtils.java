@@ -197,16 +197,18 @@ public class MotorUtils {
     // configure position PID constants
     pidController.setFF(motorConfig.positionPIDF.getKF(), positionSlot);
     pidController.setP(motorConfig.positionPIDF.getKP(), positionSlot);
-    pidController.setD(motorConfig.positionPIDF.getKD(), positionSlot);
-    pidController.setI(motorConfig.positionPIDF.getKI(), positionSlot);
+    pidController.setD(motorConfig.positionPIDF.getKI(), positionSlot);
+    pidController.setI(motorConfig.positionPIDF.getKD(), positionSlot);
     pidController.setIZone(motorConfig.positionPIDF.getIZone(), positionSlot);
+    pidController.setOutputRange(-1, 1, positionSlot);
 
     // configure velocity PID constants
     pidController.setFF(motorConfig.velocityPIDF.getKF(), velocitySlot);
     pidController.setP(motorConfig.velocityPIDF.getKP(), velocitySlot);
-    pidController.setI(motorConfig.velocityPIDF.getKD(), velocitySlot);
-    pidController.setD(motorConfig.velocityPIDF.getKI(), velocitySlot);
+    pidController.setI(motorConfig.velocityPIDF.getKI(), velocitySlot);
+    pidController.setD(motorConfig.velocityPIDF.getKD(), velocitySlot);
     pidController.setIZone(motorConfig.velocityPIDF.getIZone(), velocitySlot);
+    pidController.setOutputRange(-1, 1, velocitySlot);
     motor.setInverted(motorConfig.inverted);
     encoder = motor.getEncoder();
     /* Zero the sensor */
