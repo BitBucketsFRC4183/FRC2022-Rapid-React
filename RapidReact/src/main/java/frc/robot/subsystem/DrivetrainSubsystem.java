@@ -89,7 +89,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
 
-  private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
+  private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626); //new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
 
 
   @Override
