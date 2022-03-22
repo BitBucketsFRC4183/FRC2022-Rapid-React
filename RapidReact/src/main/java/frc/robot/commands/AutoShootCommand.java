@@ -34,27 +34,81 @@ public class AutoShootCommand extends SequentialCommandGroup
 
     private Command getSingleBallShootCommand()
     {
-        return new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()) //Activate shooter
-                .andThen(new WaitCommand(0.3) //new WaitUntilCommand(() -> this.shooter.isUpToSpeed()) //Wait until shooter is up to speed
-                        .andThen(() -> this.rgb.autoShootingSingle()) //Very important RGB
-                        .andThen(this::enableFeedersBMS) //Feed ball
-                        .andThen(new WaitCommand(0.2) //Wait a bit, then turn off everything (how long it takes ball to shoot)
-                                .andThen(this::disableShooterFeedersBMS)));
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        command.addCommands(
+
+                //Activate shooter
+                new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()),
+
+                //Wait for shooter to get up to speed
+                new WaitCommand(0.3), //new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
+
+                //Extremely important RGB
+                new InstantCommand(() -> this.rgb.autoShootingSingle()),
+
+                //Activate feeders for ball #1
+                new InstantCommand(this::enableFeedersBMS),
+
+                //Wait for ball #1 to shoot
+                new WaitCommand(0.2),
+
+                //Turn off everything
+                new InstantCommand(this::disableShooterFeedersBMS)
+        );
+
+        return command;
     }
 
     private Command getDoubleBallShootCommand()
     {
-        return new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()) //Activate shooter
-                .andThen(new WaitUntilCommand(() -> this.shooter.isUpToSpeed()) //Wait until shooter is up to speed
-                        .andThen(() -> this.rgb.autoShootingDouble()) //Very important RGB
-                        .andThen(this::enableFeedersBMS) //Activate feeders (and BMS just in case)
-                        .andThen(new WaitCommand(0.2) //Wait, then turn off feeders (how long ball #1 takes to shoot)
-                                .andThen(this::disableFeedersBMS)
-                                .andThen(new WaitUntilCommand(() -> this.shooter.isUpToSpeed()) //Wait for shooter to get up to speed again (pause between shots, shooting ball #2)
-                                        .andThen(new WaitCommand(0.7) //Extra pause between shots
-                                                .andThen(this::enableFeedersBMS)
-                                                .andThen(new WaitCommand(0.5) //Wait, then turn off everything (how long it takes ball #2 to feed and shoot)
-                                                        .andThen(this::disableShooterFeedersBMS))))));
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        command.addCommands(
+
+                //Activate shooter
+                new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()),
+
+                //Wait until shooter is up to speed
+                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
+
+                //Extremely important RGB
+                new InstantCommand(() -> this.rgb.autoShootingDouble()),
+
+                //Activate feeders
+                new InstantCommand(this::enableFeedersBMS),
+
+                //Wait for ball #1 to shoot
+                new WaitCommand(0.2),
+
+                //Turn off feeders (ball #1 is finished shooting)
+                new InstantCommand(this::disableFeedersBMS),
+
+                //Wait until shooter is up to speed again
+                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
+
+                //Extra pause between shots
+                new WaitCommand(0.7),
+
+                //Activate feeders for ball #2
+                new InstantCommand(this::enableFeedersBMS),
+
+                //Wait for ball #2 to shoot (takes longer because it travels farther to the shooter)
+                new WaitCommand(0.5),
+
+                //Turn off everything
+                new InstantCommand(this::disableShooterFeedersBMS)
+        );
+
+        return command;
+    }
+
+    @Override
+    public void cancel()
+    {
+        this.disableShooterFeedersBMS();
+
+        super.cancel();
     }
 
     private void enableFeedersBMS()
