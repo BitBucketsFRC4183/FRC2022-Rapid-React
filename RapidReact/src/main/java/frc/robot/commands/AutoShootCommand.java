@@ -42,7 +42,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()),
 
                 //Wait for shooter to get up to speed
-                new WaitCommand(0.3), //new WaitUntilCommand(() -> this.shooter.isUpToSpeed())
+                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
 
                 //Extremely important RGB
                 new InstantCommand(() -> this.rgb.autoShootingSingle()),
