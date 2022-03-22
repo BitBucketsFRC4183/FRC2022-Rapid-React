@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -34,13 +35,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     2000.0
   );
 
-  private final SimpleMotorFeedforward topFeedForward = new SimpleMotorFeedforward(0.05899, 0.12236, 0.0024555);
-  private final SimpleMotorFeedforward bottomFeedForward = new SimpleMotorFeedforward(0.05899, 0.12236, 0.0024555);
-
   private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.7);
   private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.8);
 
-  private float hubSpinUpSpeedDeadband = 300;
+  private float hubSpinUpSpeedDeadband = 50;
 
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
@@ -85,12 +83,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void spinUpTop() {
     shootState.log("TopShooting");
 
-    double ffTopSpeed = this.topFeedForward.calculate(topSpeed.currentValue());
-    double ffBottomSpeed = this.bottomFeedForward.calculate(bottomSpeed.currentValue());
-
-    shooterTop.getPIDController().setFF(ffTopSpeed);
-    shooterBottom.getPIDController().setFF(ffBottomSpeed);
-
     shooterTop.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     shooterBottom.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
 
@@ -99,12 +91,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public void shootLow() {
     shootState.log("LowShooting");
-
-    double ffTopSpeed = this.topFeedForward.calculate(topSpeedLow.currentValue());
-    double ffBottomSpeed = this.bottomFeedForward.calculate(bottomSpeedLow.currentValue());
-
-    shooterTop.getPIDController().setFF(ffTopSpeed);
-    shooterBottom.getPIDController().setFF(ffBottomSpeed);
 
     shooterTop.getPIDController().setReference(topSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
     shooterBottom.getPIDController().setReference(bottomSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
@@ -158,7 +144,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public boolean isUpToSpeed() {
     return (
-       true ||
       motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
       motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
     );
@@ -183,8 +168,12 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
       bottomError = shooterTop.getEncoder().getVelocity();
     }
 
-    topShooterError.log(LogLevel.GENERAL, topError);
-    bottomShooterError.log(LogLevel.GENERAL, bottomError);
+//    SmartDashboard.putNumber("shooter/topShooterError", topError);
+//    SmartDashboard.putNumber("shooter/bottomShooterError", bottomError);
+//    SmartDashboard.putNumber("shooter/topPercentOutput", shooterTop.getAppliedOutput());
+//    SmartDashboard.putNumber("shooter/bottomPercentOutput", shooterBottom.getAppliedOutput());
+     topShooterError.log(LogLevel.DEBUG, topError);
+     bottomShooterError.log(LogLevel.DEBUG, bottomError);
   }
 
   @Override
