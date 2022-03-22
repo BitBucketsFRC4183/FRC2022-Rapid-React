@@ -1,6 +1,7 @@
 package frc.robot.subsystem;
 
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,17 +28,17 @@ public class IntakeSubsystemTest extends SubsystemTest {
 
     @Test
     public void testSpinForward() {
+        // set the intake output
+        var output = SmartDashboard.getNumber("intake/intakePercentOutput", .6);
 
         // spin the intake motor
         subsystem.spinForward();
-
-
 
         // wait for the CTRE sim to update (weird)
         waitForCTREUpdate();
 
         // verify we applied 66% of the bus voltage to the motor (this is the default speed)
-        assertEquals(-0.60 * 11.5, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
+        assertEquals(-output * 11.5, subsystem.intake.getSimCollection().getMotorOutputLeadVoltage(), DELTA);
     }
 
 }

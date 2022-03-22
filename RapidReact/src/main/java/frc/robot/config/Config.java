@@ -54,8 +54,8 @@ public class Config {
   public static int intakeMotor_ID = 18;
 
   // Shooter
-  public int shooterTop_ID = 14;
-  public int shooterBottom_ID = 15;
+  public int shooterTop_ID = 15;
+  public int shooterBottom_ID = 14;
 
   public int shooterFeeder_ID = 19;
 
@@ -89,10 +89,11 @@ public class Config {
 
     public String nothingPath = "Nothing";
 
-    public double maxPathFollowVelocity = 3;
+    public double maxPathFollowVelocity = 1.5;
     public double maxPathFollowAcceleration = 2;
 
-    public PID pathXYPID = new PID(2.2956, 0, 0);
+    //public PID pathXYPID = new PID(2.2956, 0, 0);
+    public PID pathXYPID = new PID(3.2416, 0, 0);
     public PID pathThetaPID = new PID(3, 0, 0.02);
 
     public AutonomousConfig() {}
@@ -120,15 +121,15 @@ public class Config {
 
     public double drivetrainTrackWidth_meters = 0.6096; // set trackwidth
 
-    public double drivetrainWheelBase_meters = 0.7112 ; // set wheelbase
+    public double drivetrainWheelBase_meters = 0.7112; // set wheelbase
 
     public double frontLeftModuleSteerOffset = -Math.toRadians(232.55); // set front left steer offset
 
-    public double frontRightModuleSteerOffset = -Math.toRadians(331.96-180); // set front right steer offset
+    public double frontRightModuleSteerOffset = -Math.toRadians(331.96 - 180); // set front right steer offset
 
     public double backLeftModuleSteerOffset = -Math.toRadians(255.49); // set back left steer offset
 
-    public double backRightModuleSteerOffset = -Math.toRadians(70.66+180); // set back right steer offset
+    public double backRightModuleSteerOffset = -Math.toRadians(70.66 + 180); // set back right steer offset
 
     public DriveConfig() {}
   }
@@ -175,28 +176,32 @@ public class Config {
     intake.ballManagementMotor.inverted = true;
 
     // Shooter
+    // For FeedFoward: 7 V (out of 12) gave us 56/54 rotations / second during characterization
+    // we found it was a bit more accurate if we went with 60 rot/s, hence the 60*60 below
+    // For kI, the rev docs (https://docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control)
+    // say that kI is multiplied by the error and added to output for each pid loop. I think these pid loops run at 1khz,
+    // so divide the kI by 1000 otherwise it's too large.
     shooter.shooterTop.id = shooterTop_ID;
-
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.00002, /*I*/0.5, /*D*/0, /*F*/0.00018, /*izone*/400);
-    shooter.shooterBottom.inverted = false;
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.0001 / 2 / 2, /*I*/0.001 / 1000, /*D*/0, /*F*/(7.0 / 12.0) / (60 * 60), /*izone*/300);
+    shooter.shooterTop.inverted = true;
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.00001, /*I*/0.1, /*D*/0, /*F*/0.00018, /*izone*/150);
-    shooter.shooterBottom.inverted = true;
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.0001 / 2 / 2, /*I*/0.001 / 1000, /*D*/0, /*F*/(7.0 / 12.0) / (60 * 60), /*izone*/300);
+    shooter.shooterBottom.inverted = false;
 
     shooter.feeder.id = shooterFeeder_ID;
     shooter.feeder.inverted = true;
-    
+
     ///////////////////
     // climber motors
     climber.climberLeft.id = climberMotor_IDLeft;
     climber.climberLeft.encoderType = EncoderType.Quadrature;
-    // TODO: actually tune these 
+    // TODO: actually tune these
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
     climber.climberLeft.motionMagicCruiseVelocity = 19000;
     climber.climberLeft.motionMagicAcceleration = 10000;
 
-    // TODO: 
+    // TODO:
     // What's the difference between the two sorts of peak outputs? Add a comment. Also, it might be nice to write down the encoder step to inch (and time unit to second) conversion in a comment.
     // Oh, I think it's the primary and aux PID output limits, right? Maybe you should call it that, not distance/ turning; this isn't a drivetrain that turns
     climber.climberLeft.positionPIDF = new PIDF(/*P*/0.1, /*I*/0, /*D*/0, /*F*/0.00018);
@@ -207,7 +212,7 @@ public class Config {
 
     climber.climberRight.id = climberMotor_IDRight;
     climber.climberRight.encoderType = EncoderType.Quadrature;
-    // TODO: actually tune these 
+    // TODO: actually tune these
     // https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#motion-magic-position-velocity-current-closed-loop-closed-loop
     climber.climberRight.motionMagicCruiseVelocity = 19000;
     climber.climberRight.motionMagicAcceleration = 10000;
