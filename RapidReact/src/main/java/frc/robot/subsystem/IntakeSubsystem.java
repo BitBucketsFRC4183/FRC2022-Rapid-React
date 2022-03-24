@@ -65,6 +65,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   @Override
   public void disable() {
     intake.set(0);
+    ballManagement.set(0);
   }
 
   //intaking, outtaking, and stop the intake
