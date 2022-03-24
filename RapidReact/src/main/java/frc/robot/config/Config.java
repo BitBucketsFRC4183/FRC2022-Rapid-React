@@ -191,9 +191,6 @@ public class Config {
 
     shooter.feeder.id = shooterFeeder_ID;
     shooter.feeder.inverted = true;
-
-    shooter.feeder.id = shooterFeeder_ID;
-    shooter.feeder.inverted = true;
     
     ///////////////////
     // climber motors
