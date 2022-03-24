@@ -5,12 +5,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.REVPhysicsSim;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.log.*;
@@ -22,8 +20,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private CANSparkMax shooterBottom;
   private TalonSRX feeder;
 
-  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 4150.0);
-  private final Changeable<Double> bottomSpeed = BucketLog.changeable(
+  private final Changeable<Double> topSpeedHigh = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 4150.0);
+  private final Changeable<Double> bottomSpeedHigh = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
     2200.0
@@ -83,8 +81,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void spinUpTop() {
     shootState.log("TopShooting");
 
-    shooterTop.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
-    shooterBottom.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterTop.getPIDController().setReference(topSpeedHigh.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setReference(bottomSpeedHigh.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
 
     shooterState = ShooterState.TOP;
   }
@@ -142,10 +140,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     );
   }
 
-  public boolean isUpToSpeed() {
+  public boolean isUpToHighSpeed() {
     return (
-      motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
-      motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
+      motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue()) &&
+      motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue())
     );
   }
 
@@ -158,8 +156,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     double bottomError;
     if (isShooting())
     {
-      topError = shooterTop.getEncoder().getVelocity() - topSpeed.currentValue();
-      bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeed.currentValue();
+      if (shooterState == ShooterState.LOW) {
+        topError = shooterTop.getEncoder().getVelocity() - topSpeedLow.currentValue();
+        bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeedLow.currentValue();
+      } else {
+        topError = shooterTop.getEncoder().getVelocity() - topSpeedHigh.currentValue();
+        bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeedHigh.currentValue();
+      }
 
     }
     else

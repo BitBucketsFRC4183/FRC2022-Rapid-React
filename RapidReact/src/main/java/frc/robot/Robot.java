@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
 
     if (shooterSubsystem.isShooting()) {
       wasShooting = true;
-      if (shooterSubsystem.isUpToSpeed()) {
+      if (shooterSubsystem.isUpToHighSpeed()) {
         rgbSubsystem.upToSpeed();
       } else {
         rgbSubsystem.notUpToSpeed();
