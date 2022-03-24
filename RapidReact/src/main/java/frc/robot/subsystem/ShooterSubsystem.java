@@ -2,7 +2,6 @@ package frc.robot.subsystem;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.REVPhysicsSim;
@@ -21,8 +20,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private CANSparkMax shooterBottom;
   private TalonSRX feeder;
 
-  private final Changeable<Double> topSpeed = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 4150.0);
-  private final Changeable<Double> bottomSpeed = BucketLog.changeable(
+  private final Changeable<Double> topSpeedHigh = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 4150.0);
+  private final Changeable<Double> bottomSpeedHigh = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
     2200.0
@@ -33,15 +32,16 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     "shooter/bottomShooterSpeedLow",
     2000.0
   );
-  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.5);
-  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.7);
 
-  private float hubSpinUpSpeedDeadband = 300;
+  private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.7);
+  private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.8);
+
+  private float hubSpinUpSpeedDeadband = 50;
 
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
-  private final Loggable<Double> roller1OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller1OutputVel");
-  private final Loggable<Double> roller2OutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/Roller2OutputVel");
+  private final Loggable<Double> shooterTopOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterTopOutputVel");
+  private final Loggable<Double> shooterBottomOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterBottomOutputVel");
 
   private final Loggable<Double> topShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterActualSpeed");
   private final Loggable<Double> bottomShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterActualSpeed");
@@ -81,17 +81,18 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void spinUpTop() {
     shootState.log("TopShooting");
 
-    shooterTop.getPIDController().setReference(topSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
-    shooterBottom.getPIDController().setReference(bottomSpeed.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterTop.getPIDController().setReference(topSpeedHigh.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setReference(bottomSpeedHigh.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+
     shooterState = ShooterState.TOP;
   }
 
   public void shootLow() {
     shootState.log("LowShooting");
+
     shooterTop.getPIDController().setReference(topSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
-    shooterBottom
-      .getPIDController()
-      .setReference(bottomSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setReference(bottomSpeedLow.currentValue(), ControlType.kVelocity, MotorUtils.velocitySlot);
+
     shooterState = ShooterState.LOW;
   }
 
@@ -139,12 +140,18 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     );
   }
 
-  public boolean isUpToSpeed() {
+  public boolean isUpToHighSpeed() {
     return (
-      // true ||
-      motorIsInSpeedDeadband(shooterTop, topSpeed.currentValue()) &&
-      motorIsInSpeedDeadband(shooterBottom, bottomSpeed.currentValue())
+      motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue()) &&
+      motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue())
     );
+  }
+
+  public boolean isUpToLowSpeed() {
+    return (
+            motorIsInSpeedDeadband(shooterTop, topSpeedLow.currentValue())  &&
+            motorIsInSpeedDeadband(shooterBottom, topSpeedLow.currentValue())
+            );
   }
 
   @Override
@@ -156,8 +163,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     double bottomError;
     if (isShooting())
     {
-      topError = shooterTop.getEncoder().getVelocity() - topSpeed.currentValue();
-      bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeed.currentValue();
+      if (shooterState == ShooterState.LOW) {
+        topError = shooterTop.getEncoder().getVelocity() - topSpeedLow.currentValue();
+        bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeedLow.currentValue();
+      } else {
+        topError = shooterTop.getEncoder().getVelocity() - topSpeedHigh.currentValue();
+        bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeedHigh.currentValue();
+      }
+
     }
     else
     {
@@ -165,8 +178,12 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
       bottomError = shooterTop.getEncoder().getVelocity();
     }
 
-    topShooterError.log(LogLevel.GENERAL, topError);
-    bottomShooterError.log(LogLevel.GENERAL, bottomError);
+//    SmartDashboard.putNumber("shooter/topShooterError", topError);
+//    SmartDashboard.putNumber("shooter/bottomShooterError", bottomError);
+//    SmartDashboard.putNumber("shooter/topPercentOutput", shooterTop.getAppliedOutput());
+//    SmartDashboard.putNumber("shooter/bottomPercentOutput", shooterBottom.getAppliedOutput());
+     topShooterError.log(LogLevel.DEBUG, topError);
+     bottomShooterError.log(LogLevel.DEBUG, bottomError);
   }
 
   @Override
@@ -185,8 +202,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     // flywheelSim.update(Constants.kRobotMainLoopPeriod);
     // encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
-    roller1OutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
-    roller2OutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
+    shooterTopOutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
+    shooterBottomOutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
   }
 
   @Override

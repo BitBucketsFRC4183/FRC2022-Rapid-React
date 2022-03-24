@@ -89,7 +89,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   private final Loggable<String> odometryLoggable = BucketLog.loggable(Put.STRING, "drivetrain/odometry");
 
-  private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
+  private SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626); //new SimpleMotorFeedforward(0.12817, 2.3423, 0.53114);
 
 
   @Override
@@ -107,7 +107,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
    SmartDashboard.putNumber("/drivetrain/max_angular_velocity", this.maxAngularVelocity_radiansPerSecond);
 
-    this.speedModifier = 1.0;
+    this.speedModifier = .75;
 
     this.moduleFrontLeftLocation =
       new Translation2d(config.drive.drivetrainTrackWidth_meters / 2.0, config.drive.drivetrainWheelBase_meters / 2.0);
@@ -211,6 +211,12 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   public void stopSticky() {
+
+    if(true) {
+      this.stop();
+      return;
+    }
+
     setStates(new SwerveModuleState[]{
       new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Front Left
       new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Front Right
@@ -319,16 +325,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     SmartDashboard.putString("/drivetrain/odometry_position", this.odometry.getPoseMeters().toString());
     SmartDashboard.putString("/drivetrain/gyro_heading", this.gyro.getRotation2d().toString());
     SmartDashboard.putNumber("/drivetrain/speed_modifier", this.speedModifier);
-  }
-
-  public void zeroStates(Pose2d start)
-  {
-    SwerveModuleState zeroState = new SwerveModuleState(0, start.getRotation());
-    SwerveModuleState[] states = {zeroState, zeroState, zeroState, zeroState};
-    this.setStates(states);
-
-
-    this.odometry.resetPosition(start, start.getRotation());
   }
 
   public void stop() {

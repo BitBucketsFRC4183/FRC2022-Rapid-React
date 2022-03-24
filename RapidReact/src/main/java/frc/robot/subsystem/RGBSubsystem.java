@@ -51,6 +51,29 @@ public class RGBSubsystem extends BitBucketsSubsystem {
     motor.set(BlinkenColors.Twinkles_Party_Palette.getValue());
   }
 
+  public void upToSpeed() {
+    motor.set(BlinkenColors.Colors_Green.getValue());  
+  }
+  
+  public void notUpToSpeed() {
+    motor.set(BlinkenColors.Colors_Red.getValue());  
+  }
+
+  public void autoShootingSingle()
+  {
+    motor.set(BlinkenColors.Strobe_White.getValue());
+  }
+
+  public void autoShootingDouble()
+  {
+    motor.set(BlinkenColors.Strobe_Gold.getValue());
+  }
+
+  public void alertMatchTimeLeft()
+  {
+    motor.set(BlinkenColors.Colors_Yellow.getValue());
+  }
+
   @Override
   public void periodic() {
     // TODO Auto-generated method stub
@@ -62,4 +85,6 @@ public class RGBSubsystem extends BitBucketsSubsystem {
     // TODO Auto-generated method stub
 
   }
+
+
 }

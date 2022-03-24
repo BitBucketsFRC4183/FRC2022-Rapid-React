@@ -5,6 +5,9 @@
         "name": "ShooterTop [ID:14]"
       },
       "SPARK MAX [15]": {
+        "header": {
+          "open": true
+        },
         "name": "ShooterBottom [ID:15]"
       },
       "Talon FX[1]": {
@@ -235,6 +238,8 @@
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
       "/LiveWindow/Ungrouped/PWMSparkMax[9]": "Motor Controller",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Talon FX [1]": "Motor Controller",
