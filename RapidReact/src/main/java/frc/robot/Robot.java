@@ -314,7 +314,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    drivetrainSubsystem.stop();
+  }
 
   @Override
   public void simulationPeriodic() {
