@@ -147,6 +147,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     );
   }
 
+  public boolean isUpToLowSpeed() {
+    return (
+            motorIsInSpeedDeadband(shooterTop, topSpeedLow.currentValue())  &&
+            motorIsInSpeedDeadband(shooterBottom, topSpeedLow.currentValue())
+            );
+  }
+
   @Override
   public void periodic() {
     topShooterSpeed.log(LogLevel.GENERAL, shooterTop.getEncoder().getVelocity());
