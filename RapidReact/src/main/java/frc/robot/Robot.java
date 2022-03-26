@@ -111,12 +111,12 @@ public class Robot extends TimedRobot {
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
-    //Create the Autonomous Commands now so we don't do this every time autonomousInit() gets called
-    this.cacheAutonomousCommands();
-
     // Subsystem Initialize Loop
 
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
+
+    //Create the Autonomous Commands now so we don't do this every time autonomousInit() gets called
+    this.cacheAutonomousCommands();
   }
 
   private void cacheAutonomousCommands()
