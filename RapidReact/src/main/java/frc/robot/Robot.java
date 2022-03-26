@@ -311,6 +311,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     this.robotSubsystems.forEach(BitBucketsSubsystem::disable);
+    drivetrainSubsystem.stop();
   }
 
   /** This function is called periodically when disabled. */
