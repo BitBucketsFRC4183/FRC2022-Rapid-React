@@ -5,6 +5,8 @@ import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.subsystem.RGBSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 
+import java.util.function.BooleanSupplier;
+
 public class AutoShootCommand extends SequentialCommandGroup
 {
     private final ShooterSubsystem shooter;

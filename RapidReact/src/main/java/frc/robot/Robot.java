@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
 
     if (shooterSubsystem.isShooting()) {
       wasShooting = true;
-      if (shooterSubsystem.isUpToSpeed()) {
+      if (shooterSubsystem.isUpToHighSpeed()) {
         rgbSubsystem.upToSpeed();
       } else {
         rgbSubsystem.notUpToSpeed();
@@ -278,6 +278,8 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
+    shooterSubsystem.disable();
+    intakeSubsystem.disable();
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -312,7 +314,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    drivetrainSubsystem.stop();
+  }
 
   @Override
   public void simulationPeriodic() {
