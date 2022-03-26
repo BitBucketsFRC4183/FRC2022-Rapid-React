@@ -58,6 +58,20 @@ public class AutonomousCommand extends SequentialCommandGroup
         return this.shootLoaded(2, top);
     }
 
+    public AutonomousCommand shootPreloadAndDropIntake(boolean top)
+    {
+        this.addCommands(
+                new AutoShootCommand(this.shooter, this.intake, this.rgb).withParameters(1, top)
+                        .alongWith(new InstantCommand(() -> {
+                            this.intake.forceIntaking();
+                            this.intake.spinForward();
+                            this.shooter.antiFeed();
+                        }))
+        );
+
+        return this;
+    }
+
     public AutonomousCommand dropIntake()
     {
         return this.executeAction((d, i, s) -> {
