@@ -119,6 +119,12 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     shooterBottom = MotorUtils.makeSpark(config.shooter.shooterBottom);
     feeder = MotorUtils.makeSRX(config.shooter.feeder);
 
+    shooterTop.getPIDController().setOutputRange(0, 1, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setOutputRange(0, 1, MotorUtils.velocitySlot);
+
+    shooterTop.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    shooterBottom.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
     //limit the voltage of the feeder motors
     feeder.configVoltageCompSaturation(11);
     feeder.enableVoltageCompensation(true);
@@ -126,7 +132,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     if (Robot.isSimulation()) {
       // REVPhysicsSim.getInstance().addSparkMax(roller1, DCMotor.getNEO(1));
       flywheelSim = new FlywheelSim(DCMotor.getNEO(1), 3, 0.008);
-
       Encoder encoder = new Encoder(2, 3);
       encoder.reset();
       encoderSim = new EncoderSim(encoder);

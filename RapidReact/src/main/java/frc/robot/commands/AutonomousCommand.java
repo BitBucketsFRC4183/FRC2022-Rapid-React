@@ -4,6 +4,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -39,81 +40,89 @@ public class AutonomousCommand extends SequentialCommandGroup
         this.initialPosition = Optional.empty();
     }
 
-    private AutonomousCommand shootLoaded(int ballCount, boolean top)
+    //Basic Commands
+    public AutoShootCommand getShootCommand(int ballCount, boolean top)
     {
-        this.addCommands(
-                new AutoShootCommand(this.shooter, this.intake, this.rgb)
-                        .withParameters(ballCount, top)
-        );
-        return this;
+        return new AutoShootCommand(this.shooter, this.intake, this.rgb)
+                .withParameters(ballCount, top);
     }
 
-    public AutonomousCommand shootOne(boolean top)
+    public InstantCommand getDropIntakeCommand()
     {
-        return this.shootLoaded(1, top);
-    }
-
-    public AutonomousCommand shootTwo(boolean top)
-    {
-        return this.shootLoaded(2, top);
-    }
-
-    public AutonomousCommand shootPreloadAndDropIntake(boolean top)
-    {
-        this.addCommands(
-                new AutoShootCommand(this.shooter, this.intake, this.rgb).withParameters(1, top)
-                        .alongWith(new InstantCommand(() -> {
-                            this.intake.forceIntaking();
-                            this.intake.spinForward();
-                            this.shooter.antiFeed();
-                        }))
-        );
-
-        return this;
-    }
-
-    public AutonomousCommand dropIntake()
-    {
-        return this.executeAction((d, i, s) -> {
+        return this.actionToCommand((d, i, s) -> {
             i.forceIntaking();
             i.spinForward();
             s.antiFeed();
         });
     }
 
+    public InstantCommand getSpinShooterCommand(boolean top)
+    {
+        return this.actionToCommand((d, i, s) -> {
+            if(top) s.spinUpTop();
+            else s.shootLow();
+        });
+    }
+
+    public SequentialCommandGroup getSpinShooterCommandWithDelay(boolean top, double delay)
+    {
+        return new WaitCommand(delay).andThen(this.getSpinShooterCommand(top));
+    }
+
+    //AutonomousCommand Builders
+
+    public AutonomousCommand shootOne(boolean top)
+    {
+        this.addCommands(
+                new InstantCommand(() -> this.intake.stopSpin())
+                .andThen(this.getShootCommand(1, top))
+                .andThen(new InstantCommand(() -> this.intake.spinForward()))
+        );
+        return this;
+    }
+
+    public AutonomousCommand shootTwo(boolean top)
+    {
+        this.addCommands(
+                new InstantCommand(() -> this.intake.stopSpin())
+                .andThen(this.getShootCommand(2, top))
+                .andThen(new InstantCommand(() -> this.intake.spinForward()))
+        );
+        return this;
+    }
+
     public AutonomousCommand executeDrivePath(AutonomousPath path, double delay)
     {
-        return this.executeDrivePath(path.pathName, delay);
+        return this.executeDrivePath(path.pathName, delay, null);
     }
 
-    public AutonomousCommand executeDrivePath(String pathPlanner)
+    public AutonomousCommand executeDrivePath(AutonomousPath path, double delay, Command parallel)
+    {
+        return this.executeDrivePath(path.pathName, delay, parallel);
+    }
+
+    public AutonomousCommand executeDrivePath(String pathPlanner, double delay)
+    {
+        return this.executeDrivePath(pathPlanner, delay, null);
+    }
+
+    public AutonomousCommand executeDrivePath(String pathPlanner, double delay, Command parallel)
     {
         PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
-        this.addCommands(new AutonomousFollowPathCommand(t, this.auto, this.drive, this.rgb));
+
+        SequentialCommandGroup drive = new WaitCommand(delay)
+                .andThen(new AutonomousFollowPathCommand(t, this.auto, this.drive, this.rgb));
+
+        if(parallel == null) this.addCommands(drive);
+        else this.addCommands(drive.alongWith(parallel));
 
         if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
         return this;
     }
 
-    public AutonomousCommand executeDrivePath(String pathPlanner, double delayBeforeStart)
+    public AutonomousCommand executeAction(SubsystemAction action, double delay)
     {
-        PathPlannerTrajectory t = this.auto.buildPath(pathPlanner);
-        this.addCommands(new WaitCommand(delayBeforeStart)
-                .andThen(new AutonomousFollowPathCommand(t, this.auto, this.drive, this.rgb)));
-
-        if(this.initialPosition.isEmpty()) this.setInitialPosition(t);
-        return this;
-    }
-
-    public AutonomousCommand executeAction(SubsystemAction action)
-    {
-        this.addCommands(this.actionToCommand(action));
-        return this;
-    }
-
-    public AutonomousCommand executeAction(SubsystemAction action, double delayBeforeStart)
-    {
-        this.addCommands(new WaitCommand(delayBeforeStart)
+        this.addCommands(new WaitCommand(delay)
                 .andThen(this.actionToCommand(action)));
         return this;
     }
@@ -128,7 +137,7 @@ public class AutonomousCommand extends SequentialCommandGroup
         ));
     }
 
-    public AutonomousCommand complete()
+    public AutonomousCommand stop()
     {
         this.addCommands(this.actionToCommand((d, i, s) -> {
             d.stopSticky();

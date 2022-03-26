@@ -14,7 +14,7 @@ public class AutonomousSubsystem extends BitBucketsSubsystem {
   {
     return pathName.equals(this.config.auto.nothingPath)
             ? PathPlanner.loadPath(pathName, 0, 0)
-            : PathPlanner.loadPath(pathName, this.config.auto.maxPathFollowVelocity, this.config.auto.maxPathFollowAcceleration);
+            : PathPlanner.loadPath(pathName, pathName.equals("4 Ball Auto Alt P2") ? 5 : this.config.auto.maxPathFollowVelocity, this.config.auto.maxPathFollowAcceleration);
   }
 
   @Override
