@@ -5,8 +5,6 @@ import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.subsystem.RGBSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
 
-import java.util.function.BooleanSupplier;
-
 public class AutoShootCommand extends SequentialCommandGroup
 {
     private final ShooterSubsystem shooter;
@@ -41,7 +39,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
 
                 //Wait for shooter to get up to speed
-                new WaitUntilCommand(this.shooter::isUpToSpeed),
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed),
 
                 //Extremely important RGB
                 new InstantCommand(this.rgb::autoShootingSingle),
