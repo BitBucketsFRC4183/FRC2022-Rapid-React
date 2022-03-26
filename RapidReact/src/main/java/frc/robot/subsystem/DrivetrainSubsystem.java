@@ -94,11 +94,14 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+    //Normalized Wheel Diameter after wear
+    double wheelWearFactor = 0.94;
+
     this.maxVelocity_metersPerSecond =
       6380.0 /
       60.0 *
       SdsModuleConfigurations.MK4_L2.getDriveReduction() *
-      SdsModuleConfigurations.MK4_L2.getWheelDiameter() *
+      (SdsModuleConfigurations.MK4_L2.getWheelDiameter() * wheelWearFactor) *
       Math.PI;
 
     this.maxAngularVelocity_radiansPerSecond =
@@ -245,7 +248,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
             new SwerveModuleState(this.moduleBackRight.getDriveVelocity(), new Rotation2d(this.moduleBackRight.getSteerAngle())) //Back Right
     );
 
-      this.dumpInfo();
+      //this.dumpInfo();
   }
 
   public void setStates(SwerveModuleState[] states)

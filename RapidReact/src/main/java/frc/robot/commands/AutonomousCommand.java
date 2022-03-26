@@ -73,21 +73,20 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     public AutonomousCommand shootOne(boolean top)
     {
-        this.addCommands(this.getShootCommand(1, top));
+        this.addCommands(
+                new InstantCommand(() -> this.intake.stopSpin())
+                .andThen(this.getShootCommand(1, top))
+                .andThen(new InstantCommand(() -> this.intake.spinForward()))
+        );
         return this;
     }
 
     public AutonomousCommand shootTwo(boolean top)
     {
-        this.addCommands(this.getShootCommand(2, top));
-        return this;
-    }
-
-    public AutonomousCommand parallelShootPreloadDropIntake(boolean top)
-    {
         this.addCommands(
-                this.getShootCommand(1, top)
-                        .alongWith(this.getDropIntakeCommand())
+                new InstantCommand(() -> this.intake.stopSpin())
+                .andThen(this.getShootCommand(2, top))
+                .andThen(new InstantCommand(() -> this.intake.spinForward()))
         );
         return this;
     }
