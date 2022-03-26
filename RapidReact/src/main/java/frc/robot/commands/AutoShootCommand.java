@@ -7,9 +7,9 @@ import frc.robot.subsystem.ShooterSubsystem;
 
 public class AutoShootCommand extends SequentialCommandGroup
 {
-    private ShooterSubsystem shooter;
-    private IntakeSubsystem intake;
-    private RGBSubsystem rgb;
+    private final ShooterSubsystem shooter;
+    private final IntakeSubsystem intake;
+    private final RGBSubsystem rgb;
 
     private boolean top;
 
@@ -18,9 +18,6 @@ public class AutoShootCommand extends SequentialCommandGroup
         this.shooter = shooter;
         this.intake = intake;
         this.rgb = rgb;
-
-        //Default Parameters
-        this.withParameters(2, true);
     }
 
     public AutoShootCommand withParameters(int ballCount, boolean top)
@@ -39,13 +36,13 @@ public class AutoShootCommand extends SequentialCommandGroup
         command.addCommands(
 
                 //Activate shooter
-                new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()),
+                new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
 
                 //Wait for shooter to get up to speed
-                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
+                new WaitUntilCommand(this.shooter::isUpToSpeed),
 
                 //Extremely important RGB
-                new InstantCommand(() -> this.rgb.autoShootingSingle()),
+                new InstantCommand(this.rgb::autoShootingSingle),
 
                 //Activate feeders for ball #1
                 new InstantCommand(this::enableFeedersBMS),
@@ -67,13 +64,13 @@ public class AutoShootCommand extends SequentialCommandGroup
         command.addCommands(
 
                 //Activate shooter
-                new InstantCommand(this.top ? () -> this.shooter.spinUpTop() : () -> this.shooter.shootLow()),
+                new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
 
                 //Wait until shooter is up to speed
-                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed),
 
                 //Extremely important RGB
-                new InstantCommand(() -> this.rgb.autoShootingDouble()),
+                new InstantCommand(this.rgb::autoShootingDouble),
 
                 //Activate feeders
                 new InstantCommand(this::enableFeedersBMS),
@@ -85,7 +82,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this::disableFeedersBMS),
 
                 //Wait until shooter is up to speed again
-                new WaitUntilCommand(() -> this.shooter.isUpToSpeed()),
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed),
 
                 //Extra pause between shots
                 new WaitCommand(0.7),
