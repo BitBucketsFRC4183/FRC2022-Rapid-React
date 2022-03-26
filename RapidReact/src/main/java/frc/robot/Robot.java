@@ -177,85 +177,78 @@ public class Robot extends TimedRobot {
 
       switch (this.autonomousChooser.getSelected()) {
         case NOTHING:
-          command.executeDrivePath(AutonomousPath.NOTHING, 0).complete();
+          command.executeDrivePath(AutonomousPath.NOTHING, 0).stop();
           break;
         case TEST_1M_FORWARD:
-          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0).complete();
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0).stop();
           break;
         case TEST_1M_FORWARD_1M_UP:
-          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0).complete();
+          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0).stop();
           break;
         case HARDCODED:
           drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
           command
-            .shootOne(true) //Shoot Preload
-            .dropIntake()
+            .parallelShootPreloadDropIntake(true)
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
             .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
             .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
             .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
             .shootOne(false)
-            .complete();
+            .stop();
           break;
         case ONE_BALL:
           command
             .shootOne(true)
             .executeDrivePath(AutonomousPath.ONE_BALL, 1)
-            .complete();
+            .stop();
           break;
         case ONE_BALL_INTAKE:
           command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
-            .complete();
+            .parallelShootPreloadDropIntake(true)
+            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)//, command.getSpinShooterCommand(true))
+            .stop();
           break;
         case TWO_BALL_HANGAR:
           command
+            .parallelShootPreloadDropIntake(true)
+            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)//, command.getSpinShooterCommandWithDelay(true, 0.5))
             .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)
-            .shootOne(true)
-            .complete();
+            .stop();
           break;
         case TWO_BALL_WALL:
           command
+            .parallelShootPreloadDropIntake(true)
+            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)//, command.getSpinShooterCommandWithDelay(true, 0.5))
             .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)
-            .shootOne(true)
-            .complete();
+            .stop();
           break;
         case THREE_BALL:
           command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
+            .parallelShootPreloadDropIntake(true)
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1)//, command.getSpinShooterCommandWithDelay(true, 2.0))
             .shootTwo(true)
-            .complete();
+            .stop();
           break;
         case FOUR_BALL:
           command
-            .shootOne(true)
-            .dropIntake()
+            .parallelShootPreloadDropIntake(true)
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
             .shootTwo(true)
             .executeDrivePath("4 Ball Auto P2", 1)
-            .executeDrivePath("4 Ball Auto P3", 0.5)
+            .executeDrivePath("4 Ball Auto P3", 0.5)//, command.getSpinShooterCommand(true))
             .shootOne(true)
-            .complete();
+            .stop();
           break;
         case FIVE_BALL:
           command
-            .shootOne(true)
-            .dropIntake()
+            .parallelShootPreloadDropIntake(true)
             .executeDrivePath(AutonomousPath.THREE_BALL, 1)
             .shootTwo(true)
             .executeDrivePath("4 Ball Auto P2", 1)
-            .executeDrivePath("4 Ball Auto P3", 3)
+            .executeDrivePath("4 Ball Auto P3", 3)//, command.getSpinShooterCommand(true))
             .shootOne(true)
-            .complete();
+            .stop();
           break;
         default:
           info.log(LogLevel.CRITICAL, "Invalid Autonomous Path " + this.autonomousChooser.getSelected() + ".");
