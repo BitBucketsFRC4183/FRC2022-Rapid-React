@@ -62,7 +62,7 @@ public class AutoShootCommand extends SequentialCommandGroup
     {
         Command antifeedStuff = new InstantCommand(() -> {
            shooter.antiFeed();
-           intake.spinForward();
+           intake.ballManagementForward();
         }).raceWith(new WaitCommand(0.1));
 
         SequentialCommandGroup command = new SequentialCommandGroup();
@@ -92,7 +92,9 @@ public class AutoShootCommand extends SequentialCommandGroup
 
                 //now
                 //Wait until shooter is up to speed again
-                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed).alongWith(new WaitCommand(0.7).alongWith(antifeedStuff))
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed)
+                        .alongWith(new WaitCommand(0.3))
+                        .alongWith(antifeedStuff)
                        /* .raceWith(new WaitCommand(0.5))*/,
 
                 //Extra pause between shots
