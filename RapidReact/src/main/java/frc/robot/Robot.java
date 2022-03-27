@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,9 +26,8 @@ import frc.robot.subsystem.*;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
   private ClimberSubsystem climberSubsystem;
 
   private SendableChooser<AutonomousPath> autonomousChooser = new SendableChooser<>();
+  private Map<AutonomousPath, AutonomousCommand> autonomousCommands = new HashMap<>();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -68,6 +69,8 @@ public class Robot extends TimedRobot {
     this.config = new Config();
     this.buttons = new Buttons();
     this.field = new Field2d();
+
+    LiveWindow.disableAllTelemetry();
 
     //Autonomous Selection
     Arrays.stream(AutonomousPath.values()).forEach(path -> this.autonomousChooser.addOption(path.dashboardName, path));
@@ -111,6 +114,101 @@ public class Robot extends TimedRobot {
     // Subsystem Initialize Loop
 
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
+
+    //Create the Autonomous Commands now so we don't do this every time autonomousInit() gets called
+    this.cacheAutonomousCommands();
+  }
+
+  private void cacheAutonomousCommands()
+  {
+    Supplier<AutonomousCommand> base = () -> new AutonomousCommand(
+          this.autonomousSubsystem,
+          this.drivetrainSubsystem,
+          this.intakeSubsystem,
+          this.shooterSubsystem,
+          this.rgbSubsystem
+    );
+
+    //Just to grab the getCommand methods
+    final AutonomousCommand instance = base.get();
+
+    this.autonomousCommands.put(AutonomousPath.NOTHING, base.get()
+            .executeDrivePath(AutonomousPath.NOTHING, 0)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.HARDCODED, base.get()
+            .shootOne(true)
+            .executeAction((d, i, s) -> instance.getDropIntakeCommand().execute(), 0.2)
+            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
+            .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
+            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
+            .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
+            .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
+            .shootOne(false)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.ONE_BALL, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.ONE_BALL_INTAKE, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1, instance.getDropIntakeCommand())//, command.getSpinShooterCommand(true))
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.TWO_BALL_HANGAR, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1, instance.getDropIntakeCommand())//, command.getSpinShooterCommandWithDelay(true, 0.5))
+            .shootOne(true)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.TWO_BALL_WALL, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1, instance.getDropIntakeCommand())//, command.getSpinShooterCommandWithDelay(true, 0.5))
+            .shootOne(true)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.THREE_BALL, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1, instance.getDropIntakeCommand())//, command.getSpinShooterCommandWithDelay(true, 2.0))
+            .shootTwo(true)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.FOUR_BALL, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.THREE_BALL, 0.05, instance.getDropIntakeCommand())
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto P2", 0.0)
+            .executeDrivePath("4 Ball Auto P3", 0.2)//, command.getSpinShooterCommand(true))
+            .shootOne(true)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.FOUR_BALL_ALT, base.get()
+            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 0.05, instance.getDropIntakeCommand())
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto Alt P2", 0.04)
+            .shootTwo(true)
+            .stop()
+    );
+
+    this.autonomousCommands.put(AutonomousPath.FIVE_BALL, base.get()
+            .shootOne(true)
+            .executeDrivePath(AutonomousPath.THREE_BALL, 1, instance.getDropIntakeCommand())
+            .shootTwo(true)
+            .executeDrivePath("4 Ball Auto P2", 1)
+            .executeDrivePath("4 Ball Auto P3", 3)//, command.getSpinShooterCommand(true))
+            .shootOne(true)
+            .stop()
+    );
   }
 
   boolean wasShooting;
@@ -167,100 +265,11 @@ public class Robot extends TimedRobot {
     if (config.enableDriveSubsystem && config.enableAutonomousSubsystem) {
       this.info.log(LogLevel.GENERAL, "auton started");
 
-      AutonomousCommand command = new AutonomousCommand(
-        this.autonomousSubsystem,
-        this.drivetrainSubsystem,
-        this.intakeSubsystem,
-        this.shooterSubsystem,
-        this.rgbSubsystem
-      );
+      long timeI = System.currentTimeMillis();
 
-      switch (this.autonomousChooser.getSelected()) {
-        case NOTHING:
-          command.executeDrivePath(AutonomousPath.NOTHING, 0).complete();
-          break;
-        case TEST_1M_FORWARD:
-          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD, 0).complete();
-          break;
-        case TEST_1M_FORWARD_1M_UP:
-          command.executeDrivePath(AutonomousPath.TEST_1M_FORWARD_1M_UP, 0).complete();
-          break;
-        case HARDCODED:
-          drivetrainSubsystem.resetGyroWithOffset(Rotation2d.fromDegrees(-150));
-          command
-            .shootOne(true) //Shoot Preload
-            .dropIntake()
-            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
-            .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
-            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
-            .executeAction((d, i, s) -> d.stop(), 2.5) //Drive back to the hub pt 2
-            .executeAction((d, i, s) -> d.stop(), .5) //Drive back to the hub pt 2
-            .shootOne(false)
-            .complete();
-          break;
-        case ONE_BALL:
-          command
-            .shootOne(true)
-            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
-            .complete();
-          break;
-        case ONE_BALL_INTAKE:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.ONE_BALL_INTAKE, 1)
-            .complete();
-          break;
-        case TWO_BALL_HANGAR:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.TWO_BALL_HANGAR, 1)
-            .shootOne(true)
-            .complete();
-          break;
-        case TWO_BALL_WALL:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.TWO_BALL_WALL, 1)
-            .shootOne(true)
-            .complete();
-          break;
-        case THREE_BALL:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
-            .shootTwo(true)
-            .complete();
-          break;
-        case FOUR_BALL:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
-            .shootTwo(true)
-            .executeDrivePath("4 Ball Auto P2", 1)
-            .executeDrivePath("4 Ball Auto P3", 0.5)
-            .shootOne(true)
-            .complete();
-          break;
-        case FIVE_BALL:
-          command
-            .shootOne(true)
-            .dropIntake()
-            .executeDrivePath(AutonomousPath.THREE_BALL, 1)
-            .shootTwo(true)
-            .executeDrivePath("4 Ball Auto P2", 1)
-            .executeDrivePath("4 Ball Auto P3", 3)
-            .shootOne(true)
-            .complete();
-          break;
-        default:
-          info.log(LogLevel.CRITICAL, "Invalid Autonomous Path " + this.autonomousChooser.getSelected() + ".");
-          return;
-      }
+      AutonomousCommand command = this.autonomousCommands.getOrDefault(this.autonomousChooser.getSelected(), this.autonomousCommands.get(AutonomousPath.NOTHING));
+
+      SmartDashboard.putNumber("autonomousInit_time", System.currentTimeMillis() - timeI);
 
       command.schedule();
     }
@@ -271,8 +280,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     info.log(LogLevel.GENERAL, "Still in autonomous");
 
-    System.out.println("Odometry Position: " + this.drivetrainSubsystem.odometry.getPoseMeters());
-    System.out.println("Gyro Heading: " + this.drivetrainSubsystem.gyro.getRotation2d());
+    //System.out.println("Odometry Position: " + this.drivetrainSubsystem.odometry.getPoseMeters());
+    //System.out.println("Gyro Heading: " + this.drivetrainSubsystem.gyro.getRotation2d());
   }
 
   /** This function is called once when teleop is enabled. */
@@ -306,7 +315,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    this.drivetrainSubsystem.stop();
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
@@ -314,7 +325,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+    drivetrainSubsystem.stop();
+  }
 
   @Override
   public void simulationPeriodic() {
@@ -386,7 +399,7 @@ public class Robot extends TimedRobot {
         }
       );
 
-      buttons.autoShoot.whenPressed(() -> new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).schedule());
+      buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(2, true));
 
       buttons.feedInFire.whenPressed(
         () -> {
