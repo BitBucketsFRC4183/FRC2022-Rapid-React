@@ -182,11 +182,11 @@ public class Config {
     // say that kI is multiplied by the error and added to output for each pid loop. I think these pid loops run at 1khz,
     // so divide the kI by 1000 otherwise it's too large.
     shooter.shooterTop.id = shooterTop_ID;
-    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.0001 / 4, /*I*/0.001 / 1000, /*D*/0, /*F*/(7.0 / 12.0) / (60 * 60), /*izone*/300);
+    shooter.shooterTop.velocityPIDF = new PIDF(/*P*/0.0001 / 4, /*I*/0.001 / 1000, /*D*/0, /*F*/((7.0 / 12.0) / (60 * 60)) * (12.0/11.0), /*izone*/300);
     shooter.shooterTop.inverted = true;
 
     shooter.shooterBottom.id = shooterBottom_ID;
-    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.0001 / 4, /*I*/0.001 / 1000, /*D*/0, /*F*/(7.0 / 12.0) / (60 * 60), /*izone*/300);
+    shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.0001 / 4, /*I*/0.001 / 1000, /*D*/0, /*F*/((7.0 / 12.0) / (60 * 60)) * (12.0/11.0), /*izone*/300);
     shooter.shooterBottom.inverted = false;
 
     shooter.feeder.id = shooterFeeder_ID;

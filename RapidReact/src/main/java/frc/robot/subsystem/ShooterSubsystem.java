@@ -131,6 +131,9 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     feeder.configVoltageCompSaturation(11);
     feeder.enableVoltageCompensation(true);
 
+    shooterTop.enableVoltageCompensation(11);
+    shooterBottom.enableVoltageCompensation(11);
+
     if (Robot.isSimulation()) {
       // REVPhysicsSim.getInstance().addSparkMax(roller1, DCMotor.getNEO(1));
       flywheelSim = new FlywheelSim(DCMotor.getNEO(1), 3, 0.008);
