@@ -36,8 +36,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.7);
   private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.8);
 
-  private float hubSpinUpSpeedDeadband = 50;
-
+  private float hubSpinUpSpeedDeadband = 20;
+  private int upToSpeedCount = 0;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
   private final Loggable<Double> shooterTopOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterTopOutputVel");
@@ -74,6 +74,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     shootState.log("Idling");
     shooterState = ShooterState.STOPPED;
     isUpToHighSpeed.log(false);
+    upToSpeedCount = 0;
     shooterTop.set(0);
     shooterBottom.set(0);
     turnOffFeeders();
@@ -148,8 +149,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   public boolean isUpToHighSpeed() {
     boolean state = (motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue()) && motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue()));
+    if (state) {
+      upToSpeedCount++;
+    } else {
+      upToSpeedCount = 0;
+    }
     isUpToHighSpeed.log(LogLevel.GENERAL, state);
-    return (state);
+    return (state && upToSpeedCount >= 3);
   }
 
   public boolean isUpToLowSpeed() {

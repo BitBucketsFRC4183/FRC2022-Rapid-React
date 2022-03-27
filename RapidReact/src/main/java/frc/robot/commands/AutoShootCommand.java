@@ -49,13 +49,13 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this::enableFeedersBMS),
 
                 //Wait for ball #1 to shoot
-                new WaitCommand(0.2),
+                new WaitCommand(0.1),
 
                 //Turn off everything
                 new InstantCommand(this::disableShooterFeedersBMS)
         );
 
-        return command.raceWith(new WaitCommand(1));
+        return command.raceWith(new WaitCommand(1.5).andThen(this::disableShooterFeedersBMS));
     }
 
     private Command getDoubleBallShootCommand()
@@ -84,11 +84,11 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this::disableFeedersBMS),
 
                 //Wait until shooter is up to speed again
-                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed)
-                        .raceWith(new WaitCommand(0.5)),
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed).alongWith(new WaitCommand(0.7))
+                       /* .raceWith(new WaitCommand(0.5))*/,
 
                 //Extra pause between shots
-                new WaitCommand(0.7),
+                
 
                 //Activate feeders for ball #2
                 new InstantCommand(this::enableFeedersBMS),
@@ -100,7 +100,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this::disableShooterFeedersBMS)
         );
 
-        return command.raceWith(new WaitCommand(2.0));
+        return command.raceWith(new WaitCommand(3).andThen(this::disableShooterFeedersBMS));
     }
 
     @Override
