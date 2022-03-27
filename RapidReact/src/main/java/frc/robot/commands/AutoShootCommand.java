@@ -78,14 +78,14 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new InstantCommand(this::enableFeedersBMS),
 
                 //Wait for ball #1 to shoot
-                new WaitCommand(0.2),
+                new WaitCommand(0.1),
 
                 //Turn off feeders (ball #1 is finished shooting)
                 new InstantCommand(this::disableFeedersBMS),
 
                 //Wait until shooter is up to speed again
                 new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed)
-                        /*.raceWith(new WaitCommand(0.5))*/,
+                        .raceWith(new WaitCommand(0.5)),
 
                 //Extra pause between shots
                 new WaitCommand(0.7),
