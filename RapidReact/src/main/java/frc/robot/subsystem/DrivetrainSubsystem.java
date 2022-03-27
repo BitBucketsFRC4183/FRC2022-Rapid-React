@@ -95,7 +95,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   @Override
   public void init() {
     //Normalized Wheel Diameter after wear
-    double wheelWearFactor = 0.94;
+    double wheelWearFactor = 1;
 
     this.maxVelocity_metersPerSecond =
       6380.0 /

@@ -86,7 +86,10 @@ public class AutonomousCommand extends SequentialCommandGroup
         this.addCommands(
                 new InstantCommand(() -> this.intake.stopSpin())
                 .andThen(this.getShootCommand(2, top))
-                .andThen(new InstantCommand(() -> this.intake.spinForward()))
+                .andThen(new InstantCommand(() -> {
+                    this.intake.spinForward();
+                    this.shooter.antiFeed();
+                }))
         );
         return this;
     }
