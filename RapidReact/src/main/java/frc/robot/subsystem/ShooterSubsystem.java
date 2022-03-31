@@ -20,11 +20,11 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private CANSparkMax shooterBottom;
   private TalonSRX feeder;
 
-  private final Changeable<Double> topSpeedHigh = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 2200.0);
+  private final Changeable<Double> topSpeedHigh = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 2000.0);
   private final Changeable<Double> bottomSpeedHigh = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
-    4150.0
+    4250.0
   );
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 2000.0);
   private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
@@ -36,12 +36,13 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private final Changeable<Double> feederPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederPercentOutput", 0.7);
   private final Changeable<Double> feederHoldPO = BucketLog.changeable(Put.DOUBLE, "shooter/feederHoldPercentOutput", 0.8);
 
-  private float hubSpinUpSpeedDeadband = 50;
-
+  private float hubSpinUpSpeedDeadband = 20;
+  private int upToSpeedCount = 0;
 
   private final Loggable<String> shootState = BucketLog.loggable(Put.STRING, "shooter/shootState");
   private final Loggable<Double> shooterTopOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterTopOutputVel");
   private final Loggable<Double> shooterBottomOutputVelLoggable = BucketLog.loggable(Put.DOUBLE, "shooter/ShooterBottomOutputVel");
+  private final Loggable<Boolean> isUpToHighSpeed = BucketLog.loggable(Put.BOOL, "shooter/isUpToHighSpeed");
 
   private final Loggable<Double> topShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/topShooterActualSpeed");
   private final Loggable<Double> bottomShooterSpeed = BucketLog.loggable(Put.DOUBLE, "shooter/bottomShooterActualSpeed");
@@ -72,7 +73,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void stopShoot() {
     shootState.log("Idling");
     shooterState = ShooterState.STOPPED;
-
+    isUpToHighSpeed.log(false);
+    upToSpeedCount = 0;
     shooterTop.set(0);
     shooterBottom.set(0);
     turnOffFeeders();
@@ -129,6 +131,9 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     feeder.configVoltageCompSaturation(11);
     feeder.enableVoltageCompensation(true);
 
+    shooterTop.enableVoltageCompensation(11);
+    shooterBottom.enableVoltageCompensation(11);
+
     if (Robot.isSimulation()) {
       // REVPhysicsSim.getInstance().addSparkMax(roller1, DCMotor.getNEO(1));
       flywheelSim = new FlywheelSim(DCMotor.getNEO(1), 3, 0.008);
@@ -146,10 +151,14 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToHighSpeed() {
-    return (
-      motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue()) &&
-      motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue())
-    );
+    boolean state = (motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue()) && motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue()));
+    if (state) {
+      upToSpeedCount++;
+    } else {
+      upToSpeedCount = 0;
+    }
+    isUpToHighSpeed.log(LogLevel.GENERAL, state);
+    return (state && upToSpeedCount >= 3);
   }
 
   public boolean isUpToLowSpeed() {

@@ -86,7 +86,10 @@ public class AutonomousCommand extends SequentialCommandGroup
         this.addCommands(
                 new InstantCommand(() -> this.intake.stopSpin())
                 .andThen(this.getShootCommand(2, top))
-                .andThen(new InstantCommand(() -> this.intake.spinForward()))
+                .andThen(new InstantCommand(() -> {
+                    this.intake.spinForward();
+                    this.shooter.antiFeed();
+                }))
         );
         return this;
     }
@@ -147,10 +150,11 @@ public class AutonomousCommand extends SequentialCommandGroup
 
         //Set Odometry
         Pose2d zeroPos = new Pose2d(0, 0, new Rotation2d(0));
-        SmartDashboard.putString("/drivetrain/initial_path_position", this.initialPosition.get().toString());
-        this.drive.resetGyroWithOffset(this.initialPosition.orElse(zeroPos).getRotation());
-        this.drive.setOdometry(this.initialPosition.orElse(zeroPos));
-
+        if (this.initialPosition.isPresent()) {
+            SmartDashboard.putString("/drivetrain/initial_path_position", this.initialPosition.get().toString());
+            this.drive.resetGyroWithOffset(this.initialPosition.orElse(zeroPos).getRotation());
+            this.drive.setOdometry(this.initialPosition.orElse(zeroPos));
+        }
         return this;
     }
 
