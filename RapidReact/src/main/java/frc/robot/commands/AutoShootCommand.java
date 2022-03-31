@@ -62,8 +62,8 @@ public class AutoShootCommand extends SequentialCommandGroup
     {
         Command antifeedStuff = new InstantCommand(() -> {
            shooter.antiFeed();
-           intake.ballManagementForward();
-        }).raceWith(new WaitCommand(0.1));
+           //intake.ballManagementForward();
+        }).raceWith(new WaitCommand(0.2));
 
         SequentialCommandGroup command = new SequentialCommandGroup();
 
