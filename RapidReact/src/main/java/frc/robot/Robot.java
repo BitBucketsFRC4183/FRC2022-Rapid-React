@@ -401,6 +401,8 @@ public class Robot extends TimedRobot {
 
       buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(2, true));
 
+      buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(1, true));
+
       buttons.feedInFire.whenPressed(
         () -> {
           shooterSubsystem.turnOnFeeders();
