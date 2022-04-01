@@ -228,20 +228,6 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     //this.robotSubsystems.forEach(BitBucketsSubsystem::periodic);
-
-    if (shooterSubsystem.isShooting()) {
-      wasShooting = true;
-      if (shooterSubsystem.isUpToHighSpeed()) {
-        rgbSubsystem.upToSpeed();
-      } else {
-        rgbSubsystem.notUpToSpeed();
-      }
-    } else {
-      if (wasShooting) {
-        rgbSubsystem.normalize();
-        wasShooting = false;
-      }
-    }
   }
 
   /**
@@ -305,6 +291,20 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if((int)Timer.getMatchTime() == 30) this.rgbSubsystem.alertMatchTimeLeft();
+
+    if (shooterSubsystem.isShooting()) {
+      wasShooting = true;
+      if (shooterSubsystem.isUpToHighSpeed()) {
+        rgbSubsystem.upToSpeed();
+      } else {
+        rgbSubsystem.notUpToSpeed();
+      }
+    } else {
+      if (wasShooting) {
+        rgbSubsystem.normalize();
+        wasShooting = false;
+      }
+    }
   }
 
   /** This function is called once when the robot is disabled. */
@@ -400,6 +400,8 @@ public class Robot extends TimedRobot {
       );
 
       buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(2, true));
+
+      buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(1, true));
 
       buttons.feedInFire.whenPressed(
         () -> {
