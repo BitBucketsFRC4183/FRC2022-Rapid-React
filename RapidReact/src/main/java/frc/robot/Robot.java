@@ -139,7 +139,11 @@ public class Robot extends TimedRobot {
 
     this.autonomousCommands.put(AutonomousPath.HARDCODED, base.get()
             .shootOne(true)
-            .executeAction((d, i, s) -> instance.getDropIntakeCommand().execute(), 0.2)
+            .executeAction((d, i, s) -> {
+              i.forceIntaking();
+              i.spinForward();
+              s.antiFeed();
+            }, 0.2)
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 1) //Drive out of the tarmac
             .executeAction((d, i, s) -> d.stop(), 2.0) //Drive out of the tarmac pt 2
             .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(-1.5, 0.0, 0)), 2) //Drive back to the hub
@@ -149,11 +153,28 @@ public class Robot extends TimedRobot {
             .stop()
     );
 
-    this.autonomousCommands.put(AutonomousPath.ONE_BALL, base.get()
+    this.autonomousCommands.put(AutonomousPath.ONE_BALL_PATHPLANNER, base.get()
             .shootOne(true)
-            .executeDrivePath(AutonomousPath.ONE_BALL, 1)
+            .executeDrivePath(AutonomousPath.ONE_BALL_PATHPLANNER, 0.5)
             .stop()
     );
+
+    //One Ball Hardcoded
+//    this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
+//            .shootOne(true)
+//            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 0)
+//            .executeAction((d, i, s) -> d.stop(), 2.0)
+//            .stop()
+//    );
+    this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
+            .executeAction((d, i, s) -> {
+              s.autoTopSpeedHighOffset = 800;
+              s.autoBottomSpeedHighOffset = 0; //100
+            }, 0.02)
+            .shootOne(true)
+            .executeDrivePath("1 Ball Taxi", 0.01)
+            .stop()
+     );
 
     this.autonomousCommands.put(AutonomousPath.ONE_BALL_INTAKE, base.get()
             .shootOne(true)
@@ -177,7 +198,7 @@ public class Robot extends TimedRobot {
 
     this.autonomousCommands.put(AutonomousPath.THREE_BALL, base.get()
             .shootOne(true)
-            .executeDrivePath(AutonomousPath.THREE_BALL, 1, instance.getDropIntakeCommand())//, command.getSpinShooterCommandWithDelay(true, 2.0))
+            .executeDrivePath(AutonomousPath.THREE_BALL, 0.02, instance.getDropIntakeCommand())//, command.getSpinShooterCommandWithDelay(true, 2.0))
             .shootTwo(true)
             .stop()
     );
@@ -275,6 +296,10 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     shooterSubsystem.disable();
     intakeSubsystem.disable();
+
+    this.shooterSubsystem.autoBottomSpeedHighOffset = 0;
+    this.shooterSubsystem.autoTopSpeedHighOffset = 0;
+
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
         new DefaultDriveCommand(
@@ -292,17 +317,20 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if((int)Timer.getMatchTime() == 30) this.rgbSubsystem.alertMatchTimeLeft();
 
-    if (shooterSubsystem.isShooting()) {
-      wasShooting = true;
-      if (shooterSubsystem.isUpToHighSpeed()) {
-        rgbSubsystem.upToSpeed();
+    if(!this.shooterSubsystem.isAutoShooting)
+    {
+      if (shooterSubsystem.isShooting()) {
+        wasShooting = true;
+        if (shooterSubsystem.isUpToHighSpeed()) {
+          rgbSubsystem.upToSpeed();
+        } else {
+          rgbSubsystem.notUpToSpeed();
+        }
       } else {
-        rgbSubsystem.notUpToSpeed();
-      }
-    } else {
-      if (wasShooting) {
-        rgbSubsystem.normalize();
-        wasShooting = false;
+        if (wasShooting) {
+          rgbSubsystem.normalize();
+          wasShooting = false;
+        }
       }
     }
   }

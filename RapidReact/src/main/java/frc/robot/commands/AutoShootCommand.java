@@ -35,6 +35,8 @@ public class AutoShootCommand extends SequentialCommandGroup
 
         command.addCommands(
 
+                new InstantCommand(() -> this.shooter.isAutoShooting = true),
+
                 new InstantCommand(() -> {
                     this.intake.ballManagementForward();
                     this.shooter.antiFeed();
@@ -62,7 +64,12 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new WaitCommand(0.3),
 
                 //Turn off everything
-                new InstantCommand(this::disableShooterFeedersBMS)
+                new InstantCommand(this::disableShooterFeedersBMS),
+
+                new InstantCommand(() -> {
+                    this.shooter.isAutoShooting = false;
+                    this.rgb.normalize();
+                })
         );
 
         return command.raceWith(new WaitCommand(3).andThen(this::disableShooterFeedersBMS));
@@ -78,6 +85,7 @@ public class AutoShootCommand extends SequentialCommandGroup
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         command.addCommands(
+                new InstantCommand(() -> this.shooter.isAutoShooting = true),
 
                 new InstantCommand(() -> {
                     this.intake.ballManagementForward();
@@ -131,10 +139,15 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new WaitCommand(0.3),
 
                 //Turn off everything
-                new InstantCommand(this::disableShooterFeedersBMS)
+                new InstantCommand(this::disableShooterFeedersBMS),
+
+                new InstantCommand(() -> {
+                    this.shooter.isAutoShooting = false;
+                    this.rgb.normalize();
+                })
         );
 
-        return command.raceWith(new WaitCommand(3).andThen(this::disableShooterFeedersBMS));
+        return command.raceWith(new WaitCommand(5).andThen(this::disableShooterFeedersBMS));
     }
 
     private Command getTestDoubleShootCommand()
