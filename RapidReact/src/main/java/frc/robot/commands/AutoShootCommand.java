@@ -181,6 +181,37 @@ public class AutoShootCommand extends SequentialCommandGroup
         return command.andThen(this::disableShooterFeedersBMS);
     }
 
+    private Command getTestDoubleShootCommand()
+    {
+        SequentialCommandGroup command = new SequentialCommandGroup();
+
+        command.addCommands(
+
+                new InstantCommand(() -> {
+                    this.intake.ballManagementForward();
+                    this.shooter.antiFeed();
+                }),
+
+                new WaitCommand(0.5),
+
+                //Activate shooter
+                new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
+
+                //Wait until shooter is up to speed
+                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed),
+
+                new InstantCommand(this.rgb::autoShootingDouble),
+
+                new InstantCommand(() -> this.shooter.turnOnFeeders()),
+
+                new WaitCommand(3.0),
+
+                new InstantCommand(this::disableShooterFeedersBMS)
+        );
+
+        return command.andThen(this::disableShooterFeedersBMS);
+    }
+
     @Override
     public void cancel()
     {
