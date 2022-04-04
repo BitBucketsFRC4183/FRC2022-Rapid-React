@@ -35,6 +35,8 @@ public class AutoShootCommand extends SequentialCommandGroup
 
         command.addCommands(
 
+                new InstantCommand(() -> this.shooter.isAutoShooting = true),
+
                 new InstantCommand(() -> {
                     this.intake.ballManagementForward();
                     this.shooter.antiFeed();
@@ -62,7 +64,12 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new WaitCommand(0.3),
 
                 //Turn off everything
-                new InstantCommand(this::disableShooterFeedersBMS)
+                new InstantCommand(this::disableShooterFeedersBMS),
+
+                new InstantCommand(() -> {
+                    this.shooter.isAutoShooting = false;
+                    this.rgb.normalize();
+                })
         );
 
         return command.raceWith(new WaitCommand(3).andThen(this::disableShooterFeedersBMS));
@@ -78,6 +85,7 @@ public class AutoShootCommand extends SequentialCommandGroup
         SequentialCommandGroup command = new SequentialCommandGroup();
 
         command.addCommands(
+                new InstantCommand(() -> this.shooter.isAutoShooting = true),
 
                 new InstantCommand(() -> {
                     this.intake.ballManagementForward();
@@ -131,41 +139,15 @@ public class AutoShootCommand extends SequentialCommandGroup
                 new WaitCommand(0.3),
 
                 //Turn off everything
-                new InstantCommand(this::disableShooterFeedersBMS)
-        );
-
-        return command.raceWith(new WaitCommand(3).andThen(this::disableShooterFeedersBMS));
-    }
-
-    private Command getTestDoubleShootCommand()
-    {
-        SequentialCommandGroup command = new SequentialCommandGroup();
-
-        command.addCommands(
+                new InstantCommand(this::disableShooterFeedersBMS),
 
                 new InstantCommand(() -> {
-                    this.intake.ballManagementForward();
-                    this.shooter.antiFeed();
-                }),
-
-                new WaitCommand(0.5),
-
-                //Activate shooter
-                new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
-
-                //Wait until shooter is up to speed
-                new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed),
-
-                new InstantCommand(this.rgb::autoShootingDouble),
-
-                new InstantCommand(() -> this.shooter.turnOnFeeders()),
-
-                new WaitCommand(3.0),
-
-                new InstantCommand(this::disableShooterFeedersBMS)
+                    this.shooter.isAutoShooting = false;
+                    this.rgb.normalize();
+                })
         );
 
-        return command.andThen(this::disableShooterFeedersBMS);
+        return command.raceWith(new WaitCommand(5).andThen(this::disableShooterFeedersBMS));
     }
 
     @Override

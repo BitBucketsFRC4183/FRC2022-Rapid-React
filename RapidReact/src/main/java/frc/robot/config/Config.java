@@ -68,8 +68,8 @@ public class Config {
   public int climberMotor_IDLeft = 16;
   public int climberMotor_IDRight = 17;
 
-  public int elevatorSolenoid_ID1 = 2;
-  public int elevatorSolenoid_ID2 = 3;
+  public int elevatorSolenoid_ID1 = 3;
+  public int elevatorSolenoid_ID2 = 2;
 
   //RGB
   public static int RGB_ID = 9;
@@ -89,8 +89,8 @@ public class Config {
 
     public String nothingPath = "Nothing";
 
-    public double maxPathFollowVelocity = 1.5;
-    public double maxPathFollowAcceleration = 2.5;
+    public double maxPathFollowVelocity = 1.25;
+    public double maxPathFollowAcceleration = 2.25;
 
     //public PID pathXYPID = new PID(2.2956, 0, 0);
     public PID pathXYPID = new PID(3.2416, 0, 0);

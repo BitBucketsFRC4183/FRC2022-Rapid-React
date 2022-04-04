@@ -138,6 +138,8 @@ public class AutonomousCommand extends SequentialCommandGroup
                 state.poseMeters.getTranslation(),
                 state.holonomicRotation
         ));
+
+        SmartDashboard.putString("autonomous_initial_position", this.initialPosition.get().toString());
     }
 
     public AutonomousCommand stop()
@@ -151,10 +153,14 @@ public class AutonomousCommand extends SequentialCommandGroup
         //Set Odometry
         Pose2d zeroPos = new Pose2d(0, 0, new Rotation2d(0));
         if (this.initialPosition.isPresent()) {
-            SmartDashboard.putString("/drivetrain/initial_path_position", this.initialPosition.get().toString());
+            //SmartDashboard.putString("/drivetrain/initial_path_position", this.initialPosition.get().toString());
             this.drive.resetGyroWithOffset(this.initialPosition.orElse(zeroPos).getRotation());
             this.drive.setOdometry(this.initialPosition.orElse(zeroPos));
         }
+
+        SmartDashboard.putString("autonomous_initial_gyro_rot2d", this.drive.gyro.getRotation2d().toString());
+        SmartDashboard.putString("autonomous_initial_gyro_angle", String.valueOf(this.drive.gyro.getAngle()));
+
         return this;
     }
 

@@ -6,7 +6,8 @@ public enum AutonomousPath
 
     HARDCODED("", "Hardcoded"),
 
-    ONE_BALL("1 Ball Auto"),
+    ONE_BALL_PATHPLANNER("1 Ball Auto", "1 Ball - PathPlanner"),
+    ONE_BALL_HC("1 Ball Auto", "1 Ball Auto Hardcoded"),
     ONE_BALL_INTAKE("1.5 Ball Auto"),
     TWO_BALL_HANGAR("2 Ball Auto Hangar"),
     TWO_BALL_WALL("2 Ball Auto Wall"),
