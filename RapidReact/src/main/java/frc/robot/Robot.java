@@ -53,6 +53,10 @@ public class Robot extends TimedRobot {
   private ShooterSubsystem shooterSubsystem;
   private RGBSubsystem rgbSubsystem;
   private IntakeSubsystem intakeSubsystem;
+
+  private VisionSubsystem visionSubsystem;
+
+  private HoodSubsystem hoodSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
 
@@ -96,6 +100,9 @@ public class Robot extends TimedRobot {
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
+
+    this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config));
+    this.robotSubsystems.add(hoodSubsystem = new HoodSubsystem(this.config));
 
     // create a new field to update
     SmartDashboard.putData("Field", field);
