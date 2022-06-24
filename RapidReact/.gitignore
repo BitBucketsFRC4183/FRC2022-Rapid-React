@@ -167,3 +167,5 @@ bin/
 /.idea/misc.xml
 /.idea/vcs.xml
 /.idea/.gitignore
+
+/RapidReact/.idea/
