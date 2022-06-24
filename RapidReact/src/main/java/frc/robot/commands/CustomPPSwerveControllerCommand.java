@@ -86,6 +86,8 @@ public class CustomPPSwerveControllerCommand extends CommandBase
     @SuppressWarnings("LocalVariableName")
     public void execute() {
         double curTime = m_timer.get();
+        System.out.println("Current Time: " + curTime);
+
         var desiredState = (PathPlannerTrajectory.PathPlannerState) m_trajectory.sample(curTime);
 
         var targetChassisSpeeds = m_controller.calculate(m_pose.get(), desiredState, desiredState.holonomicRotation);

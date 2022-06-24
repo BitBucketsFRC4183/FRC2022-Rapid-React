@@ -23,6 +23,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   //dashboard stuff
   private final Changeable<Double> intakePercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/intakePercentOutput", 1.0);
   private final Changeable<Double> bmsPercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/bmsPercentOutput", 0.75);
+  private final Changeable<Double> bmsFeedPercentOutput = BucketLog.changeable(Put.DOUBLE, "intake/bmsFeedPercentOutput", 1.0);
   private final Changeable<Boolean> autoExtend = BucketLog.changeable(
     Put.BOOL,
     "intake/autoExtend",
@@ -65,6 +66,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   @Override
   public void disable() {
     intake.set(0);
+    ballManagement.set(0);
   }
 
   //intaking, outtaking, and stop the intake
@@ -116,6 +118,12 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
   public void ballManagementForward() {
     ballManagement.set(ControlMode.PercentOutput, bmsPercentOutput.currentValue());
     bmsState.log(LogLevel.GENERAL, "bms intaking");
+  }
+
+  public void ballManagementFeed()
+  {
+    ballManagement.set(ControlMode.PercentOutput, bmsFeedPercentOutput.currentValue());
+    bmsState.log(LogLevel.GENERAL, "bms feeding");
   }
 
   public void ballManagementBackward() {

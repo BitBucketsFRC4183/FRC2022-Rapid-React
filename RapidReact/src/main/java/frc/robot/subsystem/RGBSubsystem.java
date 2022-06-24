@@ -43,7 +43,7 @@ public class RGBSubsystem extends BitBucketsSubsystem {
 
   public void autoDriving()
   {
-    motor.set(BlinkenColors.Fire_Medium.getValue());
+    motor.set(BlinkenColors.Fire_Large.getValue());
   }
 
   public void autoNotDriving()
@@ -66,7 +66,7 @@ public class RGBSubsystem extends BitBucketsSubsystem {
 
   public void autoShootingDouble()
   {
-    motor.set(BlinkenColors.Strobe_Gold.getValue());
+    motor.set(BlinkenColors.Color_Waves_Lava_Palette.getValue());
   }
 
   public void alertMatchTimeLeft()

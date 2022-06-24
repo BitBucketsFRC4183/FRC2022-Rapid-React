@@ -49,8 +49,8 @@ public class CursedRobot extends TimedRobot {
       turn = 0;
     }
 
-    double leftSpeed = (forw + turn * -1);
-    double rightSpeed = (forw - turn * -1);
+    double leftSpeed = (forw + turn);
+    double rightSpeed = (forw - turn);
 
     /* drive robot */
     _diffDrive.tankDrive(
