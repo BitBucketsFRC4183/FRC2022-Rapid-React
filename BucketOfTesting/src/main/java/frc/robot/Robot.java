@@ -4,16 +4,10 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.config.Config;
-import frc.robot.config.MotorConfig;
-import frc.robot.utils.MotorUtils;
+import frc.robot.subsystem.VisionSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -27,13 +21,6 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  private Config config;
-  private MotorConfig[] motorConfigs;
-
-  private WPI_TalonSRX motor1;
-  private WPI_TalonSRX motor2;
-  private WPI_TalonSRX motor3;
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -43,16 +30,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    
-    motorConfigs = new MotorConfig[config.motorIDs.length];
-    for (int i = 0; i < config.motorIDs.length; i++) {
-      motorConfigs[i] = new MotorConfig();
-      motorConfigs[i].id = config.motorIDs[i];
-    }
-    motor1 = MotorUtils.makeSRX(motorConfigs[0]);
-    motor2 = MotorUtils.makeSRX(motorConfigs[1]);
-    motor3 = MotorUtils.makeSRX(motorConfigs[2]);
   }
+  VisionSubsystem vision = new VisionSubsystem();
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for items like
@@ -63,9 +42,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    motor1.set(ControlMode.PercentOutput, 100 * SmartDashboard.getNumber("Motor 1 %Output", 0));
-    motor2.set(ControlMode.PercentOutput, 100 * SmartDashboard.getNumber("Motor 2 %Output", 0));
-    motor3.set(ControlMode.PercentOutput, 100 * SmartDashboard.getNumber("Motor 3 %Output", 0));
+    vision.periodic();
   }
 
   /**

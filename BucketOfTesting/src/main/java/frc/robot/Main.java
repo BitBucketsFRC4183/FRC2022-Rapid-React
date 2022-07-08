@@ -20,6 +20,6 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
-    RobotBase.startRobot(CursedRobot::new); //switch constructor reference to CursedRobot to use the CursedRobot
+    RobotBase.startRobot(Robot::new); //switch constructor reference to CursedRobot to use the CursedRobot
   }
 }
