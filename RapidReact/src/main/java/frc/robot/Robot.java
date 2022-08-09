@@ -23,6 +23,7 @@ import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.simulator.SetModeTestSubsystem;
 import frc.robot.simulator.SimulatorTestSubsystem;
 import frc.robot.subsystem.*;
+import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 
@@ -86,7 +87,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     }
     if (config.enableRGBSubsystem) {
-      this.robotSubsystems.add(rgbSubsystem = new RGBSubsystem(this.config));
+      this.robotSubsystems.add(rgbSubsystem = new RGBSubsystem());
     }
     if (config.enableDriveSubsystem) {
       this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
@@ -101,7 +102,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
 
-    this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config));
+    this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config, angleDegrees, heightInches));
     this.robotSubsystems.add(hoodSubsystem = new HoodSubsystem(this.config));
 
     // create a new field to update
@@ -286,6 +287,8 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("autonomousInit_time", System.currentTimeMillis() - timeI);
 
       command.schedule();
+
+      //CommandScheduler.getInstance().schedule();
     }
   }
 
@@ -309,7 +312,7 @@ public class Robot extends TimedRobot {
 
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
+          new DefaultDriveCommand(
           drivetrainSubsystem,
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),

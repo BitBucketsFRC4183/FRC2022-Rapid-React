@@ -280,6 +280,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
         }
       }
     } else {
+
       withinThresholdLoops1 = 0;
     }
 

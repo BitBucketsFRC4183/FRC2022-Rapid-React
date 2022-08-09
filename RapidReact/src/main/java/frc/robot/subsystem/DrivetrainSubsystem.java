@@ -136,12 +136,6 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     //this.chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    this.initializeModules();
-
-    setOdometry(new Pose2d());
-  }
-
-  private void initializeModules() {
     ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
     // There are 4 methods you can call to create your swerve modules.
@@ -151,7 +145,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
     // Your module has two Falcon 500s on it. One for steering and one for driving.
     //
     // Similar helpers also exist for Mk4 modules using the Mk4SwerveModuleHelper class.
-    
+
     // By default we will use Falcon 500s in standard configuration. But if you use
     // a different configuration or motors
     // you MUST change it. If you do not, your code will crash on startup.
@@ -201,6 +195,8 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
     //Calibrate the gyro only once when the drive subsystem is first initialized
     this.gyro.calibrate();
+
+    setOdometry(new Pose2d());
   }
 
   public double getMaxVelocity()
@@ -214,6 +210,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   }
 
   public void stopSticky() {
+
+
+
     setStates(new SwerveModuleState[]{
       new SwerveModuleState(0, Rotation2d.fromDegrees(45)), //Front Left
       new SwerveModuleState(0, Rotation2d.fromDegrees(-45)), //Front Right
@@ -287,6 +286,7 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
   //DOES NOT RESET GYRO
   public void setOdometry(Pose2d startingPosition) {
     odometry = new SwerveDriveOdometry(kinematics, this.gyro.getRotation2d(), startingPosition);
+
 
     odometryLoggable.log(LogLevel.DEBUG, "Reset Odometry to Starting Position: " + startingPosition);
     SmartDashboard.putString("/drivetrain/start_position", startingPosition.toString());

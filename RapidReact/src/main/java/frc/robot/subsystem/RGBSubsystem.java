@@ -2,32 +2,17 @@ package frc.robot.subsystem;
 
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import frc.robot.config.Config;
-import frc.robot.log.BucketLog;
-import frc.robot.log.Changeable;
-import frc.robot.log.Put;
+import frc.robot.lib.RunCycle;
 import frc.robot.utils.BlinkenColors;
 
-public class RGBSubsystem extends BitBucketsSubsystem {
+public class RGBSubsystem implements RunCycle {
 
-  private final PWMSparkMax motor;
+  private final PWMSparkMax motor = new PWMSparkMax(Config.RGB_ID);
 
-  private final Changeable<Double> color = BucketLog.changeable(
-    Put.DOUBLE,
-    "rgb/color",
-    BlinkenColors.Colors_Violet.getValue()
-  );
-
-  public RGBSubsystem(Config config) {
-    super(config);
-    motor = new PWMSparkMax(Config.RGB_ID);
-    //TODO Auto-generated constructor stub
+  public void setColor(BlinkenColors color) {
+    motor.set(color.getValue());
   }
 
-  @Override
-  public void init() {
-    // TODO Auto-generated method stub
-    motor.set(color.currentValue());
-  }
 
   public void climberEnabled() {
     motor.set(BlinkenColors.Colors_Dark_red.getValue());
@@ -75,16 +60,21 @@ public class RGBSubsystem extends BitBucketsSubsystem {
   }
 
   @Override
+  public void init() {
+
+  }
+
+  @Override
   public void periodic() {
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public void disable() {
-    // TODO Auto-generated method stub
+  public void stop() {
 
   }
+
 
 
 }
