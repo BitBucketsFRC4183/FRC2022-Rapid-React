@@ -1,13 +1,13 @@
 package frc.robot.subsystem.drive.cmd;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystem.drive.DriveSubsystem2;
+import frc.robot.subsystem.drive.DriveSubsystem;
 
 public class ResetGyro extends CommandBase {
 
-    private final DriveSubsystem2 driveSubsystem;
+    private final DriveSubsystem driveSubsystem;
 
-    public ResetGyro(DriveSubsystem2 driveSubsystem) {
+    public ResetGyro(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
 
         this.addRequirements(driveSubsystem);

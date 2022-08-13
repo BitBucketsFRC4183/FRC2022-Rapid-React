@@ -7,13 +7,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
-import frc.robot.log.BucketLog;
-import frc.robot.log.LogLevel;
-import frc.robot.log.Loggable;
-import frc.robot.log.Put;
-import frc.robot.subsystem.AutonomousSubsystem;
-import frc.robot.subsystem.DrivetrainSubsystem;
-import frc.robot.subsystem.RGBSubsystem;
+import frc.robot.subsystem.other.AutonomousSubsystem;
+import frc.robot.subsystem.other.DrivetrainSubsystem;
+import frc.robot.subsystem.other.RGBSubsystem;
 
 public class AutonomousFollowPathCommand extends SequentialCommandGroup
 {

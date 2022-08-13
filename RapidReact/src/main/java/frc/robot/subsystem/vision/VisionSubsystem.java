@@ -1,49 +1,46 @@
 package frc.robot.subsystem.vision;
 
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.config.Config;
-import frc.robot.subsystem.BitBucketsSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.lib.RunCycle;
 
-public class VisionSubsystem extends BitBucketsSubsystem {
+import static frc.robot.subsystem.vision.VisionConstants.*;
 
-    NetworkTable limelight;
+public class VisionSubsystem extends SubsystemBase implements RunCycle {
 
-    private final float angleDegrees;
-    private final float heightInches;
-
-    public VisionSubsystem(Config config, float angleDegrees, float heightInches) {
-        super(config);
-        this.angleDegrees = angleDegrees;
-        this.heightInches = heightInches;
-    }
-
-
+    NetworkTableEntry yEntry;
 
     @Override
     public void init() {
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
+        yEntry = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty");
     }
 
     @Override
     public void periodic() {
-        System.out.printf("LIMELIGHT TEST: Target area = %s and pipeline %s%n", limelight.getEntry("ta"), limelight.getEntry("getpipe"));
+
     }
 
     @Override
-    public void disable() {
+    public void stop() {
 
     }
 
     public double angleTarget() {
+        double ty = yEntry.getDouble(0.0);
+
+
+// distance from the target to the floor
+        double goalHeightInches = 60.0;
+
+        double angleToGoalDegrees = MOUNT_ANGLE_DEGREES + ty;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+
+//calculate distance
+        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches)/Math.tan(angleToGoalRadians);
 
     }
 
-    public float distanceFromTarget() {
-        limelight.getEntry("ty");
-
-        return 0;
-    }
 
 
 }

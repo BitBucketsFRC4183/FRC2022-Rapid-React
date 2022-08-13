@@ -1,14 +1,13 @@
 package frc.robot.subsystem.drive.cmd;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystem.drive.DriveSubsystem2;
+import frc.robot.subsystem.drive.DriveSubsystem;
 
 public class SlowDrive extends CommandBase {
 
-    private final DriveSubsystem2 driveSubsystem;
+    private final DriveSubsystem driveSubsystem;
 
-    public SlowDrive(DriveSubsystem2 driveSubsystem) {
+    public SlowDrive(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
     }
 

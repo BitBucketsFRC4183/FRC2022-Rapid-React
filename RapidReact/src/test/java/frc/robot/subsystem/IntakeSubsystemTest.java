@@ -3,6 +3,7 @@ package frc.robot.subsystem;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
+import frc.robot.subsystem.other.IntakeSubsystem;
 import org.junit.Before;
 import org.junit.Test;
 

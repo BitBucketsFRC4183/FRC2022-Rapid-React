@@ -8,11 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.log.BucketLog;
-import frc.robot.log.LogLevel;
-import frc.robot.log.Loggable;
-import frc.robot.log.Put;
-import frc.robot.subsystem.*;
+import frc.robot.subsystem.other.*;
 import frc.robot.utils.AutonomousPath;
 
 import java.util.Optional;
