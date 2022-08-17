@@ -4,6 +4,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -12,11 +13,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.lib.RunCycle;
 
@@ -25,25 +28,21 @@ import static frc.robot.subsystem.drive.DriveConstants.*;
 
 public class DriveSubsystem extends SubsystemBase implements RunCycle {
 
-    private final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
-    private final Translation2d[] translations = new Translation2d[] {
-            new Translation2d(TRACK_WIDTH_METERS_HALF, WHEEL_BASE_METERS_HALF), //frontLeft
-            new Translation2d(TRACK_WIDTH_METERS_HALF, -WHEEL_BASE_METERS_HALF), //frontRight
-            new Translation2d(-TRACK_WIDTH_METERS_HALF, WHEEL_BASE_METERS_HALF), //backLeft
-            new Translation2d(-TRACK_WIDTH_METERS_HALF, -WHEEL_BASE_METERS_HALF), //backRight
-    };
+    final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
+
 
     //identical
-    private final SwerveModule[] modules = new SwerveModule[4];
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(translations);
+    final SwerveModule[] modules = new SwerveModule[4];
 
-    private double speedModifier = 0.75;
-    private AHRS gyro;
-    private SwerveDriveOdometry odometry;
+
+    double speedModifier = 0.75;
+    AHRS gyro;
+    SwerveDriveOdometry odometry;
 
 
     @Override
     public void init() {
+        PIDController controller;
         //instantiate
         gyro = new AHRS(SPI.Port.kMXP, (byte)200);
         odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d()); //this rot2d will update in periodic
@@ -79,26 +78,31 @@ public class DriveSubsystem extends SubsystemBase implements RunCycle {
 
     @Override
     public void periodic(float delta) {
-
-    }
-
-    @Override
-    public void periodic() {
         SwerveModuleState[] states = new SwerveModuleState[4];
 
         for (int i = 0; i < modules.length; i++) {
             SwerveModule module = modules[i];
+
             states[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
-            //current state in m/s : rads
         }
 
-        //integrate m/s to m
         this.odometry.update(gyro.getRotation2d(), states);
     }
 
     @Override
     public void stop() {
         command(new ChassisSpeeds(0,0,0));
+    }
+
+
+    public void command(SwerveModuleState[] states) {
+        for(int i = 0; i < modules.length; i++)
+        {
+            double voltage = MathUtil.clamp(feedForward.calculate(states[i].speedMetersPerSecond), -12, 12);
+            double radians = states[i].angle.getRadians();
+
+            modules[i].set(voltage, radians);
+        }
     }
 
     /**
@@ -109,13 +113,7 @@ public class DriveSubsystem extends SubsystemBase implements RunCycle {
         SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VEL_METERS_PER_SECOND * speedModifier);
 
-        for(int i = 0; i < modules.length; i++)
-        {
-            double voltage = MathUtil.clamp(feedForward.calculate(states[i].speedMetersPerSecond), -12, 12);
-            double radians = states[i].angle.getRadians();
 
-            modules[i].set(voltage, radians);
-        }
 
 
     }

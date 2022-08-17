@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.config.Config;
 import frc.robot.subsystem.other.AutonomousSubsystem;
 import frc.robot.subsystem.other.DrivetrainSubsystem;
-import frc.robot.subsystem.other.RGBSubsystem;
 
 public class AutonomousFollowPathCommand extends SequentialCommandGroup
 {

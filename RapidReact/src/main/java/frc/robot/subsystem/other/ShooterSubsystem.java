@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.REVPhysicsSim;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
@@ -130,6 +131,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
     shooterTop.setIdleMode(CANSparkMax.IdleMode.kCoast);
     shooterBottom.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
 
     //limit the voltage of the feeder motors
     feeder.configVoltageCompSaturation(11);

@@ -1,6 +1,7 @@
 package frc.robot.subsystem.other;
 
 import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -159,6 +160,9 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
     climberRight.setInverted(followerConfig.inverted);
     climberRight.setSensorPhase(followerConfig.sensorPhase);
 
+    climberLeft.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
+
+
     // Set status frame periods to ensure we don't have stale data
     climberLeft.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20);
     climberLeft.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20);
@@ -238,6 +242,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
      * true means talon's local output is PID0 - PID1, and other side Talon is PID0 + PID1
      */
     // climberRight.configAuxPIDPolarity(false);
+
 
     /* Initialize */
     // climberRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_Targets, 10);

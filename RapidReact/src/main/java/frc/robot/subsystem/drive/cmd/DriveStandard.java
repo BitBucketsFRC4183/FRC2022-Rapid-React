@@ -8,6 +8,7 @@ import frc.robot.subsystem.drive.DriveSubsystem;
 
 import static frc.robot.subsystem.drive.DriveConstants.*;
 
+
 public class DriveStandard extends CommandBase {
 
     private final DriveSubsystem driveSubsystem;
@@ -28,7 +29,7 @@ public class DriveStandard extends CommandBase {
 
     @Override
     public void execute() {
-        double x = limiter[AXIS_X].calculate(joystick.getRawAxis(AXIS_X));
+        double x = limiter[X].calculate(joystick.getRawAxis(AXIS_X));
         double y = limiter[AXIS_Y].calculate(joystick.getRawAxis(AXIS_Y));
         double rot = joystick.getRawAxis(AXIS_ROT);
 
@@ -41,7 +42,6 @@ public class DriveStandard extends CommandBase {
 
 
 
-            driveSubsystem.command();
 
             driveSubsystem.stopSticky();
             xWheelLoggable.log(LogLevel.DEBUG, "xWheel active.");

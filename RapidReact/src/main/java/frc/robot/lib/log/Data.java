@@ -4,6 +4,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 
 public interface Data {
 
-    void init(ShuffleboardContainer container);
+    void init(ShuffleboardContainer container); //TODO types of data that require resources
 
 }

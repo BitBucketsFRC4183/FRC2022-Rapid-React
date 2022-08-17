@@ -2,6 +2,7 @@ package frc.robot.lib.log;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DoubleConst implements Constant<Double>{
 
@@ -22,6 +23,7 @@ public class DoubleConst implements Constant<Double>{
 
     @Override
     public Double value() {
+
         if (entry == null) return defaultVal;
 
         return entry.getDouble(defaultVal);
