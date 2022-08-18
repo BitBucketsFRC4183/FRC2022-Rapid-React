@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystem.drive.DriveSubsystem;
 
-import static frc.robot.subsystem.drive.DriveConstants.*;
-
 
 public class DriveStandard extends CommandBase {
 

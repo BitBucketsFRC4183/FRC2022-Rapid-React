@@ -3,11 +3,11 @@ package frc.robot.subsystem.vision;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.lib.RunCycle;
+import frc.robot.lib.System;
 
 import static frc.robot.subsystem.vision.VisionConstants.*;
 
-public class VisionSubsystem extends SubsystemBase implements RunCycle {
+public class VisionSubsystem extends SubsystemBase implements System {
 
     NetworkTableEntry yEntry;
 
