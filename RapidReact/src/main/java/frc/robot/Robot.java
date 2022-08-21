@@ -14,15 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
-import frc.robot.log.*;
-import frc.robot.simulator.CTREPhysicsSim;
-import frc.robot.simulator.SetModeTestSubsystem;
-import frc.robot.simulator.SimulatorTestSubsystem;
-import frc.robot.subsystem.*;
+import frc.robot.subsystem.other.*;
+import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.utils.AutonomousPath;
 import frc.robot.utils.MathUtils;
 
@@ -53,6 +47,10 @@ public class Robot extends TimedRobot {
   private ShooterSubsystem shooterSubsystem;
   private RGBSubsystem rgbSubsystem;
   private IntakeSubsystem intakeSubsystem;
+
+  private VisionSubsystem visionSubsystem;
+
+  private HoodSubsystem hoodSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
 
@@ -82,7 +80,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));
     }
     if (config.enableRGBSubsystem) {
-      this.robotSubsystems.add(rgbSubsystem = new RGBSubsystem(this.config));
+      this.robotSubsystems.add(rgbSubsystem = new RGBSubsystem());
     }
     if (config.enableDriveSubsystem) {
       this.robotSubsystems.add(drivetrainSubsystem = new DrivetrainSubsystem(this.config));
@@ -97,17 +95,15 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
 
+    this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config, angleDegrees, heightInches));
+    this.robotSubsystems.add(hoodSubsystem = new HoodSubsystem(this.config));
+
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
     // Configure the button bindings
     this.configureButtonBindings();
 
-    // Subsystem Initialize Loop
-    if (System.getenv().containsKey("CI")) {
-      this.robotSubsystems.add(new LogTestSubsystem(this.config));
-      this.robotSubsystems.add(new SimulatorTestSubsystem(this.config));
-    }
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
@@ -125,8 +121,7 @@ public class Robot extends TimedRobot {
           this.autonomousSubsystem,
           this.drivetrainSubsystem,
           this.intakeSubsystem,
-          this.shooterSubsystem,
-          this.rgbSubsystem
+          this.shooterSubsystem
     );
 
     //Just to grab the getCommand methods
@@ -159,13 +154,7 @@ public class Robot extends TimedRobot {
             .stop()
     );
 
-    //One Ball Hardcoded
-//    this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
-//            .shootOne(true)
-//            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 0)
-//            .executeAction((d, i, s) -> d.stop(), 2.0)
-//            .stop()
-//    );
+
     this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
             .executeAction((d, i, s) -> {
               s.autoTopSpeedHighOffset = 800;
@@ -279,6 +268,8 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("autonomousInit_time", System.currentTimeMillis() - timeI);
 
       command.schedule();
+
+      //CommandScheduler.getInstance().schedule();
     }
   }
 
@@ -302,7 +293,7 @@ public class Robot extends TimedRobot {
 
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
-        new DefaultDriveCommand(
+          new DefaultDriveCommand(
           drivetrainSubsystem,
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveForward)),
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),

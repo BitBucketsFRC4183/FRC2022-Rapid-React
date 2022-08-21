@@ -21,5 +21,9 @@ public final class Main {
    */
   public static void main(String... args) {
     RobotBase.startRobot(CursedRobot::new); //switch constructor reference to CursedRobot to use the CursedRobot
+
+
+
+
   }
 }

@@ -4,6 +4,7 @@ import edu.wpi.first.hal.HAL;
 import frc.robot.config.Config;
 import frc.robot.config.PIDF;
 import frc.robot.simulator.CTREPhysicsSim;
+import frc.robot.subsystem.other.ClimberSubsystem;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
