@@ -14,11 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AutoShootCommand;
-import frc.robot.commands.AutonomousCommand;
-import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.config.Config;
-import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.subsystem.other.*;
 import frc.robot.subsystem.vision.VisionSubsystem;
 import frc.robot.utils.AutonomousPath;
@@ -108,11 +104,6 @@ public class Robot extends TimedRobot {
     // Configure the button bindings
     this.configureButtonBindings();
 
-    // Subsystem Initialize Loop
-    if (System.getenv().containsKey("CI")) {
-      this.robotSubsystems.add(new LogTestSubsystem(this.config));
-      this.robotSubsystems.add(new SimulatorTestSubsystem(this.config));
-    }
 
     this.robotSubsystems.add(new SetModeTestSubsystem(this.config));
 
@@ -130,8 +121,7 @@ public class Robot extends TimedRobot {
           this.autonomousSubsystem,
           this.drivetrainSubsystem,
           this.intakeSubsystem,
-          this.shooterSubsystem,
-          this.rgbSubsystem
+          this.shooterSubsystem
     );
 
     //Just to grab the getCommand methods
@@ -164,13 +154,7 @@ public class Robot extends TimedRobot {
             .stop()
     );
 
-    //One Ball Hardcoded
-//    this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
-//            .shootOne(true)
-//            .executeAction((d, i, s) -> d.drive(new ChassisSpeeds(1.5, 0.0, 0)), 0)
-//            .executeAction((d, i, s) -> d.stop(), 2.0)
-//            .stop()
-//    );
+
     this.autonomousCommands.put(AutonomousPath.ONE_BALL_HC, base.get()
             .executeAction((d, i, s) -> {
               s.autoTopSpeedHighOffset = 800;

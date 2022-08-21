@@ -7,7 +7,7 @@ import frc.robot.lib.System;
  */
 public interface Header {
 
-    System init(ConstantBuilder constantBuilder, MotorBuilder motorBuilder);
+    System init(LogBuilder logBuilder, MotorBuilder motorBuilder);
 
 
 

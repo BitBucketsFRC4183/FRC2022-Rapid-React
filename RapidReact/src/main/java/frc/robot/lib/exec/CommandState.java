@@ -1,6 +1,6 @@
 package frc.robot.lib.exec;
 
-public enum Status {
+public enum CommandState {
 
     INIT,
     NORMAL,

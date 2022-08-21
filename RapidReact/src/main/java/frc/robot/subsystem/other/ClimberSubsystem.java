@@ -1,7 +1,6 @@
 package frc.robot.subsystem.other;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -9,7 +8,6 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.config.MotorConfig;
-import frc.robot.simulator.CTREPhysicsSim;
 import frc.robot.utils.MotorUtils;
 
 public class ClimberSubsystem extends BitBucketsSubsystem {
