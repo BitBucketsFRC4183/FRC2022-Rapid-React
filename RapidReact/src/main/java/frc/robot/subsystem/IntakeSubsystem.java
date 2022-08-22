@@ -38,6 +38,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+    System.out.println("j");
     ballManagement = MotorUtils.makeSRX(config.intake.ballManagementMotor);
     intake = MotorUtils.makeSRX(config.intake.intakeMotor);
     if (config.enablePneumatics) {
