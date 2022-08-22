@@ -122,6 +122,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   
   @Override
   public void init() {
+    System.out.println("Test push");
     shooterTop = MotorUtils.makeSpark(config.shooter.shooterTop);
     shooterBottom = MotorUtils.makeSpark(config.shooter.shooterBottom);
     feeder = MotorUtils.makeSRX(config.shooter.feeder);
