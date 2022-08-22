@@ -97,6 +97,7 @@ public class ClimberSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+    System.out.println("Daniel Wu\nYas queens");
     climberLeft.set(ControlMode.MotionMagic, 0);
     climberRight.set(ControlMode.MotionMagic, 0);
 
