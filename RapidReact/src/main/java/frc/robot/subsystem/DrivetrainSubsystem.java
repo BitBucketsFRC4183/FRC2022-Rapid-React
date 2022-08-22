@@ -94,6 +94,9 @@ public class DrivetrainSubsystem extends BitBucketsSubsystem {
 
   @Override
   public void init() {
+
+    System.out.println("William YB 😼");
+
     //Normalized Wheel Diameter after wear
     double wheelWearFactor = 1;
 
