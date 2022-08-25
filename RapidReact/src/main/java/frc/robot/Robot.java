@@ -380,12 +380,8 @@ public class Robot extends TimedRobot {
         }
       );
 
-      buttons.slowDrive
-        .whenPressed(() -> {
-          if(this.drivetrainSubsystem.speedModifier > 0.25) this.drivetrainSubsystem.speedModifier = 0.25;
-          else this.drivetrainSubsystem.speedModifier = 0.75;
-        });
-        //.whenReleased(() -> this.drivetrainSubsystem.speedModifier = .75);
+      buttons.slowDrive.whenPressed(() -> this.drivetrainSubsystem.speedModifier = 0.25);
+      buttons.slowDrive.whenReleased(() -> this.drivetrainSubsystem.speedModifier = 0.75);
     }
 
     //Intake buttons
