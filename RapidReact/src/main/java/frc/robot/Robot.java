@@ -9,11 +9,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DefaultDriveCommand;
@@ -409,8 +412,16 @@ public class Robot extends TimedRobot {
 
     //Shooter Buttons
     if (config.enableShooterSubsystem) {
-      buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
-      buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
+
+
+      //buttons.lowShoot.whenPressed(shooterSubsystem::shootLow);
+      //buttons.lowShoot.whenReleased(shooterSubsystem::stopShoot);
+
+      buttons.lowShootNew.whenPressed(shooterSubsystem::shootLow);
+      buttons.lowShootNew.whenReleased(shooterSubsystem::stopShoot);
+
+      //test shooter
+
 
       buttons.hubSpinUp.whenPressed(
         () -> {
@@ -430,13 +441,13 @@ public class Robot extends TimedRobot {
 
       buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(1, true));
 
-      buttons.feedInFire.whenPressed(
+      buttons.feedInFireNew.whenPressed(
         () -> {
           shooterSubsystem.turnOnFeeders();
           intakeSubsystem.ballManagementForward();
         }
       );
-      buttons.feedInFire.whenReleased(
+      buttons.feedInFireNew.whenReleased(
         () -> {
           shooterSubsystem.turnOffFeeders();
           intakeSubsystem.stopBallManagement();
