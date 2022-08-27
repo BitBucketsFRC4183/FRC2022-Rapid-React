@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
-
+    this.robotSubsystems.add(new VisionSubsystem(this.config));
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
