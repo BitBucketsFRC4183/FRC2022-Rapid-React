@@ -173,3 +173,5 @@ BucketOfTesting/build.nosync/
 BucketOfTesting/bin
 BucketOfTesting/build
 BucketOfTesting/out
+
+/.idea/
