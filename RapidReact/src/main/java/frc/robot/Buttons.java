@@ -13,8 +13,8 @@ public class Buttons {
   int swerveForward = PS4.LEFT_STICK_Y;
   int swerveStrafe = PS4.LEFT_STICK_X;
   int swerveRotation = PS4.RIGHT_STICK_X;
-  JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4.PS4);
-  JoystickButton resetOdometry = new JoystickButton(driverControl, PS4.TRACKPAD);
+  //JoystickButton driverEnableClimber = new JoystickButton(driverControl, PS4.PS4);
+  JoystickButton resetOdometry = new JoystickButton(driverControl, PS4.OPTIONS);
   JoystickButton slowDrive = new JoystickButton(driverControl, PS4.R2);
 
   //////////////////////////////////////////////////////////////////////////////
@@ -31,9 +31,9 @@ public class Buttons {
   JoystickButton intake = new JoystickButton(operatorControl, PS4.TRIANGLE);
   JoystickButton outtake = new JoystickButton(operatorControl, PS4.CROSS);
 
-  JoystickButton operatorEnableClimber = new JoystickButton(operatorControl, PS4.PS4);
-  JoystickButton climbAuto = new JoystickButton(operatorControl, PS4.TRACKPAD);
-  JoystickButton resetClimbStuff = new JoystickButton(operatorControl, PS4.OPTIONS);
+  //JoystickButton operatorEnableClimber = new JoystickButton(operatorControl, PS4.PS4);
+  //JoystickButton climbAuto = new JoystickButton(operatorControl, PS4.TRACKPAD);
+  //JoystickButton resetClimbStuff = new JoystickButton(operatorControl, PS4.OPTIONS);
 
   JoystickButton autoClimbStopLeft = new JoystickButton(operatorControl, PS4.L2);
   JoystickButton autoClimbStopRight = new JoystickButton(operatorControl, PS4.R2);
