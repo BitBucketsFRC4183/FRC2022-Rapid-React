@@ -147,7 +147,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 })
         );
 
-        return command.raceWith(new WaitCommand(5).andThen(this::disableShooterFeedersBMS));
+        return command.raceWith(new WaitCommand(8).andThen(this::disableShooterFeedersBMS));
     }
 
     @Override
