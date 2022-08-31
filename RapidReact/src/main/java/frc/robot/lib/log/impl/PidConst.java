@@ -1,7 +1,8 @@
-package frc.robot.lib.log;
+package frc.robot.lib.log.impl;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
+
 import static frc.robot.utils.ArrayConstants.*;
 
 public class PidConst implements Constant<double[]> {

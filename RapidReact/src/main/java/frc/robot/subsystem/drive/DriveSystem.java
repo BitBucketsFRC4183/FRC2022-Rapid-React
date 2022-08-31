@@ -19,6 +19,8 @@ public class DriveSystem implements System {
     final SwerveDriveKinematics kinematics;
     final Gyro gyro;
 
+    static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
+
     public DriveSystem(double maxVel, SwerveModule[] driveModules, SwerveDriveOdometry odometry, SwerveDriveKinematics kinematics, Gyro gyro) {
         this.maxVel = maxVel;
         this.driveModules = driveModules;
@@ -26,9 +28,6 @@ public class DriveSystem implements System {
         this.kinematics = kinematics;
         this.gyro = gyro;
     }
-
-    static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
-
 
     public void driveFieldOriented(double xMeterSecond, double yMeterSecond, double omegaRadSecond) {
         driveAt(
@@ -65,24 +64,4 @@ public class DriveSystem implements System {
     }
 
 
-
-
-
-
-
-
-
-    @Override
-    public void periodic(float delta) {
-
-        SwerveModuleState[] states = new SwerveModuleState[4];
-
-        for (int i = 0; i < driveModules.length; i++) {
-            SwerveModule module = driveModules[i];
-
-            states[i] = new SwerveModuleState(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
-        }
-
-        this.odometry.update(gyro.getRotation2d(), states);
-    }
 }

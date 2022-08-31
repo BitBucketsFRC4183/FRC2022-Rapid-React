@@ -1,4 +1,4 @@
-package frc.robot.lib.log;
+package frc.robot.lib.log.impl;
 
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 

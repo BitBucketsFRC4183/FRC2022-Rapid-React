@@ -1,10 +1,9 @@
-package frc.robot.lib.log;
+package frc.robot.lib.log.impl;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DoubleConst implements Constant<Double>{
+public class DoubleConst implements Constant<Double> {
 
     private final double defaultVal;
     private final String id;
