@@ -19,8 +19,8 @@ public class VisionSubsystem extends BitBucketsSubsystem {
 
     @Override
     public void periodic() {
-        System.out.printf("LIMELIGHT TEST: Target x = %s and pipeline %s%n", limelight.getEntry("tx").getDouble(0.0), limelight.getEntry("getpipe").getDouble(0.0));
-        System.out.printf("LIMELIGHT TEST: Target y = %s and pipeline %s%n", limelight.getEntry("ty").getDouble(0.0), limelight.getEntry("getpipe").getDouble(0.0));
+        //ystem.out.printf("LIMELIGHT TEST: Target x = %s and pipeline %s%n", limelight.getEntry("tx").getDouble(0.0), limelight.getEntry("getpipe").getDouble(0.0));
+        //System.out.printf("LIMELIGHT TEST: Target y = %s and pipeline %s%n", limelight.getEntry("ty").getDouble(0.0), limelight.getEntry("getpipe").getDouble(0.0));
     }
 
     @Override
