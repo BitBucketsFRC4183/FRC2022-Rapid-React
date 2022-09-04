@@ -15,9 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.config.Config;
-import frc.robot.subsystem.other.*;
-import frc.robot.subsystem.vision.VisionSubsystem;
-import frc.robot.utils.AutonomousPath;
+import frc.robot.system.other.*;
+import frc.robot.system.vision.VisionSubsystem;
 import frc.robot.utils.MathUtils;
 
 import java.util.*;
@@ -420,10 +419,6 @@ public class Robot extends TimedRobot {
           }
         }
       );
-
-      buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(2, true));
-
-      buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(1, true));
 
       buttons.feedInFire.whenPressed(
         () -> {

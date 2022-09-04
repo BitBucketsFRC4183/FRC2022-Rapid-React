@@ -3,9 +3,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.lib.exec.Pressable;
 import frc.robot.utils.PS4;
 
 public class Buttons {
+
+
+
+
+
+
 
   //////////////////////////////////////////////////////////////////////////////
   // Driver
@@ -17,6 +24,9 @@ public class Buttons {
   public JoystickButton resetOdometry = new JoystickButton(driverControl, PS4.TRACKPAD);
   public JoystickButton slowDrive = new JoystickButton(driverControl, PS4.R2);
 
+  public Pressable SLOW_DRIVE = Pressable.from(new JoystickButton(driverControl, PS4.R2));
+  public Pressable AIM_DRIVE = Pressable.from(new JoystickButton(driverControl, PS4.CIRCLE));
+
   //////////////////////////////////////////////////////////////////////////////
   //Operator
   public Joystick operatorControl = new Joystick(1);
@@ -26,6 +36,8 @@ public class Buttons {
   public JoystickButton feedInFire = new JoystickButton(operatorControl, PS4.L2);
   public JoystickButton autoShoot = new JoystickButton(operatorControl, PS4.SQUARE);
   public JoystickButton autoShootOne = new JoystickButton(operatorControl, PS4.R_STICK);
+
+
 
   public JoystickButton toggleIntake = new JoystickButton(operatorControl, PS4.CIRCLE);
   public JoystickButton intake = new JoystickButton(operatorControl, PS4.TRIANGLE);

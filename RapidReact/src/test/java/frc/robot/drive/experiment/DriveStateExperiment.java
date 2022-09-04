@@ -5,8 +5,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import org.junit.Test;
 
-import static frc.robot.subsystem.drive.DriveHeader.TRACK_WIDTH_METERS_HALF;
-import static frc.robot.subsystem.drive.DriveHeader.WHEEL_BASE_METERS_HALF;
+import static frc.robot.system.drive.DriveHeader.TRACK_WIDTH_METERS_HALF;
+import static frc.robot.system.drive.DriveHeader.WHEEL_BASE_METERS_HALF;
 
 public class DriveStateExperiment {
 

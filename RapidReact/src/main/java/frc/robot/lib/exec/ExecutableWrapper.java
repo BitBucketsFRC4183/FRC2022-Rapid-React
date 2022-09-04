@@ -12,20 +12,20 @@ public class ExecutableWrapper extends CommandBase {
 
     @Override
     public void execute() {
-        executable.run(CommandState.NORMAL);
+        executable.run(CommandIs.RUNNING);
     }
 
     @Override
     public void initialize() {
-        executable.run(CommandState.INIT);
+        executable.run(CommandIs.STARTING);
     }
 
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            executable.run(CommandState.SHUTDOWN_INTERRUPT);
+            executable.run(CommandIs.STOPPING_INTERRUPTED);
         } else {
-            executable.run(CommandState.SHUTDOWN);
+            executable.run(CommandIs.STOPPING);
         }
     }
 }
