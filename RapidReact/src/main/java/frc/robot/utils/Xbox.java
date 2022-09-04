@@ -1,6 +1,6 @@
 package frc.robot.utils;
 
-public interface PS4 {
+public interface Xbox {
 
     int LEFT_STICK_X = 0;
     int LEFT_STICK_Y = 1;
