@@ -6,7 +6,7 @@ public class StateTransitionTest {
 
     public void shouldTransition() {
 
-        MyStateTransition transition = new MyStateTransition(new FoodSubsystem() {
+        MyStateProcessor transition = new MyStateProcessor(new FoodSubsystem() {
             @Override
             public boolean foundFood() {
                 return true;

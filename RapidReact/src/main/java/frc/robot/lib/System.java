@@ -8,9 +8,10 @@ public interface System {
     default void init() {
 
     }
-    default void periodic(float delta) {
+    default void periodic(float delta, int iteration) {
 
     }
+
     default void stop() {
 
     }

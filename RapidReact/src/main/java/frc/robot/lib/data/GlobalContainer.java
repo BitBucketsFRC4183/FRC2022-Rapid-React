@@ -22,6 +22,11 @@ class GlobalContainer implements Container {
     }
 
     @Override
+    public <IN, OUT> Consumer<OUT> logger(MappedConstructor<IN, OUT> ctor, String path, IN empty) {
+        return new ThreadedConsumer<>(thread, ctor.make(Shuffleboard.getTab("global"), path, empty));
+    }
+
+    @Override
     public <T> Supplier<T> constant(SupplierConstructor<T> ctor, String path, T defaultValue) {
         return ctor.make(Shuffleboard.getTab("global"), path, defaultValue);
     }

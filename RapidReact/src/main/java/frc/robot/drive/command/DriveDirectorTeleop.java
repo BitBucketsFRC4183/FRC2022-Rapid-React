@@ -5,14 +5,13 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.drive.Drive;
 import frc.robot.drive.DriveSystem;
-import frc.robot.drive.OdometrySystem;
+import frc.robot.drive.odometry.OdometrySystem;
 import frc.robot.lib.System;
 import frc.robot.lib.exec.Pressable;
-import frc.robot.lib.header.RobotContext;
+import frc.robot.lib.header.SystemContext;
 import frc.robot.utils.MathUtils;
 import frc.robot.vision.VisionSystem;
 
@@ -24,7 +23,7 @@ public class DriveDirectorTeleop implements System {
     final OdometrySystem odometrySystem;
     final VisionSystem visionSystem;
 
-    public DriveDirectorTeleop(RobotContext context, DriveSystem driveSystem, OdometrySystem odometrySystem, VisionSystem visionSystem) {
+    public DriveDirectorTeleop(SystemContext context, DriveSystem driveSystem, OdometrySystem odometrySystem, VisionSystem visionSystem) {
         this.driveSystem = driveSystem;
         this.odometrySystem = odometrySystem;
         this.visionSystem = visionSystem;
@@ -50,30 +49,18 @@ public class DriveDirectorTeleop implements System {
 
 
     @Override
-    public void periodic(float delta) {
+    public void periodic(float delta, int iteration) {
 
         double x = limiter[AXIS_X].calculate(MathUtils.modifyAxis(driverControl.getRawAxis(AXIS_X)));
         double y = limiter[AXIS_Y].calculate(MathUtils.modifyAxis(driverControl.getRawAxis(AXIS_Y)));
         double rot = MathUtils.modifyAxis(driverControl.getRawAxis(AXIS_ROT));
 
-        //not a FSM, a behavior tree!
-
         boolean aim = aimDrive.held();
-        double coefficient = (slowDrive.held() ? 0.25 : 1); //if slow, 0.75, else 1
+        double coefficient = slowDrive.held() ? 0.25 : 1;
 
-
-        //TODO clean this up
         if (aim) {
-            if (visionSystem.hasTarget()) {
-                driverControl.setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
-            } else {
-                driverControl.setRumble(GenericHID.RumbleType.kLeftRumble, 1.0);
-            }
-
             driveOrient(x, y, rot, coefficient);
-
         } else {
-            driverControl.setRumble(GenericHID.RumbleType.kLeftRumble, 0.0);
             if (x == 0 && y == 0 && rot == 0) {
                 lock();
             } else {
@@ -82,10 +69,6 @@ public class DriveDirectorTeleop implements System {
         }
 
     }
-
-
-    //Commands
-    //TODO move these to propagating command classes
 
     public void lock() {
         driveSystem.driveAt(

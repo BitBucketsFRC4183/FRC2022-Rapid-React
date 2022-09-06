@@ -10,7 +10,7 @@ public interface Container {
     Container sub(String path);
 
     <T> Consumer<T> logger(LoggedConstructor<T> ctor, String path, T emptyValue);
-
+    <IN, OUT> Consumer<OUT> logger(MappedConstructor<IN, OUT> ctor, String path, IN empty);
 
     <T> Supplier<T> constant(SupplierConstructor<T> ctor, String path, T defaultValue);
 

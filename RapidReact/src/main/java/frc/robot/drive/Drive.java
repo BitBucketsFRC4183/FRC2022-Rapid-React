@@ -5,21 +5,17 @@ import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import frc.robot.lib.System;
 import frc.robot.lib.data.Const;
 import frc.robot.lib.data.Container;
-import frc.robot.lib.header.SystemHeader;
+import frc.robot.lib.header.SystemMaker;
 
 import static com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper.GearRatio.L2;
 import static com.swervedrivespecialties.swervelib.SdsModuleConfigurations.MK4_L2;
 
 public interface Drive {
 
-    //          CONTAINER
     Container DRIVE = Container.GLOBAL.sub("drive");
 
-
-    //          CONST
     String SHARED_SWERVE = "shared_swerve";
 
     double WIDTH = DRIVE.constant(Const.NUMBER, "track_width", 0.6096).get() / 2;
@@ -27,11 +23,11 @@ public interface Drive {
 
     double VISION_DRIVE_THRESHOLD_DEG = 1.0;
     double MAX_DRIVE_VELOCITY = 6380.0 / 60.0 * MK4_L2.getDriveReduction() * MK4_L2.getWheelDiameter() * Math.PI;
-    double MAX_ANGULAR_VEL = Math.hypot(WIDTH / 2, WHEEL_BASE) / 2; //TODO math check
+    double MAX_ANGULAR_VEL = Math.hypot(WIDTH / 2, WHEEL_BASE) / 2;
 
     SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
 
-    SystemHeader HEADER = (context) -> {
+    SystemMaker MAKER = (context) -> {
         SwerveModule[] modules = new SwerveModule[4];
 
         ShuffleboardLayout frontLeft = context.tab()

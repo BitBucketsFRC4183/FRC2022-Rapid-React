@@ -1,18 +1,29 @@
 package frc.robot.intake;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import frc.robot.lib.System;
-import frc.robot.lib.header.RobotContext;
 
 public class BallManagementSystem implements System {
 
     final WPI_TalonSRX ballManagement;
 
-    public BallManagementSystem(RobotContext context) {
-        ballManagement = null;
-
+    public BallManagementSystem(WPI_TalonSRX ballManagement) {
+        this.ballManagement = ballManagement;
     }
 
 
 
+
+    public void bringBallsIn() {
+        ballManagement.set(ControlMode.PercentOutput, BallManagement.BMS_FEED.get());
+    }
+
+    public void pushBallsOut() {
+        ballManagement.set(ControlMode.PercentOutput, -BallManagement.BMS_FEED.get());
+    }
+
+    public void resetMotor() {
+        ballManagement.set(ControlMode.PercentOutput, 0);
+    }
 }

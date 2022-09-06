@@ -69,6 +69,7 @@ public class IntakeSubsystem extends BitBucketsSubsystem {
 
   //intaking, outtaking, and stop the intake
   public void spinForward() {
+
     if (autoExtend.currentValue() && config.enablePneumatics) {
       intakeSolenoid.set(Value.kForward);
     }

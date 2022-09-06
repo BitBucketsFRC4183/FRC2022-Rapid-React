@@ -7,7 +7,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.lib.System;
 import frc.robot.lib.resources.SharedFunction;
 
-public record DriveSystem(SwerveModule[] swerve) implements System {
+public class DriveSystem implements System {
+
+    final SwerveModule[] swerve;
+
+    public DriveSystem(SwerveModule[] swerve) {
+        this.swerve = swerve;
+    }
 
     @SharedFunction
     public SwerveModuleState[] currentStates() {
