@@ -34,7 +34,7 @@ public class NormalHSystem implements StateHandler<TeleopState> {
         if (driveSystem == null) return;
 
         odometrySystem.calculateFieldOrientedDesiredStates(
-                inputSystem.getSlewX(), inputSystem.getSlewY(), inputSystem.getRotation(),
+                inputSystem.getSlewX(), inputSystem.getSlewY(), inputSystem.getRotation()
         );
     }
 }

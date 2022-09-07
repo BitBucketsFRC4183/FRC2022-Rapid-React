@@ -2,7 +2,6 @@ package frc.robot.lib.capability;
 
 import frc.robot.lib.RobotInit;
 import frc.robot.lib.System;
-import frc.robot.lib.header.SystemMaker;
 import frc.robot.lib.header.SystemContext;
 
 public class CapabilityInit implements RobotInit.Setup {
@@ -21,7 +20,6 @@ public class CapabilityInit implements RobotInit.Setup {
 
         maker.init(context);
 
-        new SingleCapabilityCounter<READ, READ>()
 
         return null;
     }

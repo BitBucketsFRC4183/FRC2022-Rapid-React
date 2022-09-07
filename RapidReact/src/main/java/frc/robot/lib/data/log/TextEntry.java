@@ -4,7 +4,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.function.Consumer;
 
-public record TextEntry(NetworkTableEntry entry) implements Consumer<String> {
+public class TextEntry implements Consumer<String> {
+
+    final NetworkTableEntry entry;
+
+    public TextEntry(NetworkTableEntry entry) {
+        this.entry = entry;
+    }
 
     @Override
     public void accept(String s) {

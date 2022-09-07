@@ -4,7 +4,13 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.util.function.Consumer;
 
-public record NumberEntry(NetworkTableEntry singularNumber) implements Consumer<Number> {
+public class NumberEntry implements Consumer<Number> {
+
+    final NetworkTableEntry singularNumber;
+
+    public NumberEntry(NetworkTableEntry singularNumber) {
+        this.singularNumber = singularNumber;
+    }
 
     @Override
     public void accept(Number number) {
