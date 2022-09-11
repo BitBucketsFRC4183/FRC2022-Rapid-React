@@ -20,7 +20,8 @@ public class Config {
   public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
-  public boolean enableVisionSubsystem = false;
+  public boolean enableVisionSubsystem = true;
+  public boolean enableHoodSubsystem = true;
 
   public boolean enablePneumatics = true;
 
@@ -62,7 +63,7 @@ public class Config {
   public int intakeSolenoid_ID1 = 0;
   public int intakeSolenoid_ID2 = 1;
 
-  // Shooter
+  public int hoodMotor_ID = 20;
 
   //Climber Subsystem
   public int climberMotor_IDLeft = 16;
@@ -83,6 +84,7 @@ public class Config {
   public ShooterConfig shooter = new ShooterConfig();
   public VisionConfig vision = new VisionConfig();
   public ClimberConfig climber = new ClimberConfig();
+  public HoodConfig hood = new HoodConfig();
 
   // Autonomous Config
   public class AutonomousConfig {
@@ -164,10 +166,18 @@ public class Config {
     public VisionConfig() {}
   }
 
+  public class HoodConfig {
+    public MotorConfig hoodMotor = new MotorConfig();
+
+    public HoodConfig() {}
+  }
+
   public Config() {
     //////////////////////////////////////////////////////////////////////////////
     // Motor Configuration
 
+    //Hood
+    hood.hoodMotor.id = hoodMotor_ID;
     // Intake
     intake.intakeMotor.id = intakeMotor_ID;
     intake.intakeMotor.inverted = true;
@@ -187,7 +197,7 @@ public class Config {
 
     shooter.shooterBottom.id = shooterBottom_ID;
     shooter.shooterBottom.velocityPIDF = new PIDF(/*P*/0.0001 / 4, /*I*/0.001 / 1000, /*D*/0, /*F*/((7.0 / 12.0) / (60 * 60)) * (12.0/11.0), /*izone*/300);
-    shooter.shooterBottom.inverted = false;
+    shooter.shooterBottom.inverted = true;
 
     shooter.feeder.id = shooterFeeder_ID;
     shooter.feeder.inverted = true;

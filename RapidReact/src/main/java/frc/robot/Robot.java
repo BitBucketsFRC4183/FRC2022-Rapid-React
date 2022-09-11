@@ -58,6 +58,8 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
+  private VisionSubsystem visionSubsystem;
+  private HoodSubsystem hoodSubsystem;
 
   private SendableChooser<AutonomousPath> autonomousChooser = new SendableChooser<>();
   private Map<AutonomousPath, AutonomousCommand> autonomousCommands = new HashMap<>();
@@ -99,7 +101,12 @@ public class Robot extends TimedRobot {
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
-    this.robotSubsystems.add(new VisionSubsystem(this.config));
+    if (config.enableVisionSubsystem) {
+      this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config));
+    }
+    if (config.enableHoodSubsystem) {
+      this.robotSubsystems.add(hoodSubsystem = new HoodSubsystem(this.config, visionSubsystem));
+    }
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
@@ -119,7 +126,9 @@ public class Robot extends TimedRobot {
     this.robotSubsystems.forEach(BitBucketsSubsystem::init);
 
     //Create the Autonomous Commands now so we don't do this every time autonomousInit() gets called
-    this.cacheAutonomousCommands();
+    if(config.enableAutonomousSubsystem){
+      this.cacheAutonomousCommands();
+    }
   }
 
   private void cacheAutonomousCommands()
@@ -297,11 +306,14 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    shooterSubsystem.disable();
-    intakeSubsystem.disable();
-
-    this.shooterSubsystem.autoBottomSpeedHighOffset = 0;
-    this.shooterSubsystem.autoTopSpeedHighOffset = 0;
+    if(config.enableShooterSubsystem){
+      shooterSubsystem.disable();
+      this.shooterSubsystem.autoBottomSpeedHighOffset = 0;
+      this.shooterSubsystem.autoTopSpeedHighOffset = 0;
+    }
+    if(config.enableIntakeSubsystem){
+      intakeSubsystem.disable();
+    }
 
     if (config.enableDriveSubsystem) {
       drivetrainSubsystem.setDefaultCommand(
@@ -320,19 +332,21 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if((int)Timer.getMatchTime() == 30) this.rgbSubsystem.alertMatchTimeLeft();
 
-    if(!this.shooterSubsystem.isAutoShooting)
-    {
-      if (shooterSubsystem.isShooting()) {
-        wasShooting = true;
-        if (shooterSubsystem.isUpToHighSpeed()) {
-          rgbSubsystem.upToSpeed();
+    if(config.enableShooterSubsystem){
+      if(!this.shooterSubsystem.isAutoShooting)
+      {
+        if (shooterSubsystem.isShooting()) {
+          wasShooting = true;
+          if (shooterSubsystem.isUpToHighSpeed()) {
+            rgbSubsystem.upToSpeed();
+          } else {
+            rgbSubsystem.notUpToSpeed();
+          }
         } else {
-          rgbSubsystem.notUpToSpeed();
-        }
-      } else {
-        if (wasShooting) {
-          rgbSubsystem.normalize();
-          wasShooting = false;
+          if (wasShooting) {
+            rgbSubsystem.normalize();
+            wasShooting = false;
+          }
         }
       }
     }
@@ -347,7 +361,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    this.drivetrainSubsystem.stop();
+    if(config.enableDriveSubsystem){
+      this.drivetrainSubsystem.stop();
+    }
   }
 
   /** This function is called once when test mode is enabled. */
@@ -423,13 +439,11 @@ public class Robot extends TimedRobot {
       //test shooter
 
 
-      buttons.hubSpinUp.whenPressed(
-        () -> {
+      buttons.hubSpinUp.whenPressed(() -> {
           shooterSubsystem.spinUpTop();
         }
       );
-      buttons.hubSpinUp.whenReleased(
-        () -> {
+      buttons.hubSpinUp.whenReleased(() -> {
           shooterSubsystem.stopShoot();
           if (config.enableIntakeSubsystem) {
             intakeSubsystem.stopBallManagement();
@@ -491,5 +505,14 @@ public class Robot extends TimedRobot {
         rgbSubsystem.funnyButton();
       }
     );
+
+    //Hood Buttons
+    if(config.enableHoodSubsystem){
+      buttons.hoodUp.whenPressed(hoodSubsystem::hoodUp);
+      buttons.hoodDown.whenPressed(hoodSubsystem::hoodDown);
+
+      buttons.hoodUp.whenReleased(hoodSubsystem::hoodStop);
+      buttons.hoodDown.whenReleased(hoodSubsystem::hoodStop);
+    }
   }
 }
