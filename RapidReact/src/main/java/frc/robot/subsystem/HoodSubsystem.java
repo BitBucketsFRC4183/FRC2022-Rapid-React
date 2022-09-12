@@ -33,6 +33,8 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     public void init() {
         hoodMotor = MotorUtils.makeSpark(config.hood.hoodMotor);
         hoodMotor.setIdleMode(IdleMode.kBrake);
+
+        
 //        hoodMotor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 //        hoodMotor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
 //        m_forwardLimit.enableLimitSwitch(false);
@@ -62,9 +64,9 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 //        }
         if(visionSubsystem.hasTarget()){
             double angle = angleTable.get(visionSubsystem.distance());
+            SmartDashboard.putNumber("Hood Angle", angle);
             setAngle(angle);
         }
-        setAngle(40);
     }
 
     @Override
@@ -77,6 +79,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         //TODO
         //sets number of rotations of the motor to move the hood by a certain angle parameter
         hoodMotor.getPIDController().setReference(HOOD_MOTOR_CONSTANT * angle_degrees, CANSparkMax.ControlType.kPosition);
+    
     }
 
     public void hoodUp(){

@@ -231,5 +231,8 @@ public class Config {
     climber.climberRight.sensorPhase = false;
     climber.climberRight.distancePeakOutput = 0.5;
     climber.climberRight.turningPeakOutput = 1;
+
+    //HOOD
+    hood.hoodMotor.positionPIDF = new PIDF(0.001, 0,0,0);
   }
 }
