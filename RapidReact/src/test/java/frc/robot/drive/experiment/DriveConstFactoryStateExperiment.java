@@ -8,7 +8,7 @@ import org.junit.Test;
 import static frc.robot.system.drive.DriveHeader.TRACK_WIDTH_METERS_HALF;
 import static frc.robot.system.drive.DriveHeader.WHEEL_BASE_METERS_HALF;
 
-public class DriveStateExperiment {
+public class DriveConstFactoryStateExperiment {
 
     private final Translation2d[] translations = new Translation2d[] {
             new Translation2d(TRACK_WIDTH_METERS_HALF, WHEEL_BASE_METERS_HALF), //frontLeft

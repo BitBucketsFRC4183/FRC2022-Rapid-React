@@ -5,32 +5,20 @@ import com.swervedrivespecialties.swervelib.SwerveModule;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import frc.robot.lib.data.Const;
-import frc.robot.lib.data.Container;
-import frc.robot.lib.header.SystemMaker;
+import frc.log.DriveConst;
 
 import static com.swervedrivespecialties.swervelib.Mk4SwerveModuleHelper.GearRatio.L2;
-import static com.swervedrivespecialties.swervelib.SdsModuleConfigurations.MK4_L2;
 
-public interface Drive {
-
-    Container DRIVE = Container.GLOBAL.sub("drive");
-
-    String SHARED_SWERVE = "shared_swerve";
-
-    double WIDTH = DRIVE.constant(Const.NUMBER, "track_width", 0.6096).get() / 2;
-    double WHEEL_BASE = DRIVE.constant(Const.NUMBER, "wheel_base", 0.7112).get() / 2;
-
-    double VISION_DRIVE_THRESHOLD_DEG = 1.0;
-    double MAX_DRIVE_VELOCITY = 6380.0 / 60.0 * MK4_L2.getDriveReduction() * MK4_L2.getWheelDiameter() * Math.PI;
-    double MAX_ANGULAR_VEL = Math.hypot(WIDTH / 2, WHEEL_BASE) / 2;
+public class DriveFactory implements Sts<DriveConst> {
 
     SimpleMotorFeedforward FEEDFORWARD = new SimpleMotorFeedforward(0.65292, 2.3053, 0.37626);
 
-    SystemMaker MAKER = (context) -> {
+
+    @Override
+    public DriveConst make() {
         SwerveModule[] modules = new SwerveModule[4];
 
-        ShuffleboardLayout frontLeft = context.tab()
+        ShuffleboardLayout frontLeft = DriveConst.CONTAINER.asShuffleboard()
                 .getLayout("Front Left Module", BuiltInLayouts.kList)
                 .withPosition(0, 0);
         ShuffleboardLayout frontRight = context.tab()
@@ -48,15 +36,10 @@ public interface Drive {
         modules[2] = Mk4SwerveModuleHelper.createFalcon500(backLeft, L2, 5, 6, 11, -Math.toRadians(255.49));
         modules[3] = Mk4SwerveModuleHelper.createFalcon500(backRight, L2, 3, 4, 10, -Math.toRadians(70.66 + 180));
 
-        DriveSystem system = new DriveSystem(modules);
+        DriveConstSystem system = new DriveConstSystem(modules);
 
         context.shareInput(SHARED_SWERVE, system::currentStates);
 
         return system;
-    };
-
-
-
-
-
+    }
 }

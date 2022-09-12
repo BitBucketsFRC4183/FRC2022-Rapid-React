@@ -2,13 +2,13 @@ package frc.robot.drive.command;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.drive.DriveSystem;
+import frc.robot.drive.DriveConstSystem;
 
 public class DriveCommands {
 
-    final DriveSystem drive;
+    final DriveConstSystem drive;
 
-    public DriveCommands(DriveSystem drive) {
+    public DriveCommands(DriveConstSystem drive) {
         this.drive = drive;
     }
 

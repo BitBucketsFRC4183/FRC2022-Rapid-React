@@ -6,12 +6,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Joystick;
-import frc.robot.drive.Drive;
-import frc.robot.drive.DriveSystem;
+import frc.robot.drive.DriveFactory;
+import frc.robot.drive.DriveConstSystem;
 import frc.robot.drive.odometry.OdometrySystem;
 import frc.robot.lib.System;
 import frc.robot.lib.exec.Pressable;
-import frc.robot.lib.header.SystemContext;
 import frc.robot.utils.MathUtils;
 import frc.robot.vision.VisionSystem;
 
@@ -19,11 +18,11 @@ import static frc.robot.utils.ArrayConstants.*;
 
 public class DriveDirectorTeleop implements System {
 
-    final DriveSystem driveSystem;
+    final DriveConstSystem driveSystem;
     final OdometrySystem odometrySystem;
     final VisionSystem visionSystem;
 
-    public DriveDirectorTeleop(SystemContext context, DriveSystem driveSystem, OdometrySystem odometrySystem, VisionSystem visionSystem) {
+    public DriveDirectorTeleop(SystemContext context, DriveConstSystem driveSystem, OdometrySystem odometrySystem, VisionSystem visionSystem) {
         this.driveSystem = driveSystem;
         this.odometrySystem = odometrySystem;
         this.visionSystem = visionSystem;
@@ -33,7 +32,7 @@ public class DriveDirectorTeleop implements System {
 
         driverControl = context.buttons().driverControl;
 
-        double maxAngVel = Drive.MAX_ANGULAR_VEL;
+        double maxAngVel = DriveFactory.MAX_ANGULAR_VEL;
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(maxAngVel, maxAngVel * 10.0);
 
         rotControllerRad = new ProfiledPIDController(3, 0.2, 0.02, constraints);
@@ -96,7 +95,7 @@ public class DriveDirectorTeleop implements System {
 
         //first deadband
         Rotation2d target = new Rotation2d(joystickRot);
-        if (errorDeg > Drive.VISION_DRIVE_THRESHOLD_DEG) {
+        if (errorDeg > DriveFactory.VISION_DRIVE_THRESHOLD_DEG) {
             if (offsetRotDeg > 0) { //offset is positive, subtract
                 target = gyroRot.minus(Rotation2d.fromDegrees(errorDeg));
             } else { //offset is negative, add

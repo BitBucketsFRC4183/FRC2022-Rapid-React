@@ -8,12 +8,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.drive.Drive;
-import frc.robot.lib.header.SystemMaker;
-import frc.robot.lib.resources.SharedOut;
+import frc.robot.drive.DriveFactory;
 
-import static frc.robot.drive.Drive.WHEEL_BASE;
-import static frc.robot.drive.Drive.WIDTH;
 
 public interface Odometry {
 
@@ -32,7 +28,7 @@ public interface Odometry {
         SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, gyro.getRotation2d(), new Pose2d());
         Field2d field2d = new Field2d();
 
-        SharedOut<SwerveModuleState[]> motorState = context.shareOutput(Drive.SHARED_SWERVE);
+        SharedOut<SwerveModuleState[]> motorState = context.shareOutput(DriveFactory.SHARED_SWERVE);
 
         return new OdometrySystem(motorState, gyro, kinematics, odometry, field);
     };

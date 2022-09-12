@@ -1,6 +1,6 @@
 package frc.robot.drive.teleop;
 
-import frc.robot.drive.DriveSystem;
+import frc.robot.drive.DriveConstSystem;
 import frc.robot.drive.input.DriveInputSystem;
 import frc.robot.drive.odometry.OdometrySystem;
 import frc.robot.lib.fsm.StateHandler;
@@ -10,11 +10,11 @@ import java.util.List;
 
 public class NormalHSystem implements StateHandler<TeleopState> {
 
-    final prc<DriveSystem> driveSystem;
+    final prc<DriveConstSystem> driveSystem;
     final prc<DriveInputSystem> inputSystem;
     final prc<OdometrySystem> odometrySystem;
 
-    public NormalHSystem(prc<DriveSystem> driveSystem, prc<DriveInputSystem> inputSystem, prc<OdometrySystem> odometrySystem) {
+    public NormalHSystem(prc<DriveConstSystem> driveSystem, prc<DriveInputSystem> inputSystem, prc<OdometrySystem> odometrySystem) {
         this.driveSystem = driveSystem;
         this.inputSystem = inputSystem;
         this.odometrySystem = odometrySystem;
@@ -27,7 +27,7 @@ public class NormalHSystem implements StateHandler<TeleopState> {
 
     @Override
     public void onEvent() {
-        DriveSystem driveSystem = this.driveSystem.tryAcquire(NormalHSystem.class);
+        DriveConstSystem driveSystem = this.driveSystem.tryAcquire(NormalHSystem.class);
         DriveInputSystem inputSystem = this.inputSystem.tryParallel(NormalHSystem.class);
         OdometrySystem odometrySystem = this.odometrySystem.tryParallel(NormalHSystem.class);
 

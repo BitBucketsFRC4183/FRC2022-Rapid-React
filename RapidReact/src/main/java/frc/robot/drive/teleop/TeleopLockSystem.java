@@ -2,22 +2,22 @@ package frc.robot.drive.teleop;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import frc.robot.drive.DriveSystem;
+import frc.robot.drive.DriveConstSystem;
 import frc.robot.lib.fsm.StateSystem;
 import frc.robot.lib.resources.b.prc;
 
 public class TeleopLockSystem implements StateSystem<TeleopState> {
 
-    final prc<DriveSystem> driveSystem;
+    final prc<DriveConstSystem> driveSystem;
 
-    public TeleopLockSystem(prc<DriveSystem> driveSystem) {
+    public TeleopLockSystem(prc<DriveConstSystem> driveSystem) {
         this.driveSystem = driveSystem;
     }
 
     @Override
     public void consume(TeleopState teleopState) {
         if (teleopState == TeleopState.LOCKED) {
-            DriveSystem system = driveSystem.tryAcquire();
+            DriveConstSystem system = driveSystem.tryAcquire();
 
             if (system != null) {
                 system.driveAt(

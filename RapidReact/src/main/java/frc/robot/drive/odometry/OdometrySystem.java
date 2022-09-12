@@ -7,7 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.drive.Drive;
+import frc.robot.drive.DriveFactory;
 import frc.robot.lib.System;
 import frc.robot.lib.resources.SharedOut;
 
@@ -47,7 +47,7 @@ public class OdometrySystem implements System {
                 ChassisSpeeds.fromFieldRelativeSpeeds(x,y,rot, ahrs.getRotation2d())
         );
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_DRIVE_VELOCITY * gain);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveFactory.MAX_DRIVE_VELOCITY * gain);
 
         return states;
     }

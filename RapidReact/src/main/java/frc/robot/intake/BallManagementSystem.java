@@ -12,9 +12,6 @@ public class BallManagementSystem implements System {
         this.ballManagement = ballManagement;
     }
 
-
-
-
     public void bringBallsIn() {
         ballManagement.set(ControlMode.PercentOutput, BallManagement.BMS_FEED.get());
     }
