@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutoOrientCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DefaultDriveCommand;
@@ -323,6 +324,15 @@ public class Robot extends TimedRobot {
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
         )
+      );
+
+      buttons.autoAim.whenPressed(
+              new AutoOrientCommand(
+                      buttons.operatorControl::getX,
+                      buttons.operatorControl::getY,
+                      drivetrainSubsystem,
+                      visionSubsystem
+              )
       );
     }
   }
