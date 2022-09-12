@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.AutoOrientCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
 import frc.robot.commands.DefaultDriveCommand;
@@ -58,6 +59,8 @@ public class Robot extends TimedRobot {
   private IntakeSubsystem intakeSubsystem;
   private Field2d field;
   private ClimberSubsystem climberSubsystem;
+  private VisionSubsystem visionSubsystem;
+  private HoodSubsystem hoodSubsystem;
 
   private SendableChooser<AutonomousPath> autonomousChooser = new SendableChooser<>();
   private Map<AutonomousPath, AutonomousCommand> autonomousCommands = new HashMap<>();
@@ -99,7 +102,8 @@ public class Robot extends TimedRobot {
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
     }
-    this.robotSubsystems.add(new VisionSubsystem(this.config));
+    this.robotSubsystems.add(visionSubsystem = new VisionSubsystem(this.config));
+    this.robotSubsystems.add(hoodSubsystem = new HoodSubsystem(this.config, visionSubsystem));
     // create a new field to update
     SmartDashboard.putData("Field", field);
 
@@ -311,6 +315,15 @@ public class Robot extends TimedRobot {
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveStrafe)),
           () -> -MathUtils.modifyAxis(buttons.driverControl.getRawAxis(buttons.swerveRotation))
         )
+      );
+
+      buttons.autoAim.whenPressed(
+              new AutoOrientCommand(
+                      buttons.operatorControl::getX,
+                      buttons.operatorControl::getY,
+                      drivetrainSubsystem,
+                      visionSubsystem
+              )
       );
     }
   }

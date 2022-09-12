@@ -27,7 +27,7 @@ public class VisionSubsystem extends BitBucketsSubsystem {
         return heightGoalTrigMeters / Math.tan(angleToGoalRad);
     }
 
-    public double tx() {
+    public double getHeadingOffsetAngle() {
         return tx.getDouble(0);
     }
 
