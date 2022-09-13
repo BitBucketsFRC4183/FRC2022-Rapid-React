@@ -42,7 +42,7 @@ public class AutoOrientCommand extends CommandBase {
     public void execute() {
         Rotation2d gyroRot = drivetrainSubsystem.getGyroAngle();
 
-        double offsetRotDeg = visionSubsystem.getHeadingOffsetAngle();
+        double offsetRotDeg = visionSubsystem.tx(); //same thing
         double errorDeg = Math.abs(offsetRotDeg);
 
         //first deadband
