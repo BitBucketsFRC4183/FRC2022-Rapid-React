@@ -19,9 +19,7 @@ public class Buttons {
   int lt = 2;
   int rt = 3;
   Button slowDrive = new Button(() -> driverControl.getRawAxis(lt) > 0.1);
-  JoystickButton autoAim = new JoystickButton(driverControl, Xbox.CIRCLE);
-
-          //Operator
+  //Operator
   Joystick operatorControl = new Joystick(1);
 
   Button lowShootNew = new Button(() -> operatorControl.getRawAxis(rt) > 0.1); //rt
@@ -42,4 +40,6 @@ public class Buttons {
 
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up
+  POVButton hoodDown = new POVButton(operatorControl, 90); // DPAD left
+  POVButton hoodUp = new POVButton(operatorControl, 270); // DPAD right
 }
