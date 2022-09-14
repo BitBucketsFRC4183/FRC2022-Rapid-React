@@ -14,18 +14,31 @@ import frc.robot.config.Config;
 import frc.robot.log.*;
 import frc.robot.utils.MotorUtils;
 
+import java.util.function.Supplier;
+
 public class ShooterSubsystem extends BitBucketsSubsystem {
 
   private CANSparkMax shooterTop;
   private CANSparkMax shooterBottom;
   private TalonSRX feeder;
 
-  private final Changeable<Double> topSpeedHigh = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 2500.0 * 0.85);
-  private final Changeable<Double> bottomSpeedHigh = BucketLog.changeable(
+  boolean lerpShoot = false;
+
+  private final Supplier<Double> topSpeedHigh;
+  private final Supplier<Double> bottomSpeedHigh;
+
+  private final Changeable<Double> topSpeedHighChangeable = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 2500.0 * 0.85);
+  private final Changeable<Double> bottomSpeedHighChangeable = BucketLog.changeable(
     Put.DOUBLE,
     "shooter/bottomShooterSpeed",
     5450.0 * 0.85
   );
+
+
+
+
+
+
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 2000.0);
   private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
     Put.DOUBLE,
@@ -67,8 +80,25 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   ShooterState shooterState = ShooterState.STOPPED;
 
-  public ShooterSubsystem(Config config) {
+  public ShooterSubsystem(Config config, HoodSubsystem hoodSubsystem) {
     super(config);
+
+    topSpeedHigh = () -> {
+      if (lerpShoot) {
+        return hoodSubsystem.getTopShootSpeed();
+      }
+
+      return topSpeedHighChangeable.currentValue();
+    };
+
+
+    bottomSpeedHigh = () -> {
+      if (lerpShoot) {
+        return hoodSubsystem.getBottomShootSpeed();
+      }
+
+      return bottomSpeedHighChangeable.currentValue();
+    };
   }
 
   public boolean isShooting(){
@@ -88,8 +118,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public void spinUpTop() {
     shootState.log("TopShooting");
 
-    shooterTop.getPIDController().setReference(topSpeedHigh.currentValue() + autoTopSpeedHighOffset, ControlType.kVelocity, MotorUtils.velocitySlot);
-    shooterBottom.getPIDController().setReference(bottomSpeedHigh.currentValue()+ autoBottomSpeedHighOffset, ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterTop.getPIDController().setReference(topSpeedHigh.get() + autoTopSpeedHighOffset, ControlType.kVelocity, MotorUtils.velocitySlot);
+    shooterBottom.getPIDController().setReference(bottomSpeedHigh.get() + autoBottomSpeedHighOffset, ControlType.kVelocity, MotorUtils.velocitySlot);
 
     shooterState = ShooterState.TOP;
   }
@@ -157,7 +187,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToHighSpeed() {
-    boolean state = (motorIsInSpeedDeadband(shooterTop, topSpeedHigh.currentValue() + autoTopSpeedHighOffset) && motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.currentValue() + autoBottomSpeedHighOffset));
+
+    boolean state = (motorIsInSpeedDeadband(shooterTop, topSpeedHigh.get() + autoTopSpeedHighOffset) && motorIsInSpeedDeadband(shooterBottom, bottomSpeedHigh.get() + autoBottomSpeedHighOffset));
     if (state) {
       upToSpeedCount++;
     } else {
@@ -187,8 +218,8 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
         topError = shooterTop.getEncoder().getVelocity() - topSpeedLow.currentValue();
         bottomError = shooterBottom.getEncoder().getVelocity() - bottomSpeedLow.currentValue();
       } else {
-        topError = shooterTop.getEncoder().getVelocity() - (topSpeedHigh.currentValue() + autoTopSpeedHighOffset);
-        bottomError = shooterBottom.getEncoder().getVelocity() - (bottomSpeedHigh.currentValue() + autoBottomSpeedHighOffset);
+        topError = shooterTop.getEncoder().getVelocity() - (topSpeedHigh.get() + autoTopSpeedHighOffset);
+        bottomError = shooterBottom.getEncoder().getVelocity() - (bottomSpeedHigh.get() + autoBottomSpeedHighOffset);
       }
 
     }
@@ -231,5 +262,9 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     shooterTop.set(0);
     shooterBottom.set(0);
     feeder.set(ControlMode.PercentOutput, 0);
+  }
+
+  public void toggleLerpShoot() {
+    lerpShoot = !lerpShoot;
   }
 }

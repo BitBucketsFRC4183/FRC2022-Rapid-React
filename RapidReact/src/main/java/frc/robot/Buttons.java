@@ -27,6 +27,7 @@ public class Buttons {
 
   Button lowShootNew = new Button(() -> operatorControl.getRawAxis(rt) > 0.1); //rt
   Button feedInFireNew = new Button(() -> operatorControl.getRawAxis(lt) > 0.1); //lt
+  Button toggleShooterLerpSpeed = new JoystickButton(operatorControl, Xbox.OPTIONS);
 
   JoystickButton hubSpinUp = new JoystickButton(operatorControl, Xbox.R1);
 

@@ -6,6 +6,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
 
+import java.util.Scanner;
+
 public class VisionSubsystem extends BitBucketsSubsystem {
 
     private NetworkTableEntry tx;

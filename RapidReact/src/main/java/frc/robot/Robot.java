@@ -9,14 +9,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoOrientCommand;
 import frc.robot.commands.AutoShootCommand;
 import frc.robot.commands.AutonomousCommand;
@@ -97,7 +94,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
     }
     if (config.enableShooterSubsystem) {
-      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config));
+      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config, hoodSubsystem));
     }
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
@@ -524,5 +521,7 @@ public class Robot extends TimedRobot {
       buttons.hoodUp.whenReleased(hoodSubsystem::hoodStop);
       buttons.hoodDown.whenReleased(hoodSubsystem::hoodStop);
     }
+
+    buttons.toggleShooterLerpSpeed.whenPressed(shooterSubsystem::toggleLerpShoot);
   }
 }

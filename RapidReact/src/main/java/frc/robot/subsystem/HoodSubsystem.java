@@ -1,12 +1,9 @@
 package frc.robot.subsystem;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxLimitSwitch;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
-import frc.robot.config.MotorConfig;
 import frc.robot.utils.MotorUtils;
 
 public class HoodSubsystem extends BitBucketsSubsystem {
@@ -17,11 +14,17 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 //    private SparkMaxLimitSwitch m_reverseLimit;
 
     private final LerpTable<Double, Double> angleTable = new LerpTable<>();
+    private final LerpTable<Double, Double> lowMotorTable = new LerpTable<>();
+    private final LerpTable<Double, Double> highMotorTable = new LerpTable<>();
 
     private final VisionSubsystem visionSubsystem;
 
     //845/72 is number of motor turns to raise hood by 1 degree
     private final double HOOD_MOTOR_CONSTANT = 845f/72;
+
+    //TODO
+    private final LerpTable<Double, Double> shooterBottom = new LerpTable<>();
+    private final LerpTable<Double, Double> shooterTop = new LerpTable<>();
 
 
     public HoodSubsystem(Config config, VisionSubsystem visionSubsystem) {
@@ -49,6 +52,8 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         //angleTable.put(distance, angle)
         angleTable.put(0d,0d);
         angleTable.put(100d,100d);
+
+
     }
 
     @Override
@@ -103,4 +108,13 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     public void hoodStop(){
         hoodMotor.set(0);
     }
+
+    public double getTopShootSpeed() {
+        return highMotorTable.get(visionSubsystem.distance());
+    }
+
+    public double getBottomShootSpeed() {
+        return lowMotorTable.get(visionSubsystem.distance());
+    }
+
 }
