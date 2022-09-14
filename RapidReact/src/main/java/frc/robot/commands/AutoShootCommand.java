@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.subsystem.HoodSubsystem;
 import frc.robot.subsystem.IntakeSubsystem;
 import frc.robot.subsystem.RGBSubsystem;
 import frc.robot.subsystem.ShooterSubsystem;
@@ -8,16 +9,18 @@ import frc.robot.subsystem.ShooterSubsystem;
 public class AutoShootCommand extends SequentialCommandGroup
 {
     private final ShooterSubsystem shooter;
+    private final HoodSubsystem hood;
     private final IntakeSubsystem intake;
     private final RGBSubsystem rgb;
 
     private boolean top;
 
-    public AutoShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, RGBSubsystem rgb)
+    public AutoShootCommand(ShooterSubsystem shooter, IntakeSubsystem intake, RGBSubsystem rgb, HoodSubsystem hood)
     {
         this.shooter = shooter;
         this.intake = intake;
         this.rgb = rgb;
+        this.hood = hood;
     }
 
     public AutoShootCommand withParameters(int ballCount, boolean top)
@@ -53,6 +56,7 @@ public class AutoShootCommand extends SequentialCommandGroup
                 //Wait for shooter to get up to speed
                 new WaitUntilCommand(this.top ? this.shooter::isUpToHighSpeed : this.shooter::isUpToLowSpeed)
                         /*.raceWith(new WaitCommand(0.5))*/,
+                new InstantCommand(() -> hood.setAngle(0)),
 
                 //Extremely important RGB
                 new InstantCommand(this.rgb::autoShootingSingle),
