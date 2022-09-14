@@ -21,6 +21,8 @@ public class AutonomousCommand extends SequentialCommandGroup
 {
     private AutonomousSubsystem auto;
     private DrivetrainSubsystem drive;
+
+    private HoodSubsystem hood;
     private IntakeSubsystem intake;
     private ShooterSubsystem shooter;
     private RGBSubsystem rgb;
@@ -29,13 +31,14 @@ public class AutonomousCommand extends SequentialCommandGroup
 
     private Optional<Pose2d> initialPosition;
 
-    public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, RGBSubsystem rgb)
+    public AutonomousCommand(AutonomousSubsystem auto, DrivetrainSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, RGBSubsystem rgb,HoodSubsystem hood)
     {
         this.auto = auto;
         this.drive = drive;
         this.intake = intake;
         this.shooter = shooter;
         this.rgb = rgb;
+        this.hood = hood;
 
         this.initialPosition = Optional.empty();
     }
@@ -43,7 +46,7 @@ public class AutonomousCommand extends SequentialCommandGroup
     //Basic Commands
     public AutoShootCommand getShootCommand(int ballCount, boolean top)
     {
-        return new AutoShootCommand(this.shooter, this.intake, this.rgb)
+        return new AutoShootCommand(this.shooter, this.intake, this.rgb,this.hood)
                 .withParameters(ballCount, top);
     }
 

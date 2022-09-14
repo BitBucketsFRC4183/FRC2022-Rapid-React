@@ -136,7 +136,8 @@ public class Robot extends TimedRobot {
           this.drivetrainSubsystem,
           this.intakeSubsystem,
           this.shooterSubsystem,
-          this.rgbSubsystem
+          this.rgbSubsystem,
+          this.hoodSubsystem
     );
 
     //Just to grab the getCommand methods
@@ -458,9 +459,9 @@ public class Robot extends TimedRobot {
         }
       );
 
-      buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(2, true));
+      buttons.autoShoot.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem,this.hoodSubsystem).withParameters(2, true));
 
-      buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem).withParameters(1, true));
+      buttons.autoShootOne.whenHeld(new AutoShootCommand(this.shooterSubsystem, this.intakeSubsystem, this.rgbSubsystem,this.hoodSubsystem).withParameters(1, true));
 
       buttons.feedInFireNew.whenPressed(
         () -> {

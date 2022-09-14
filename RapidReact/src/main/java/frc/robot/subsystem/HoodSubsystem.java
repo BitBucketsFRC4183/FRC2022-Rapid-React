@@ -53,7 +53,13 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         angleTable.put(0d,0d);
         angleTable.put(100d,100d);
 
+        //angleTable.put(distance, speed)
+        lowMotorTable.put(0d,0d);
+        lowMotorTable.put(100d,100d);
 
+        //angleTable.put(distance, speed)
+        highMotorTable.put(0d,0d);
+        highMotorTable.put(100d,100d);
     }
 
     @Override
@@ -89,7 +95,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     }
 
 
-    void setAngle(double angle_degrees) {
+    public void setAngle(double angle_degrees) {
         //TODO
 
         //sets number of rotations of the motor to move the hood by a certain angle parameter
