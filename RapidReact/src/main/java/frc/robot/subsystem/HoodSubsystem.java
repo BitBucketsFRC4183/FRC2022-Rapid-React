@@ -97,8 +97,13 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         angleTable.put(0d,0d);
         angleTable.put(10d,18.9);
 
+        //angleTable.put(distance, speed)
+        lowMotorTable.put(0d,0d);
+        lowMotorTable.put(100d,100d);
 
-
+        //angleTable.put(distance, speed)
+        highMotorTable.put(0d,0d);
+        highMotorTable.put(100d,100d);
     }
 
     @Override
