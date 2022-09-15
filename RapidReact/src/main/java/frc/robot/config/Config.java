@@ -15,9 +15,9 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = true;
-  public boolean enableClimberSubsystem = false;
+  public boolean enableClimberSubsystem = true;
   public boolean enableDriveSubsystem = true;
-  public boolean enableIntakeSubsystem = false;
+  public boolean enableIntakeSubsystem = true;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
@@ -233,6 +233,8 @@ public class Config {
     climber.climberRight.turningPeakOutput = 1;
 
     //HOOD
+    hood.hoodMotor.encoderType = EncoderType.Relative;
     hood.hoodMotor.positionPIDF = new PIDF(0.001, 0,0,0);
+
   }
 }
