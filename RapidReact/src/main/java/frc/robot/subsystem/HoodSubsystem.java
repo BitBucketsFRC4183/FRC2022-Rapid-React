@@ -27,7 +27,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
 
     //845/72 is number of motor turns to raise hood by 1 degree
-    private final double HOOD_MOTOR_CONSTANT = 845f/72;
+    private final double HOOD_MOTOR_CONSTANT = 169f/9;
 
     //TODO
     private final LerpTable<Double, Double> shooterBottom = new LerpTable<>();
@@ -51,7 +51,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
         ShuffleboardContainer tab = Shuffleboard.getTab("HoodTesting");
 
-        SmartDashboard.putNumber("Hood Angle setpoint", hood_angle);
+        SmartDashboard.putNumber("Hood Angle", hood_angle);
         SmartDashboard.putNumber("Hood angle current poss", hoodMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Output percent",hoodMotor.getAppliedOutput());
         SmartDashboard.putNumber("Hood Error",hood_angle-hoodMotor.getEncoder().getPosition());
@@ -99,18 +99,15 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 //        }
 
 
-        hood_angle = SmartDashboard.getNumber("Hood Angle setpoint", 0.0);
-        SmartDashboard.putNumber("Hood Angle setpoint", hood_angle);
+        hood_angle = SmartDashboard.getNumber("Hood Angle", 0.0);
+        SmartDashboard.putNumber("Hood Angle", hood_angle);
+        SmartDashboard.putNumber("Hood setpoint", hood_angle * HOOD_MOTOR_CONSTANT);
         SmartDashboard.putNumber("Hood angle current poss", hoodMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("Output percent",hoodMotor.getAppliedOutput());
         SmartDashboard.putNumber("Hood Error",hood_angle-hoodMotor.getEncoder().getPosition());
         SmartDashboard.putBoolean("Forward Limit Enabled", m_forwardLimit.isPressed());
         SmartDashboard.putBoolean("Reverse Limit Enabled", m_reverseLimit.isPressed());
 
-        if (m_reverseLimit.isPressed())
-        {
-            hoodMotor.getEncoder().setPosition(0);
-        }
 
         //set stuff
 
@@ -122,7 +119,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         hoodMotor.getPIDController().setI(i);
         hoodMotor.getPIDController().setD(d);
 
-        setAngle(hood_angle);
+       // setAngle(hood_angle);
 
     }
 
@@ -140,12 +137,12 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     }
 
     public void hoodUp(){
-        //hoodMotor.set(0.1);;
+        hoodMotor.set(0.1);;
     }
 
 
     public void hoodDown(){
-        //hoodMotor.set(-0.1);;
+        hoodMotor.set(-0.1);;
     }
 
     public void hoodStop(){
