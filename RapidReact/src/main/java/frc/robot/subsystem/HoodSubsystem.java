@@ -131,7 +131,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
     }
 
-
     public void setAngle(double angle_degrees) {
         //TODO
 
