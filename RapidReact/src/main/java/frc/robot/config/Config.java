@@ -15,9 +15,9 @@ public class Config {
   //////////////////////////////////////////////////////////////////////////////
   // Enablers
   public boolean enableAutonomousSubsystem = true;
-  public boolean enableClimberSubsystem = true;
+  public boolean enableClimberSubsystem = false;
   public boolean enableDriveSubsystem = true;
-  public boolean enableIntakeSubsystem = true;
+  public boolean enableIntakeSubsystem = false;
   public boolean enableRGBSubsystem = true;
   public boolean enableShooterSubsystem = true;
   public boolean enableVisionSubsystem = true;
