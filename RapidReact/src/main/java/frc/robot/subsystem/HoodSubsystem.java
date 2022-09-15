@@ -10,7 +10,7 @@ import frc.robot.config.Config;
 
 public class HoodSubsystem extends BitBucketsSubsystem {
 
-
+    boolean lerpShoot = false;
     private CANSparkMax motor;
     
     private SparkMaxLimitSwitch m_forwardLimit;
@@ -145,8 +145,12 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         //TODO
 
         //sets number of rotations of the motor to move the hood by a certain angle parameter
-        motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
-    
+        if(lerpShoot)
+        {
+            motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
+
+        }
+
     }
 
     public void hoodUp(){
@@ -169,5 +173,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     public double getBottomShootSpeed() {
         return lowMotorTable.get(visionSubsystem.distance());
     }
-
+    public void toggleLerpShoot() {
+        lerpShoot = !lerpShoot;
+    }
 }

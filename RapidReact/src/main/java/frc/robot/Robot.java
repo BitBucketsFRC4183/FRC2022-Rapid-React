@@ -524,5 +524,6 @@ public class Robot extends TimedRobot {
     }
 
     buttons.toggleShooterLerpSpeed.whenPressed(shooterSubsystem::toggleLerpShoot);
+    buttons.toggleShooterLerpSpeed.whenPressed(hoodSubsystem::toggleLerpShoot);
   }
 }
