@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
     this.config = new Config();
     this.buttons = new Buttons();
     this.field = new Field2d();
@@ -94,7 +96,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
     }
     if (config.enableShooterSubsystem) {
-      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config, hoodSubsystem,visionSubsystem));
+      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config, buttons.hoodLerp, visionSubsystem));
     }
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
@@ -449,7 +451,6 @@ public class Robot extends TimedRobot {
 
       buttons.hubSpinUp.whenPressed(() -> {
           shooterSubsystem.spinUpTop();
-          hoodSubsystem.changeHoodAngle();
         }
       );
       buttons.hubSpinUp.whenReleased(() -> {
@@ -520,11 +521,26 @@ public class Robot extends TimedRobot {
       buttons.hoodUp.whenPressed(hoodSubsystem::hoodUp);
       buttons.hoodDown.whenPressed(hoodSubsystem::hoodDown);
 
+      buttons.hoodLerp.whenPressed(() -> {
+        Optional<Double> opt = hoodSubsystem.getDesiredRevolutions();
+
+        if (opt.isEmpty()) {
+          buttons.operatorControl.setRumble(GenericHID.RumbleType.kLeftRumble, 1.0);
+        } else {
+          hoodSubsystem.hoodToRevolutions(opt.get());
+        }
+
+
+      });
+
       buttons.hoodUp.whenReleased(hoodSubsystem::hoodStop);
       buttons.hoodDown.whenReleased(hoodSubsystem::hoodStop);
+      buttons.hoodLerp.whenReleased(() -> {
+        buttons.operatorControl.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+
+        hoodSubsystem.hoodStop();
+      });
     }
 
-    buttons.toggleShooterLerpSpeed.whenPressed(shooterSubsystem::toggleLerpShoot);
-    buttons.toggleShooterLerpSpeed.whenPressed(hoodSubsystem::toggleLerpShoot);
   }
 }
