@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
+import frc.robot.config.MotorConfig;
+import frc.robot.utils.MotorUtils;
 
 public class HoodSubsystem extends BitBucketsSubsystem {
 
