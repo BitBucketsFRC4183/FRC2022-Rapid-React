@@ -49,7 +49,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     public void init() {
 
 
-
         SmartDashboard.putNumber(DESIRED_REVOLUTIONS, 0);
         motor = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
 
@@ -78,7 +77,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
         motor.setIdleMode(IdleMode.kBrake);
 
-        ShuffleboardContainer tab = Shuffleboard.getTab("HoodTesting");
         ;
         SmartDashboard.putNumber(ACTUAL_REVOLUTIONS, motor.getEncoder().getPosition());
 
@@ -160,6 +158,7 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         //sets number of rotations of the motor to move the hood by a certain angle parameter
         if(lerpShoot)
         {
+
             motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
 
         }
