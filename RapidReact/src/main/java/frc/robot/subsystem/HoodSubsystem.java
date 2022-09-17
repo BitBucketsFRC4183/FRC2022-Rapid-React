@@ -11,6 +11,8 @@ import frc.robot.config.Config;
 public class HoodSubsystem extends BitBucketsSubsystem {
 
     boolean lerpShoot = false;
+
+    double revs = 0;
     private CANSparkMax motor;
     
     private SparkMaxLimitSwitch m_forwardLimit;
@@ -99,11 +101,11 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
         //angleTable.put(distance, speed)
         lowMotorTable.put(0d,0d);
-        lowMotorTable.put(100d,100d);
+        lowMotorTable.put(10d,100d);
 
         //angleTable.put(distance, speed)
         highMotorTable.put(0d,0d);
-        highMotorTable.put(100d,100d);
+        highMotorTable.put(10d,100d);
     }
 
     @Override
@@ -120,11 +122,16 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 //        if(m_reverseLimit.isLimitSwitchEnabled()){
 //            m_reverseLimit.enableLimitSwitch(true);
 //        }
+        if(visionSubsystem.hasTarget()) {
+            revs = angleTable.get(visionSubsystem.distance());
 
+        }
+        else {
+            revs = 0;
 
-        double revs = angleTable.get(visionSubsystem.distance());
-
-        SmartDashboard.putNumber(DESIRED_REVOLUTIONS, revs);
+        }
+        SmartDashboard.putBoolean("Lerp boolean", lerpShoot);
+        SmartDashboard.getNumber(DESIRED_REVOLUTIONS, revs);
         SmartDashboard.putNumber(ACTUAL_REVOLUTIONS, motor.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42).getPosition());
         SmartDashboard.putNumber("Conversion factor",motor.getEncoder().getPositionConversionFactor());
         SmartDashboard.putBoolean("Forward Limit Enabled", m_forwardLimit.isPressed());
@@ -132,7 +139,13 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         SmartDashboard.putBoolean("Reverse Limit Enabled", m_reverseLimit.isPressed());
 
 
-       setRevs(revs);
+
+    }
+
+    public void changeHoodAngle()
+    {
+
+        setRevs(revs);
 
     }
 

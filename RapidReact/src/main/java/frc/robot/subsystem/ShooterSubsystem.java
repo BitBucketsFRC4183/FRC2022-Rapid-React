@@ -80,11 +80,12 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
   ShooterState shooterState = ShooterState.STOPPED;
 
-  public ShooterSubsystem(Config config, HoodSubsystem hoodSubsystem) {
+  public ShooterSubsystem(Config config, HoodSubsystem hoodSubsystem, VisionSubsystem vision) {
     super(config);
 
     topSpeedHigh = () -> {
-      if (lerpShoot) {
+      if (lerpShoot && vision.hasTarget()) {
+
         return hoodSubsystem.getTopShootSpeed();
       }
 
@@ -93,7 +94,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
 
 
     bottomSpeedHigh = () -> {
-      if (lerpShoot) {
+      if (lerpShoot && vision.hasTarget()) {
         return hoodSubsystem.getBottomShootSpeed();
       }
 
