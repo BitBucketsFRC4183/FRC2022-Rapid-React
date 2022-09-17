@@ -358,7 +358,10 @@
       "intake": {
         "open": true
       },
-      "open": true
+      "open": true,
+      "shooter": {
+        "open": true
+      }
     }
   },
   "Plot": {

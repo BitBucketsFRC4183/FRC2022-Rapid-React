@@ -233,6 +233,8 @@ public class Config {
     climber.climberRight.turningPeakOutput = 1;
 
     //HOOD
+    hood.hoodMotor.encoderType = EncoderType.Relative;
     hood.hoodMotor.positionPIDF = new PIDF(0.001, 0,0,0);
+
   }
 }

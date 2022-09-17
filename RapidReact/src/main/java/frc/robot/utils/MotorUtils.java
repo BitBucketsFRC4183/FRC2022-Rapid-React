@@ -184,8 +184,8 @@ public class MotorUtils {
 
   public static void motorInit(CANSparkMax motor, MotorConfig motorConfig) {
     /* Configure Sensor Source for velocity PID */
-    RelativeEncoder encoder;
 
+    RelativeEncoder encoder;
     motor.restoreFactoryDefaults();
 
     // brushless motors can't be inverted

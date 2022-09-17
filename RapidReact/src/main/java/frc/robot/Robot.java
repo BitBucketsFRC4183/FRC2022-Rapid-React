@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
       this.robotSubsystems.add(intakeSubsystem = new IntakeSubsystem(this.config));
     }
     if (config.enableShooterSubsystem) {
-      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config, hoodSubsystem));
+      this.robotSubsystems.add(shooterSubsystem = new ShooterSubsystem(this.config, hoodSubsystem,visionSubsystem));
     }
     if (config.enableClimberSubsystem) {
       this.robotSubsystems.add(climberSubsystem = new ClimberSubsystem(this.config));
@@ -449,6 +449,7 @@ public class Robot extends TimedRobot {
 
       buttons.hubSpinUp.whenPressed(() -> {
           shooterSubsystem.spinUpTop();
+          hoodSubsystem.changeHoodAngle();
         }
       );
       buttons.hubSpinUp.whenReleased(() -> {
@@ -524,5 +525,6 @@ public class Robot extends TimedRobot {
     }
 
     buttons.toggleShooterLerpSpeed.whenPressed(shooterSubsystem::toggleLerpShoot);
+    buttons.toggleShooterLerpSpeed.whenPressed(hoodSubsystem::toggleLerpShoot);
   }
 }
