@@ -277,11 +277,6 @@
           "visible": true
         }
       },
-      "/SmartDashboard/Autonomous Path Chooser": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "Robot": {
           "image": "images/robot.png",
@@ -318,15 +313,7 @@
           "style": "Line"
         },
         "units": "feet",
-        "width": 16.459199905395508,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/Orientation Chooser": {
-        "window": {
-          "visible": true
-        }
+        "width": 16.459199905395508
       }
     }
   },

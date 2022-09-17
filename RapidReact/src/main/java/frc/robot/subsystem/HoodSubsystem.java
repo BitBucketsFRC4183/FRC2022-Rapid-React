@@ -3,31 +3,23 @@ package frc.robot.subsystem;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkMax.IdleMode;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.config.Config;
-import frc.robot.config.MotorConfig;
 import frc.robot.utils.MotorUtils;
+
+import java.util.Optional;
 
 public class HoodSubsystem extends BitBucketsSubsystem {
 
-    boolean lerpShoot = false;
-
-    double revs = 0;
     private CANSparkMax motor;
     
     private SparkMaxLimitSwitch m_forwardLimit;
     private SparkMaxLimitSwitch m_reverseLimit;
 
     private final LerpTable<Double, Double> angleTable = new LerpTable<>();
-    private final LerpTable<Double, Double> lowMotorTable = new LerpTable<>();
-    private final LerpTable<Double, Double> highMotorTable = new LerpTable<>();
 
-    static final String DESIRED_REVOLUTIONS = "desired revs";
+
     static final String ACTUAL_REVOLUTIONS = "actual revs";
-    static final String DESIRED_ANGLE = "desired angle";
-
     private final VisionSubsystem visionSubsystem;
 
     final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(0, 0, -9.8);
@@ -35,10 +27,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
     //845/72 is number of motor turns to raise hood by 1 degree
     private final double HOOD_MOTOR_CONSTANT = 169f/9;
-
-    //TODO
-    private final LerpTable<Double, Double> shooterBottom = new LerpTable<>();
-    private final LerpTable<Double, Double> shooterTop = new LerpTable<>();
 
 
     public HoodSubsystem(Config config, VisionSubsystem visionSubsystem) {
@@ -49,19 +37,8 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
     @Override
     public void init() {
+        motor = MotorUtils.makeSpark(config.hood.hoodMotor);
 
-
-        SmartDashboard.putNumber(DESIRED_REVOLUTIONS, 0);
-        motor = new CANSparkMax(20, CANSparkMaxLowLevel.MotorType.kBrushless);
-
-        RelativeEncoder encoder;
-        motor.restoreFactoryDefaults();
-
-        // brushless motors can't be inverted
-
-        // encoder.setInverted(settings.sensorPhase);
-
-        /* Set acceleration and vcruise velocity - see documentation */
         SparkMaxPIDController pidController = motor.getPIDController();
 
         // configure position PID constants
@@ -72,19 +49,8 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         pidController.setIZone(0);
         pidController.setOutputRange(-1, 1);
 
-      //  motor.setInverted(true);
-        encoder = motor.getEncoder();
-        /* Zero the sensor */
-        encoder.setPosition(0);
-
-        motor.setIdleMode(IdleMode.kBrake);
-
-        ;
-        SmartDashboard.putNumber(ACTUAL_REVOLUTIONS, motor.getEncoder().getPosition());
-
-        //log shit
         motor.getEncoder().setPosition(0);
-
+        motor.setIdleMode(IdleMode.kBrake);
         
         this.m_forwardLimit = motor.getForwardLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
         this.m_reverseLimit = motor.getReverseLimitSwitch(SparkMaxLimitSwitch.Type.kNormallyOpen);
@@ -98,14 +64,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         //angleTable.put(distance, REVOLUTION THINGY)
         angleTable.put(0d,0d);
         angleTable.put(10d,18.9);
-
-        //angleTable.put(distance, speed)
-        lowMotorTable.put(0d,0d);
-        lowMotorTable.put(10d,100d);
-
-        //angleTable.put(distance, speed)
-        highMotorTable.put(0d,0d);
-        highMotorTable.put(10d,100d);
     }
 
     @Override
@@ -122,55 +80,35 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 //        if(m_reverseLimit.isLimitSwitchEnabled()){
 //            m_reverseLimit.enableLimitSwitch(true);
 //        }
-        if(visionSubsystem.hasTarget()) {
-            revs = angleTable.get(visionSubsystem.distance());
-
-        }
-        else {
-            revs = 0;
-
-        }
-        SmartDashboard.putBoolean("Lerp boolean", lerpShoot);
-        SmartDashboard.getNumber(DESIRED_REVOLUTIONS, revs);
         SmartDashboard.putNumber(ACTUAL_REVOLUTIONS, motor.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42).getPosition());
-        SmartDashboard.putNumber("Conversion factor",motor.getEncoder().getPositionConversionFactor());
         SmartDashboard.putBoolean("Forward Limit Enabled", m_forwardLimit.isPressed());
-
         SmartDashboard.putBoolean("Reverse Limit Enabled", m_reverseLimit.isPressed());
 
 
 
     }
 
-    public void changeHoodAngle()
-    {
-
-        setRevs(revs);
-
-    }
 
     @Override
     public void disable() {
 
     }
 
-    public void setRevs(double angle_revs) {
-        //TODO
-
-        //sets number of rotations of the motor to move the hood by a certain angle parameter
-        if(lerpShoot)
-        {
-
-            motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
-
+    public Optional<Double> getDesiredRevolutions() {
+        if (visionSubsystem.hasTarget()) {
+            return Optional.of(angleTable.get(visionSubsystem.distance()));
         }
 
+        return Optional.empty();
+    }
+
+    public void hoodToRevolutions(double angle_revs) {
+        motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
     }
 
     public void hoodUp(){
         motor.set(0.1);;
     }
-
 
     public void hoodDown(){
         motor.set(-0.1);;
@@ -180,14 +118,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         motor.set(0);
     }
 
-    public double getTopShootSpeed() {
-        return highMotorTable.get(visionSubsystem.distance());
-    }
 
-    public double getBottomShootSpeed() {
-        return lowMotorTable.get(visionSubsystem.distance());
-    }
-    public void toggleLerpShoot() {
-        lerpShoot = !lerpShoot;
-    }
+
 }
