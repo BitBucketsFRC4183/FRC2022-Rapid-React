@@ -18,14 +18,11 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
     private final LerpTable<Double, Double> angleTable = new LerpTable<>();
 
-
     static final String ACTUAL_REVOLUTIONS = "actual revs";
     private final VisionSubsystem visionSubsystem;
 
     final SimpleMotorFeedforward ff = new SimpleMotorFeedforward(0, 0, -9.8);
 
-
-    //845/72 is number of motor turns to raise hood by 1 degree
     private final double HOOD_MOTOR_CONSTANT = 169f/9;
 
 
@@ -57,9 +54,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         m_forwardLimit.enableLimitSwitch(true);
         m_reverseLimit.enableLimitSwitch(true);
 
-
-
-
         //LERP Table Values
         //angleTable.put(distance, REVOLUTION THINGY)
         angleTable.put(0d,0d);
@@ -68,24 +62,9 @@ public class HoodSubsystem extends BitBucketsSubsystem {
 
     @Override
     public void periodic() {
-
-//        m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean("Forward Limit Enabled", false));
-//        m_reverseLimit.enableLimitSwitch(SmartDashboard.getBoolean("Reverse Limit Enabled", false));
-//        SmartDashboard.putBoolean("Forward Limit Switch", m_forwardLimit.isPressed());
-//        SmartDashboard.putBoolean("Reverse Limit Switch", m_reverseLimit.isPressed());
-//
-//        if(m_forwardLimit.isLimitSwitchEnabled()){
-//            m_forwardLimit.enableLimitSwitch(true);
-//        }
-//        if(m_reverseLimit.isLimitSwitchEnabled()){
-//            m_reverseLimit.enableLimitSwitch(true);
-//        }
         SmartDashboard.putNumber(ACTUAL_REVOLUTIONS, motor.getEncoder(SparkMaxRelativeEncoder.Type.kHallSensor, 42).getPosition());
         SmartDashboard.putBoolean("Forward Limit Enabled", m_forwardLimit.isPressed());
         SmartDashboard.putBoolean("Reverse Limit Enabled", m_reverseLimit.isPressed());
-
-
-
     }
 
 
@@ -98,7 +77,6 @@ public class HoodSubsystem extends BitBucketsSubsystem {
         if (visionSubsystem.hasTarget()) {
             return Optional.of(angleTable.get(visionSubsystem.distance()));
         }
-
         return Optional.empty();
     }
 
@@ -117,7 +95,4 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     public void hoodStop(){
         motor.set(0);
     }
-
-
-
 }

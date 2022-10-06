@@ -44,8 +44,6 @@ public class VisionSubsystem extends BitBucketsSubsystem {
 
     @Override
     public void periodic() {
-
-
         SmartDashboard.putNumber("distance Y",distance());
     }
 

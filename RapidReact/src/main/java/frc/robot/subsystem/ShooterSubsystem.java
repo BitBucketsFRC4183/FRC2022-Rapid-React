@@ -23,24 +23,10 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   private TalonSRX feeder;
 
   private final Changeable<Double> topSpeedHighChangeable = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeed", 2500.0 * 0.85);
-  private final Changeable<Double> bottomSpeedHighChangeable = BucketLog.changeable(
-    Put.DOUBLE,
-    "shooter/bottomShooterSpeed",
-    5450.0 * 0.85
-  );
-
-
-
-
-
-
+  private final Changeable<Double> bottomSpeedHighChangeable = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeed", 5450.0 * 0.85);
 
   private final Changeable<Double> topSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/topShooterSpeedLow", 2000.0);
-  private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(
-    Put.DOUBLE,
-    "shooter/bottomShooterSpeedLow",
-    1600.0
-  );
+  private final Changeable<Double> bottomSpeedLow = BucketLog.changeable(Put.DOUBLE, "shooter/bottomShooterSpeedLow", 1600.0);
 
   public int autoTopSpeedHighOffset = 0;
   public int autoBottomSpeedHighOffset = 0;
@@ -82,20 +68,16 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public double calculateTopSpeedLerp() {
     if (isLerpHeld.getAsBoolean() && vision.hasTarget()) {
       double distanceX = vision.distance();
-
       return topShooterLerp.get(distanceX);
     }
-
     return topSpeedHighChangeable.currentValue();
   }
 
   public double calculateBottomSpeedLerp() {
     if (isLerpHeld.getAsBoolean() && vision.hasTarget()) {
       double distanceX = vision.distance();
-
       return bottomShooterLerp.get(distanceX);
     }
-
     return bottomSpeedHighChangeable.currentValue();
   }
 
@@ -106,7 +88,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   public ShooterSubsystem(Config config, BooleanSupplier isLerpHeld, VisionSubsystem vision) {
     super(config);
     this.isLerpHeld = isLerpHeld;
-
     this.vision = vision;
   }
 
@@ -189,10 +170,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   boolean motorIsInSpeedDeadband(CANSparkMax motor, double speed) {
-    return (
-      (motor.getEncoder().getVelocity() <= speed + hubSpinUpSpeedDeadband) &&
-      (motor.getEncoder().getVelocity() >= speed - hubSpinUpSpeedDeadband)
-    );
+    return ((motor.getEncoder().getVelocity() <= speed + hubSpinUpSpeedDeadband) && (motor.getEncoder().getVelocity() >= speed - hubSpinUpSpeedDeadband));
   }
 
   public boolean isUpToHighSpeed() {
@@ -208,10 +186,7 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
   }
 
   public boolean isUpToLowSpeed() {
-    return (
-            motorIsInSpeedDeadband(shooterTop, topSpeedLow.currentValue())  &&
-            motorIsInSpeedDeadband(shooterBottom, topSpeedLow.currentValue())
-            );
+    return (motorIsInSpeedDeadband(shooterTop, topSpeedLow.currentValue())  && motorIsInSpeedDeadband(shooterBottom, topSpeedLow.currentValue()));
   }
 
   @Override
@@ -237,11 +212,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
       topError = shooterTop.getEncoder().getVelocity();
       bottomError = shooterTop.getEncoder().getVelocity();
     }
-
-//    SmartDashboard.putNumber("shooter/topShooterError", topError);
-//    SmartDashboard.putNumber("shooter/bottomShooterError", bottomError);
-//    SmartDashboard.putNumber("shooter/topPercentOutput", shooterTop.getAppliedOutput());
-//    SmartDashboard.putNumber("shooter/bottomPercentOutput", shooterBottom.getAppliedOutput());
      topShooterError.log(LogLevel.DEBUG, topError);
      bottomShooterError.log(LogLevel.DEBUG, bottomError);
   }
@@ -253,14 +223,6 @@ public class ShooterSubsystem extends BitBucketsSubsystem {
     flywheelSim.setInput(shooterTop.get() * this.config.maxVoltage);
     flywheelSim.update(0.02); //Used to be SimConstants.SIM_SAMPLE_RATE_SEC
     encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
-
-    // encoderSim.get
-
-    // roller1.getEncoder().setPosition(Units.radiansPerSecondToRotationsPerMinute(encoderSim.getRate()));
-
-    // flywheelSim.setInput(motor.get() * RobotController.getBatteryVoltage());
-    // flywheelSim.update(Constants.kRobotMainLoopPeriod);
-    // encoderSim.setRate(flywheelSim.getAngularVelocityRadPerSec());
 
     shooterTopOutputVelLoggable.log(shooterTop.getEncoder().getVelocity());
     shooterBottomOutputVelLoggable.log(shooterBottom.getEncoder().getVelocity());
