@@ -103,6 +103,8 @@ public class HoodSubsystem extends BitBucketsSubsystem {
     }
 
     public void hoodToRevolutions(double angle_revs) {
+
+        //its
         motor.getPIDController().setReference(angle_revs, CANSparkMax.ControlType.kPosition);
     }
 

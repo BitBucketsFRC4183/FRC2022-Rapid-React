@@ -50,6 +50,8 @@ public class AutoShootCommand extends SequentialCommandGroup
                                             this.shooter.turnOffFeeders();
                                         })),
 
+
+
                 //Activate shooter
                 new InstantCommand(this.top ? this.shooter::spinUpTop : this.shooter::shootLow),
 

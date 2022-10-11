@@ -31,7 +31,6 @@ public class Buttons {
   JoystickButton hubSpinUp = new JoystickButton(operatorControl, Xbox.R1);
 
   JoystickButton toggleElevator = new JoystickButton(operatorControl, Xbox.L1);
-  JoystickButton feedInFire = new JoystickButton(operatorControl, Xbox.L2);
   JoystickButton autoShoot = new JoystickButton(operatorControl, Xbox.SQUARE);
   JoystickButton autoShootOne = new JoystickButton(operatorControl, Xbox.R_STICK);
 
@@ -40,6 +39,8 @@ public class Buttons {
   JoystickButton outtake = new JoystickButton(operatorControl, Xbox.CROSS);
 
   JoystickButton rgb = new JoystickButton(operatorControl, Xbox.SHARE);
+
+
 
   POVButton elevatorRetract = new POVButton(operatorControl, 180); // DPAD down
   POVButton elevatorExtend = new POVButton(operatorControl, 0); // DPAD up

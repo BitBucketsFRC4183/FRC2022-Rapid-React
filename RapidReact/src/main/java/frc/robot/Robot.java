@@ -82,6 +82,8 @@ public class Robot extends TimedRobot {
     this.autonomousChooser.setDefaultOption(AutonomousPath.NOTHING.dashboardName, AutonomousPath.NOTHING);
     SmartDashboard.putData("Autonomous Path Chooser", this.autonomousChooser);
 
+    new HoodSubsystem(config, visionSubsystem);
+
     // Add Subsystems Here
     if (config.enableAutonomousSubsystem) {
       this.robotSubsystems.add(autonomousSubsystem = new AutonomousSubsystem(this.config));

@@ -313,7 +313,10 @@
           "style": "Line"
         },
         "units": "feet",
-        "width": 16.459199905395508
+        "width": 16.459199905395508,
+        "window": {
+          "visible": true
+        }
       }
     }
   },

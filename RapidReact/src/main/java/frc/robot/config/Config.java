@@ -1,5 +1,6 @@
 package frc.robot.config;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.config.MotorConfig.EncoderType;
 
 public class Config {
@@ -27,13 +28,14 @@ public class Config {
 
   //////////////////////////////////////////////////////////////////////////////
   // General Stuff
-  public int maxVoltage = 12;
+  public int maxVoltage = 12; //
 
   // Motor & Pneumatic IDs
 
   // Autonomous Subsystem
 
   // Drive Subsystem
+
   public int frontLeftModuleDriveMotor_ID = 1;
   public int frontLeftModuleSteerMotor_ID = 2;
   public int frontLeftModuleSteerEncoder_ID = 9;
